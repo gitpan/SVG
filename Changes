@@ -1,10 +1,20 @@
 Revision history for Perl extension SVG.
 
+2.28 Monday 3 November, 2003 (RO, PW)
+	-Added SVG::GD to allow GD users to output SVG for simple GD drawings (RO)
+	-Added perlify support: Generate Perl code from an SVG document (PW)
+	-Added SVG::Extention for DTD validation support during serialisation (PW)
+	-Took away automatic xml escaping code. This belongs in user codei (RO).
+	-Added attributeName and attributeType to legal animateTransform in
+	 SVG::Element SMIL animation	per Mike Churchill bug report 2003.12.03
+	-bug fix to the inlinesvg.pl example Also per Mike Churchill bug report
+
 2.27 Wednesday 29 January 2002 (RO)
 	-Added setAttribute and setAttributes to SVG::DOM
 
 2.26 Sunday 4 August 2002 (PW)
-    - Moved all -specialarguments to %default_attrs so they can be set at import time
+    - Moved all -specialarguments to %default_attrs so they 
+	  can be set at import time
 	- Added strict checking for duplicate IDs in tag() and attribute() 
 	- Created test suite of 17 initial regession test scripts
 	- Improved xmlesc method in 
@@ -19,8 +29,9 @@ Revision history for Perl extension SVG.
 	  Repaired this error.
 
 2.21 Thursday 20 June 2002
-	- Added the internal hash $svg->{-docref} which contains the -elist and -idlist hashes for 
-	  tracking the elements and ids in the document in the DOM
+	- Added the internal hash $svg->{-docref} which contains 
+	  the -elist and -idlist hashes for tracking the elements 
+	  and ids in the document in the DOM
 	- Added functionality to SVG::DOM including getElements, getElementByID
 	- Added an example of the use of SVG DOM in the examples directory
 	- Added element-level namespace support to override the document namespace
@@ -66,23 +77,26 @@ Revision history for Perl extension SVG.
 	- Added svg.pm to examples. Tested sample of the synopsis script.
 
 0.31 Thu Oct 10 12:00:00
-        - Bug fix for careless error. Left a debugging comment in the code.
-	- Next time, run the code through an interpreted rather than just looking at the raw XML.
+    - Bug fix for careless error. Left a debugging comment in the code.
+	- Next time, run the code through an interpreted rather than just 
+	  looking at the raw XML.
 
 0.30 Wed Oct 10 17:05:00
-        - Now support -T and inline and namespace.
+    - Now support -T and inline and namespace.
 
 0.29 Tue Oct 9 14:36:00 
-	- Repaired bug in method $self->use(). The method was  generating an <image > tag.
+	- Repaired bug in method $self->use(). The method was 
+	  generating an <image > tag.
 
 0.28 Mon Oct 8 18:05:40
-        - Got the program to pass -w
-	- Fixed user-reported bug in animate function $rtr{-method} was missing the minus.
+    - Got the program to pass -w
+	- Fixed user-reported bug in animate function $rtr{-method}
+	  was missing the minus.
 	- ran significant tests for complex files. Most work but some crash.
 
 0.26 Sun Oct 7 00:40:00
-        - Repaired the pod file
-        - Added title and desc support
+    - Repaired the pod file
+    - Added title and desc support
 
 0.25  Sat Oct  6 23:00:02
 	- added image support; improved POD;

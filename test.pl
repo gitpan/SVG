@@ -3,6 +3,9 @@
 use strict;
 use vars qw($loaded);
 
+# pass on the @INC passed to us to the individual tests
+$ENV{PERL5LIB}=join ':',@INC;
+
 #-------------------------------------------------------------------------------
 
 $| = 1;

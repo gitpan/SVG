@@ -1,4 +1,4 @@
-README for SVG.pm 2.27 29.01.03
+README for SVG.pm
 
 SVG.pm is a perl extention to generate stand-alone or inline SVG 
 (scaleable vector graphics) images using the W3C SVG xml recommendation.
@@ -13,9 +13,12 @@ or to the following mirrors:
 The complete pod for SVG resides in SVG::Manual 
 type perldoc SVG::Manual on the command line
 
-(c) 2001,2002 Ronan Oger, RO IT Systems, GmbH 
+(c) 2001,2002,2003  Ronan Oger, RO IT Systems, GmbH 
 homepage: http://www.roitsystems.com
-ronan@cpan.org
+
+CONTACT POINT
+-------------
+email: ronan@roasp.com
 
 This software is provided as is and without warranty. 
 It is freely distributed under the general perl license.
@@ -23,11 +26,12 @@ It is freely distributed under the general perl license.
 OVERVIEW
 --------
 SVG.pm makes it possible to generate fully-functional SVG images in perl.
-100% of the SVG tags are supported.
+100% of the SVG tags are supported, and any new arbitrary element tag can be
+added by users by declaring it.
 
 VERSION
 -------
-2.22 (24.06.02)
+2.28 (03.11.2003)
 
 DOCUMENTATION
 -------------
@@ -38,14 +42,21 @@ pod in perldoc format (type perldoc SVG on command line)
 RESOURCES
 ---------
 The following URLs offer additional resources for users of SVG.pm:
-* SVG.pm on-line manual http://roasp.com/man/SVG.html
-* Perl SVG tutorials http://roasp.com/tutorial/
-* Perl SVG Zone homepage http://roasp.com/
+* SVG.pm on-line manual http://www.roasp.com/man/SVG.html
+* Perl SVG tutorials http://www.roasp.com/tutorial/
+* Perl SVG Zone homepage http://www.roasp.com/
+* Serverside Perl Forum: http://www.roasp.com/serverside/
 * gallery of the use of SVG.pm on the web http://roasp.com/gallery/svg/index.html 
+* SVG Foundation http://www.svgfoundation.org
+* SVG Developers mailing list http://www.yahoogroups.com/svg-developers/
+* W3 Consortium http://www.w3.org
+* Sams Publishing, "SVG Unleashed", September 2002. There is a Perl chapter
+* SVG Open Conference proceedings http://www.svgopen.org
+* YAPC::Open Conference Proceedings: http://www.yapc.org/eu/
 
 INSTALLATION INSTRUCTIONS
 -------------------------
-***THERE ARE FOUR WAYS TO IMPLEMENT SVG MODULE IN PERL***
+***THERE ARE FIVE WAYS TO IMPLEMENT SVG MODULE IN PERL***
 
 	1/ Systems with CPAN support (all Unix/Linux/BSD/Mac):
 	-----------------------------------------------------
@@ -63,7 +74,13 @@ INSTALLATION INSTRUCTIONS
 	 PPM> quit
 	 C:\>
 
-	3/ The hard way (requires make or nmake, tar, gunzip, and gcc):
+	3/ Use Source RPMs.
+	Download the source RPM of your choice.
+	In a shell:
+	/hom/somewhere/% rpm -ihv SVG-source-rpm-name
+	You may be prompted for the root password
+
+	4/ The hard way (requires make or nmake, tar, gunzip, and gcc):
 	---------------------------------------------------------------
 	This method was tested in DOS, Windows, AS400, Linux, Unix, BSD, Mac.
 	Hard-headed users can directly get the distribution from 
@@ -79,7 +96,7 @@ INSTALLATION INSTRUCTIONS
 	make install
 
 
-	4/ If all the above fail, there is still a (cumbersome) way:
+	5/ If all the above fail, there is still a (cumbersome) way:
 	-----------------------------------------------------------
 	You have to install to a local dirctory and explicitly call the module 
 	by using one of the following line in your calling program:
@@ -99,8 +116,7 @@ INSTALLATION INSTRUCTIONS
 
 KNOWN BUGS & ISSUES
 -------------------
-none at this time
-
+Comments before the <svg> element are toxic.
 
 SEE ALSO:
 SVG::Parser
@@ -112,4 +128,8 @@ CHANGE LOG
 ----------
 A poor version of the change history is available in the Changes file.
 
-29.01.03 Added setAttributes and setAttribute methods
+COMMENTS/FEEDBACK
+-----------------
+Please email your feedback, comments, questions to the email address at the top
+of this document. I will do my best to answer promptly. To date, I have not
+knowingly failed to answer any emails.

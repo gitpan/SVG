@@ -63,7 +63,7 @@ sub getChildAtIndex ($$;@) {
 
 sub getNextSibling ($) {
     my $self=shift;
-    
+
     if (my $parent=$self->getParent) {
         my @children=$parent->getChildren();
         my $index=$self->getChildIndex(@children);
@@ -89,7 +89,7 @@ sub getPreviousSibling ($) {
             return $children[$index-1];
         }
     }
-    
+
     return undef;
 }
 
@@ -119,7 +119,7 @@ sub getChildren ($) {
         return $self->{-childs};
     }
 
-    return undef;
+    return wantarray?():undef;
 }
 *getChildElements=\&getChildren;
 *getChildNodes=\&getChildren;
@@ -215,7 +215,7 @@ sub getSiblings ($) {
         return $parent->getChildren();
     }
 
-    return undef;
+    return wantarray?():undef;
 }
 
 #-----------------
@@ -258,7 +258,7 @@ sub getElementName ($) {
 
 sub getElements ($;$) {
     my ($self,$element)=@_;
-    
+
     return undef unless exists $self->{-docref};
     return undef unless exists $self->{-docref}->{-elist};
 
@@ -268,7 +268,7 @@ sub getElements ($;$) {
             return wantarray?@{$elist->{$element}}:
 		$elist->{$element};
         }
-        return undef;
+        return wantarray?():undef;
     } else {
        my @elements;
        foreach my $element_type (keys %$elist) {
@@ -278,6 +278,7 @@ sub getElements ($;$) {
     }
 }
 
+# forces the use of the second argument for element name
 sub getElementsByName ($$) {
     return shift->getElements(shift);
 }

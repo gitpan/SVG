@@ -13,10 +13,11 @@ use vars qw($VERSION @ISA $AUTOLOAD);
 use Exporter;
 use SVG::XML;
 use SVG::Element;
+use SVG::Extension;
 
-@ISA = qw(SVG::Element Exporter );
+@ISA = qw(SVG::Element SVG::Extension);
 
-$VERSION = "2.27";
+$VERSION = "2.28";
 
 #-------------------------------------------------------------------------------
 
@@ -156,7 +157,7 @@ B<Example:>
         -printerror => 1,
         -raiseerror => 0,
         -indent     => '  ',
-	-elsep      =>"\n",  # element line (vertical) separator
+    -elsep      =>"\n",  # element line (vertical) separator
         -docroot => 'svg', #default document root element (SVG specification assumes svg). Defaults to 'svg' if undefined
         -sysid      => 'abc', #optional system identifyer 
         -pubid      => "-//W3C//DTD SVG 1.0//EN", #public identifyer default value is "-//W3C//DTD SVG 1.0//EN" if undefined
@@ -227,8 +228,8 @@ sub new ($;@) {
     }
 
     # add -attributes to SVG object
-    #	$self->{-elrefs}->{$self}->{name} = 'document';
-    #	$self->{-elrefs}->{$self}->{id} = '';
+    #    $self->{-elrefs}->{$self}->{name} = 'document';
+    #    $self->{-elrefs}->{$self}->{id} = '';
 
     return $self;
 }
@@ -250,45 +251,46 @@ B<XML Declaration>
     -encoding          'UTF-8'
     -standalone        'yes'
     -namespace         'svg' - namespace for elements. 
-                               Can also be used in any element's method to over-ride
+                               Can also be used in any element method to over-ride
                                the current namespace
     -inline            '0' - If '1', then this is an inline document.
     -pubid             '-//W3C//DTD SVG 1.0//EN';
     -sysid             'http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd'
 
-=cut 
+=cut
 
 sub xmlify ($;@) {
 
-	my ($self,%attrs) = @_;
-	my ($decl,$ns);
+    my ($self,%attrs) = @_;
+    my ($decl,$ns);
 
-	my $credits = ''; 
-	
-	# Give the module and myself credit unless explicitly
-	# turned off by a programmer.
-	unless ($self->{-docref}->{-nocredits}) {
-		$self->comment("\n\tGenerated using the Perl SVG Module V.$VERSION\n\tby Ronan Oger\n\tInfo: http://www.roasp.com/\n" );
-	}
+    my $credits = '';
 
+    # Give the module and myself credit unless explicitly turned off
+    unless ($self->{-docref}->{-nocredits}) {
+        $self->comment("\n\tGenerated using the Perl SVG Module V$VERSION\n\tby Ronan Oger\n\tInfo: http://www.roasp.com/\n" );
+    }
 
-	foreach my $key (keys %attrs) {
-		next unless ($key =~ /^\-/);
-		$self->{$key} = $attrs{$key};
-	}
+    foreach my $key (keys %attrs) {
+        next unless ($key =~ /^\-/);
+        $self->{$key} = $attrs{$key};
+    }
 
-	foreach my $key (keys %$self) {
-		next unless ($key =~ /^\-/);
-		$attrs{$key} ||= $self->{$key};
-	}
-# return $decl.$self->SUPER::xmlify($ns);
-	
-	 return $self->SUPER::xmlify($self->{-namespace});
+    foreach my $key (keys %$self) {
+        next unless ($key =~ /^\-/);
+        $attrs{$key} ||= $self->{$key};
+    }
+
+    return $self->SUPER::xmlify($self->{-namespace});
 }
-
 *render=\&xmlify;
-
 *to_xml=\&xmlify;
+
+sub perlify ($;@) {
+    return shift->SUPER::perlify();
+}
+*toperl=\&perlify;
+
 #-------------------------------------------------------------------------------
 
 1;

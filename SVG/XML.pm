@@ -129,46 +129,29 @@ sub dtddecl ($) {
     my $self = shift;
     my $docroot = $self->{-docroot} || 'svg';
     my $id;
+
     if ($self->{-pubid}) {
-      $id = 'PUBLIC "'.$self->{-pubid}.'"';
-      $id .= ' "'.$self->{-sysid}.'"' if ($self->{-sysid});
-    } elsif ($self->{-sysid}) {
-      $id      = 'SYSTEM "'.$self->{-sysid}.'"';
-    } else { $id =  'PUBLIC "-//W3C//DTD SVG 1.0//EN"' .
-        $self->{-docref}->{-elsep} .
-        "\"$self->{-docref}->{-dtd}\""}
-
-    my $extension = '';
-    my $attlist = '';
-    my $element = '';
-    my $notation = '';
-    my $ext_flag = 0;
-
-    my %extlist = 
-        (-attlist=>'ATTLIST',
-        -element=>'ELEMENT',
-        -notation=>'NOTATION',);
-
-    my @out;
-
-    foreach my $att (keys %extlist) {
-        if(ref($self->{$att}) eq 'ARRAY') {
-            $ext_flag++;
-            while (my $entry = shift @{$self->{$att}})  {
-                push @out, "$self->{-docref}->{-elsep}<!$extlist{$att} $entry !>";
-            }
-        } elsif ($self->{$att})   {
-            $ext_flag++;
-            push @out, "<!$extlist{$att} $self->{$att} !>" ;
-        }
+        $id = 'PUBLIC "'.$self->{-pubid}.'"';
+        $id .= ' "'.$self->{-sysid}.'"' if ($self->{-sysid});
+    } elsif (
+        $self->{-sysid}) {
+        $id      = 'SYSTEM "'.$self->{-sysid}.'"';
+    } else {
+        $id =  'PUBLIC "-//W3C//DTD SVG 1.0//EN"' .
+        $self->{-docref}->{-elsep}.
+        "\"$self->{-docref}->{-dtd}\""
     }
 
-    $ext_flag++ if ($self->{-extension});
-
-    #>>>TBD: extend this to handle a list of strings or a hash of entity definitions
-    $extension = " [$self->{-docref}->{-elsep}$self->{-extension}".join ('',@out)."$self->{-docref}->{-elsep}]" if ($ext_flag);
-
     my $at=join(' ',($docroot, $id));
+
+    #>>>TBD: add internal() method to return this
+    my $extension = (exists $self->{-internal})?$self->{-internal}->render():"";
+    if (exists $self->{-extension} and $self->{-extension}) {
+        $extension .= $self->{-docref}{-elsep}.
+                      $self->{-extension}.
+                      $self->{-docref}{-elsep};
+    }
+    $extension = " [".$self->{-docref}{-elsep}.$extension."]" if $extension;
 
     return qq[<!DOCTYPE $at$extension>];
 }

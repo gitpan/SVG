@@ -4,10 +4,6 @@
 
 SVG::Element - Generate the element bits for SVG.pm
 
-=head1 VERSION
-
-1.22
-
 =head1 AUTHOR
 
 Ronan Oger, ronan@roasp.com
@@ -27,9 +23,10 @@ package SVG::Element;
 $VERSION = "2.26";
 
 use strict;
-use vars qw(@ISA $AUTOLOAD %autosubs);
 use SVG::XML;
 use SVG::DOM;
+use SVG::Extension;
+use vars qw($AUTOLOAD %autosubs);
 
 my @autosubs=qw(
     animateMotion animateColor animateTransform circle ellipse rect polyline 
@@ -39,12 +36,8 @@ my @autosubs=qw(
     font-face-src font-face-url foreignObject glyph
     glyphRef hkern marker mask metadata missing-glyph
     mpath switch symbol textPath tref tspan view vkern marker textbox
-    flowText
+    flowText style
 );
-
-=pod
-
-=cut
 
 %autosubs=map { $_ => 1 } @autosubs;
 
@@ -58,7 +51,7 @@ sub new ($$;@) {
         next if $key=~/^\-/;
         $self->{$key}=$attrs{$key};
     }
-    
+
     return bless($self,$class);
 }
 
@@ -152,6 +145,71 @@ sub xmlify ($) {
     return $xml;
 }
 
+sub perlify {
+    my $self=shift;
+    my $code='';
+
+    #prep the attributes
+    my %attrs;
+    foreach my $k (keys(%{$self})) {
+        if($k=~/^\-/) { next; }
+        if(ref($self->{$k}) eq 'ARRAY') {
+            $attrs{$k}=join(', ',@{$self->{$k}});
+        } elsif(ref($self->{$k}) eq 'HASH') {
+            $attrs{$k}=cssstyle(%{$self->{$k}});
+        } elsif(ref($self->{$k}) eq '') {
+            $attrs{$k}=$self->{$k};
+        }
+    }
+
+    if($self->{-comment}) {
+        $code .= "->comment($self->{-comment})";
+        return $code;
+    } elsif($self->{-pi}) {
+        $code .= "->pi($self->{-pi})";
+        return $code;
+    } elsif ($self->{-name} eq 'document') {
+        #write the xml header
+        #$xml .= $self->xmldecl;
+        #and write the dtd if this is inline
+        #$xml .= $self->dtddecl unless $self->{-inline};
+        foreach my $k (@{$self->{-childs}}) {
+            if(ref($k)=~/^SVG::Element/) {
+                $code .= $k->perlify();
+            }
+        }
+        return $code;
+    }
+
+    if (defined $self->{-childs}) {
+        $code .= $self->{-docref}->{-elsep};
+        $code .= $self->{-docref}->{-indent} x $self->{-docref}->{-level};
+        $code .= $self->{-name}.'('.(join ', ',(map { "$_=>'$attrs{$_}'"} sort keys %attrs)).')';
+        if ($self->{-cdata}) {
+            $code.="->cdata($self->{-cdata})";
+        } elsif ($self->{-CDATA}) {
+            $code.="->CDATA($self->{-CDATA})";
+        } elsif ($self->{-cdata_noxmlesc}) {
+            $code.="->cdata_noxmlesc($self->{-cdata_noxmlesc})";
+        }
+
+        $self->{-docref}->{-level}++;
+        foreach my $k (@{$self->{-childs}}) {
+            if(ref($k)=~/^SVG::Element/) {
+                $code .= $k->perlify();
+            }
+        }
+        $self->{-docref}->{-level}--;
+    } else {
+        $code .= $self->{-docref}->{-elsep};
+        $code .= $self->{-docref}->{-indent} x $self->{-docref}->{-level};
+        $code .= $self->{-name}.'('.(join ', ',(map { "$_=>'$attrs{$_}'"} sort keys %attrs)).')';
+    }
+
+    return $code;
+}
+*toperl=\&perlify;
+
 
 sub addchilds ($@) {
     my $self=shift;
@@ -177,11 +235,12 @@ B<Example:>
 
 sub tag ($$;@) {
     my ($self,$name,%attrs)=@_;
+
     unless ($self->{-parent}) {
       #traverse down the tree until you find a non-document entry
       while ($self->{-document})  {$self = $self->{-document}}
     }
-    my $tag=SVG::Element->new($name,%attrs);
+    my $tag=new SVG::Element($name,%attrs);
 
     #define the element namespace
     $tag->{-namespace}=$attrs{-namespace} if ($attrs{-namespace});
@@ -844,8 +903,8 @@ sub animate ($;@) {
           qq§ begin dur  end  min  max  restart  repeatCount
               repeatDur  fill  additive  accumulate calcMode  values
               keyTimes  keySplines  from  to  by calcMode path keyPoints
-              rotate origin type §,
-    animateMotion =>    
+              rotate origin type attributeName attributeType §,
+    	animateMotion =>    
           qq§ begin dur  end  min  max  restart  repeatCount
               repeatDur  fill  additive  accumulate calcMode  values
               to  by keyTimes keySplines  from  path  keyPoints
