@@ -1,4 +1,4 @@
-README for SVG.pm
+README for SVG.pm 2.27 29.01.03
 
 SVG.pm is a perl extention to generate stand-alone or inline SVG 
 (scaleable vector graphics) images using the W3C SVG xml recommendation.
@@ -67,12 +67,12 @@ INSTALLATION INSTRUCTIONS
 	---------------------------------------------------------------
 	This method was tested in DOS, Windows, AS400, Linux, Unix, BSD, Mac.
 	Hard-headed users can directly get the distribution from 
-	http://www.roasp.com/PPM/SVG/SVG-2.26.tar.gz or 
+	http://www.roasp.com/PPM/SVG/SVG-2.27.tar.gz or 
 	http://www.roasp.com/PPM/SVG/ .
 	First download the source.
 	Then, in a shell:
-	/home/somewhere% gunzip SVG-2.1.tar.gz
-	/home/somewhere% tar-xvf SVG-2.1.tar
+	/home/somewhere% gunzip SVG-2.27.tar.gz
+	/home/somewhere% tar-xvf SVG-2.27.tar
 	cd SVG-2.1
 	make
 	make test
@@ -96,19 +96,11 @@ INSTALLATION INSTRUCTIONS
 	}
 	#Refer to the Perl manual for more details.
 
-EXAMPLES:
---------
-A set of examples is included in the distribution in directory ./examples.
-Further examples are available from:
-ftp://roasp.com/pub/SVG-2.1/examples/
 
 KNOWN BUGS & ISSUES
 -------------------
-24.06.02
-SVG
-There are some issues with cdata() when the text string contains newline 
-characters.
-SVG::DOM is really a beta release.
+none at this time
+
 
 SEE ALSO:
 SVG::Parser
@@ -119,3 +111,5 @@ SVG::Element
 CHANGE LOG
 ----------
 A poor version of the change history is available in the Changes file.
+
+29.01.03 Added setAttributes and setAttribute methods

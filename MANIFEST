@@ -35,3 +35,4 @@ examples/svg.pl
 examples/minsvg.pl
 examples/inlinesvg.pl
 examples/svg_dom_sample.pl
+examples/attributeManip.pl
