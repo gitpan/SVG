@@ -5,7 +5,6 @@ BEGIN {
   push @INC , '../SVG';
 }
 
-
 use SVG;
 use strict;
 use CGI  ':header';
@@ -18,7 +17,10 @@ $svg->desc()->cdata('This example shows some more features of SVG Text');
 $svg->title()->cdata('Sample 3: text');
 
 $svg->comment(
-'hello I am a dog',
+'hello I am a dog. Actually, I am an SVG demo of the perl SVG.pm module',
+'While the original static example was done by SUN, this is a 100% dynamic',
+'sample. Case in point. Last time I looked, the SUN sample did not work on any',
+'of my browser implementations.',
 '=========================================================================',
 'SVG Sample Pool : Text',
 'This sample shows some powerful features of SVG Text elements ',
@@ -34,7 +36,7 @@ $svg->comment(
 '=========================================================================',
 );
 
-my $defg_m = $svg->defs()->g(id=>'marker',style=>{"stroke-width"=>1});
+my $defg_m = $svg->defs()->group(id=>'marker',style=>{"stroke-width"=>1});
 $defg_m->line(x1=>-15,y1=>0,x2=>15,y2=>0,style=>{'stroke'=>'currentColor'});
 $defg_m->line(y1=>-15,x1=>0,y2=>15,x2=>0,style=>{'stroke'=>'currentColor'});
 
@@ -114,7 +116,6 @@ $svg->comment('=================================================================
 
 
 $svg->comment('Draw the path on which text is laid out');
-
 my $tl3 = $svg->group( id=>"textLayout3", transform=>"translate(200, 250)");
 $tl3->use(-href=>"#Path3", style=>"stroke:yellow; stroke-width:40");
 $tl3->use( -href=>"#Path3", style=>{stroke=>'black','stroke-width'=>1});

@@ -3,7 +3,8 @@ README
 MANIFEST
 Makefile.PL
 SVG.pm
-SVG/Utils.pm
+SVG/XML.pm
+SVG/Element.pm
 test.pl
 examples/svgtest2.pl
 examples/SVG_02_sample.pl
@@ -14,5 +15,5 @@ examples/starpath.cgi
 examples/svg.pl
 examples/sun_text_sample.pl
 examples/svg.pl
+examples/minsvg.pl
 examples/inlinesvg.pl
-examples/roadselect.pl

@@ -1,12 +1,19 @@
 Revision history for Perl extension SVG.
 
-1.13 Sun Oct 28 20:35
-        - Repaired script method (was generating a text tag)
-	- Added CDATA method to generate a <![CDATA[...]]> tag
-	- Added an example script roadselect.pl which uses the script and CDATA tags
+2.0 Mon Dec 24 14:00
+    - Improved POD, and moved it to SVG::manual
+	- Tested significantly
+	- Added aliases for xmlify
+	- broke out Element.pm module from SVG.pm file
+	- Repaired scripting support
+	- Added CDATA tag for unmollested text support
+	- changed underlying datastructure to support SVG::Parser
+	- Repaired in-line SVG generation
+	- Added configurability and NON-SVG support
+	- Other stuff in the POD.
 
 1.12 Thu Oct 18 00:25
-        - Repaired Animate command
+    - Repaired Animate command
 	- Added import functionality
 	- Improved AUTOLOAD functionality
 	- Improved POD

@@ -71,7 +71,8 @@ foreach  (1..&round_up(rand(20))) {
                 dur=>&round_up(rand(20),2).'s',
                 repeatCount=>&round_up(rand(30)),
                 restart=>'always',
-                -method=>'Transform',);
+                #-method=>'transform',
+                );
 }
 my $a = $z -> anchor(
 		-href   => 'http://somewhere.org/some/other/page.html',
@@ -173,7 +174,8 @@ $w->cdata('But what about in-line SVG? Yes, we do that too');
 $w->cdata('All this with SVG.pm? Wow.');
 
 print $p->header('image/svg-xml');
-print $svg->xmlify;
+print $svg->render
+;
 
 exit;
 
