@@ -6,7 +6,7 @@ SVG::Element - Generate the element bits for SVG.pm
 
 =head1 VERSION
 
-1.2
+1.22
 
 =head1 AUTHOR
 
@@ -24,7 +24,7 @@ http://www.w3c.org/Graphics/SVG/
 
 package SVG::Element;
 
-$VERSION = "1.22";
+$VERSION = "1.23";
 
 use strict;
 use vars qw(@ISA $AUTOLOAD %autosubs);
@@ -38,7 +38,8 @@ my @autosubs=qw(
 	cursor definition-src font-face-format font-face-name
 	font-face-src font-face-url foreignObject glyph
 	glyphRef hkern marker mask metadata missing-glyph
-	mpath switch symbol textPath tref tspan view vkern
+	mpath switch symbol textPath tref tspan view vkern marker textbox
+	flowText
 );
 
 =pod
@@ -93,55 +94,60 @@ sub xmlify ($) {
 			$attrs{$k}=$self->{$k};
 		}
 	}
-
 	#prep the tag
-	$xml.=$self->{-indent} x $self->{-level};
 	if($self->{-comment}) {
-		$xml.=$self->xmlcomment($self->{-comment});
+		$xml .= $self->xmlcomment($self->{-comment});
 		return $xml;
 	} elsif($self->{-pi}) {
-		$xml.=$self->xmlpi($self->{-pi});
+		$xml .= $self->xmlpi($self->{-pi});
 		return $xml;
-	} elsif(defined $self->{-cdata}) {
-		$xml.=xmltagopen($self->{-name},$ns,%attrs);
-		$xml.=xmlescp($self->{-cdata});
-		$xml.=xmltagclose_ln($self->{-name},$ns);
-	} elsif(defined $self->{-CDATA}) {
-		$xml.=xmltagopen($self->{-name},$ns,%attrs);
-		$xml.='<![CDATA['.$self->{-CDATA}.']]>';
-		$xml.=xmltagclose_ln($self->{-name},$ns);
-	} elsif(defined $self->{-cdata_noxmlesc}) {
-		$xml.=xmltagopen($self->{-name},$ns,%attrs);
-		$xml.=$self->{-cdata_noxmlesc};
-		$xml.=xmltagclose_ln($self->{-name},$ns);
 	} elsif ($self->{-name} eq 'document') {
 		#write the xml header
-		$xml.=$self->xmldecl;
+		$xml .= $self->xmldecl;
 		#and write the dtd if this is inline
-		$xml.=$self->dtddecl unless $self->{-inline};
-
+		$xml .= $self->dtddecl unless $self->{-inline};
 		foreach my $k (@{$self->{-childs}}) {
 			if(ref($k)=~/^SVG::Element/) {
-				$xml.=$k->xmlify($ns);
+				$xml .= $k->xmlify($ns);
 			}
 		}
 		return $xml;
-	} elsif(defined $self->{-childs}) {
-		$xml.=xmltagopen_ln($self->{-name},$ns,%attrs);
+	} 
+	if(defined $self->{-childs} ||
+		defined $self->{-cdata} ||
+		defined $self->{-CDATA} ||
+		defined $self->{-cdata_noxmlesc}) {
+		$xml .= $self->{-docref}->{-elsep};
+		$xml .= $self->{-docref}->{-indent} x $self->{-docref}->{-level};
+		$xml .= xmltagopen_ln($self->{-name},$ns,%attrs);
+		$self->{-docref}->{-level}++;
 		foreach my $k (@{$self->{-childs}}) {
 			if(ref($k)=~/^SVG::Element/) {
-				$xml.=$k->xmlify($ns);
+				$xml .= $k->xmlify($ns);
 			}
 		}
+
+		if(defined $self->{-cdata}) {
+			$xml .= xmlescp($self->{-cdata});
+		} 
+		if(defined $self->{-CDATA}) {
+			$xml .= '<![CDATA['.$self->{-CDATA}.']]>';
+		}
+		if(defined $self->{-cdata_noxmlesc}) {
+			$xml .= $self->{-cdata_noxmlesc};
+		}
+
+
 		#return without writing the tag out if it the document tag
-  #	  return $xml if ($self->{-name} eq 'document');
-
-		$xml.=$self->{-indent} x $self->{-level};
-		$xml.=xmltagclose_ln($self->{-name},$ns);
+		$self->{-docref}->{-level}--;
+		$xml .= $self->{-docref}->{-elsep};
+		$xml .= $self->{-docref}->{-indent} x $self->{-docref}->{-level};
+		$xml .= xmltagclose_ln($self->{-name},$ns);
 	} else {
-		$xml.=xmltag_ln($self->{-name},$ns,%attrs);
+		$xml .= $self->{-docref}->{-elsep};
+		$xml .= $self->{-docref}->{-indent} x $self->{-docref}->{-level};
+		$xml .= xmltag_ln($self->{-name},$ns,%attrs);
 	}
-
 	#return the finished tag
 	return $xml;
 }
@@ -176,14 +182,6 @@ sub tag ($$;@) {
 	  while ($self->{-document})  {$self = $self->{-document}}
 	}
 	my $tag=SVG::Element->new($name,%attrs);
-	unless (defined $tag->{-level}) { 
-	  $tag->{-level}=0;
-	}
-	unless (defined $self->{-level}) { 
-	  $self->{-level}=0;
-	}
-	$tag->{-level}=$self->{-level}+1;
-	$tag->{-indent}=$self->{-indent};
 
 	#define the element namespace
 	$tag->{-namespace}=$attrs{-namespace} if ($attrs{-namespace});

@@ -16,7 +16,7 @@ use SVG::Element;
 
 @ISA = qw(SVG::Element Exporter );
 
-$VERSION = "2.24"; # SVG OPEN 2002 edition. :))
+$VERSION = "2.25"; #bugfix for text child element support
 
 #-------------------------------------------------------------------------------
 
@@ -45,6 +45,7 @@ Ronan Oger, RO IT Systemms GmbH, ronan@roasp.com
 
 Peter Wainwright, peter@roasp.com Excellent ideas, beta-testing, SVG::Parser
 
+
 =head1 EXAMPLES
 
 http://www.roasp.com/index.shtml?svg.pod
@@ -65,6 +66,7 @@ http://www.w3c.org/Graphics/SVG/
 my %default_attrs = (
     -auto       => 0,    # permit arbitrary autoloads (only at import)
     -indent     => "\t", # what to indent with
+	-elsep      =>"\n",  # element line (vertical) separator
     -inline     => 0,    # inline or stand alone
     -printerror => 1,    # print error messages to STDERR
     -raiseerror => 1,    # die on errors (implies -printerror)
@@ -138,10 +140,11 @@ B<Example:>
 
     my $svg2=new SVG(id => 'document_element');
 
-    my $svg3=new SVG(s
+    my $svg3=new SVG(
         -printerror => 1,
         -raiseerror => 0,
         -indent     => '  ',
+		-elsep      =>"\n",  # element line (vertical) separator
         -docroot => 'svg', #default document root element (SVG specification assumes svg). Defaults to 'svg' if undefined
         -sysid      => 'abc', #optional system identifyer 
         -pubid      => "-//W3C//DTD SVG 1.0//EN", #public identifyer default value is "-//W3C//DTD SVG 1.0//EN" if undefined
@@ -202,9 +205,10 @@ sub new ($;@) {
                         unless exists $attrs{$attr}
     }
     $self = $class->SUPER::new('document');
-	$self->{-docref} = $self unless ($self->{-docref});
-    $self->{$_}=$attrs{$_} foreach keys %default_attrs;
-    $self->{-level}=0;
+	$self->{-dtd}       = 'http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd';
+	$self->{-docref}    = $self unless ($self->{-docref});
+    $self->{$_}         = $attrs{$_} foreach keys %default_attrs;
+    $self->{-level}     = 0;
     $self->{-version}   = $attrs{-version}    if ($attrs{-version});
     $self->{-extension} = $attrs{-extension}  if ($attrs{-extension});
     $self->{-encoding}  = $attrs{-encoding}   if ($attrs{-encoding});
@@ -212,8 +216,10 @@ sub new ($;@) {
     $self->{-identifier}= $attrs{-identifier} if ($attrs{-identifier});
     $self->{-dtd}       = $attrs{-dtd}        if ($attrs{-dtd});
     $self->{-namespace} = $attrs{-namespace}  if ($attrs{-namespace});
-    $self->{-inline}     = $attrs{-inline}    if ($attrs{-inline});
+    $self->{-inline}    = $attrs{-inline}    if ($attrs{-inline});
     $self->{-nocredits} = $attrs{-nocredits}  if ($attrs{-nocredits});
+    $self->{-elsep}     = $attrs{-elsep}  if ($attrs{-elsep});
+	#the indent level for pretty printing the results
 
     # create SVG object according to inline attribute
     my $svg; 
@@ -261,8 +267,8 @@ sub xmlify ($;@) {
 	
 	# Give the module and myself credit unless explicitly
 	# turned off by a programmer.
-	unless ($self->{docref}->{nocredits}) {
-		$self->comment("\n\tGenerated in Perl \n\tusing the SVG Module V.$VERSION\n\tby Ronan Oger\n\tInfo: http://www.roasp.com/\n" )
+	unless ($self->{-docref}->{nocredits}) {
+		$self->comment("\n\tGenerated using the Perl SVG Module V.$VERSION\n\tby Ronan Oger\n\tInfo: http://www.roasp.com/\n" );
 	}
 
 

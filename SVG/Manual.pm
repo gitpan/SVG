@@ -8,12 +8,12 @@ SVG - Perl extension for generating Scalable Vector Graphics (SVG) documents
 
 =head2 VERSION
 
-Version 2.23 (Version 2.1 (17.03.02)
+Version 2.25 (22.07.02)
 
 =head1 SYNOPSIS
 
     #!/usr/bin/perl -w
-    use strict;
+    use strict; 
     use SVG;
 
     # create an SVG object
@@ -76,6 +76,8 @@ SVG is a 100% Perl module which generates a nested data structure containing the
 DOM representation of an SVG (Scalable Vector Graphics) image. Using SVG, you
 can generate SVG objects, embed other SVG instances into it, access the DOM
 object, create and access javascript, and generate SMIL animation content.
+On a 500MHz Linux RH7 machine with 256K RAM, SVG.pm exceeds 12,000 elements per
+second.
 
 =head2 General Steps to generating an SVG document
 
@@ -128,7 +130,9 @@ With the exception of -auto, all options may also be specified to the L<"new">
 constructor. The currently supported options are:
 
     -auto        enable autoloading of all unrecognised method calls (0)
-    -indent      the indent to use when rendering the SVG into XML ("\t")
+    -indent      the indent to use when rendering the SVG into XML ("\t"). This is best left to the xmlify method
+    -elsept      the separation between elements ("\n"). This is best left to the xmlify method
+    -dtd         the name of the DTD you wish to use for this document.
     -inline      whether the SVG is to be standalone or inlined (0)
     -printerror  print SVG generation errors to standard error (1)
     -raiseerror  die if a generation error is encountered (1)
@@ -230,7 +234,9 @@ B<Example:>
         -sysid      => 'abc', #optional system identifyer 
         -pubid      => "-//W3C//DTD SVG 1.0//EN", #public identifyer default value is "-//W3C//DTD SVG 1.0//EN" if undefined
         -namespace => 'mysvg',
-        -inline   => 1
+        -inline   => 1,
+		-dtd      => 'http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd', #the dtd you want to use (this is the default one)
+		-elsep    => "\n", #the separation between elements (New line in this case)
         id          => 'document_element',
         width       => 300,
         height      => 200,
@@ -249,7 +255,7 @@ Furthermore, the following options:
     -inline
     -identifier
     -nostub
-    -dtd (standalone)
+	-elsep 
 
 may also be set in xmlify, overriding any corresponding values set in the SVG->new declaration
 
@@ -1097,6 +1103,8 @@ The following L<SVG::DOM> elements are accessible through SVG:
 =item * getAttributes
 
 =item * getAttribute
+
+=item * flowText (SVG 1.1)
 
 =back
 

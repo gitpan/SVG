@@ -78,7 +78,7 @@ sub xmltag ($$;@) {
 
 sub xmltag_ln ($$;@) {
 	my ($name,$ns,%attrs)=@_;
-	return xmltag($name,$ns,%attrs).qq(\n);
+	return xmltag($name,$ns,%attrs);
 }
 
 sub xmltagopen ($$;@) {
@@ -90,19 +90,19 @@ sub xmltagopen ($$;@) {
 
 sub xmltagopen_ln ($$;@) {
 	my ($name,$ns,%attrs)=@_;
-	return xmltagopen($name,$ns,%attrs).qq(\n);
+	return xmltagopen($name,$ns,%attrs);
 }
 
 sub xmlcomment ($$) {
 	my ($self,$r_comment) = @_;
-	my $ind = "\n".$self->{-indent} x $self->{-level};
-	return(join($ind,map { qq(<!-- $_ -->)} @$r_comment)."\n");
+	my $ind = $self->{-docref}->{-elsep}.$self->{-docref}->{-indent} x $self->{-docref}->{-level};
+	return(join($ind,map { qq(<!-- $_ -->)} @$r_comment));
 }
 
 sub xmlpi ($$) {
 	my ($self,$r_pi) = @_;
-	my $ind = "\n".$self->{-indent} x $self->{-level};
-	return(join($ind,map { qq(<?$_?>)} @$r_pi)."\n");
+	my $ind = $self->{-docref}->{-elsep}.$self->{-docref}->{-indent} x $self->{-docref}->{-level};
+	return(join($ind,map { qq(<?$_?>)} @$r_pi));
 }
 
 *processinginstruction=\&xmlpi;
@@ -115,7 +115,7 @@ sub xmltagclose ($$) {
 
 sub xmltagclose_ln ($$) {
 	my ($name,$ns)=@_;
-	return xmltagclose($name,$ns).qq(\n);
+	return xmltagclose($name,$ns);
 }
 
 sub dtddecl ($) {
@@ -127,7 +127,9 @@ sub dtddecl ($) {
 	  $id .= ' "'.$self->{-sysid}.'" ' if ($self->{-sysid});
 	} elsif ($self->{-sysid}) {
 	  $id	  = ' SYSTEM "'.$self->{-sysid}.'"';
-	} else { $id =  ' PUBLIC "-//W3C//DTD SVG 1.0//EN"'."\n\t\t".  '"http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd"'}
+	} else { $id =  ' PUBLIC "-//W3C//DTD SVG 1.0//EN"' .
+		$self->{-docref}->{-elsep}.
+		"\"$self->{-docref}->{-dtd}\""}
 
 	my $extension = '';
 	my $attlist = '';
@@ -162,7 +164,7 @@ sub dtddecl ($) {
 
 	my $at=join(' ',($docroot, $id));
 
-	return qq(<!DOCTYPE $at $extension>\n);
+	return qq(<!DOCTYPE $at $extension>);
 }
 
 sub xmldecl ($) {
@@ -171,7 +173,7 @@ sub xmldecl ($) {
 	my $encoding = $self->{-encoding} || 'UTF-8';
 	my $standalone = $self->{-standalone} ||'yes';
 	my $ns = $self->{-namespace} || 'svg';
-	return qq§<?xml version="$version" encoding="$encoding" standalone="$standalone"?>§. "\n";
+	return qq§<?xml version="$version" encoding="$encoding" standalone="$standalone"?>§ . $self->{-docref}->{-elsep};
 }
 
 #-------------------------------------------------------------------------------
