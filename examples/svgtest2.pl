@@ -4,9 +4,7 @@ use strict;
 use CGI;
 
 use SVG;
-#use SVG::Element;
-#require 5.004;
-#use POSIX;
+
 #---------Create the CGI object which is required to handle the header
 my $p = CGI->new();
 

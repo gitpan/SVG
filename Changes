@@ -4,4 +4,14 @@ Revision history for Perl extension SVG.
 	- original version; created by h2xs 1.19
 0.2  Sat Oct  6 02:47:02
 	- added filter support; improved POD.
+0.3  Sat Oct  6 23:00:02
+	- added image support; improved POD;
+	- Provided DTD & XML version support:
+		XML version         '1.0'
+		XML encoding        'UTF-8'
+		standalone      'yes'
+		namespace       'svg' 
+		DTD identifier      '-//W3C//DTD SVG 1.0//EN';
+		DTD url 'http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd'  
+
 

@@ -7,6 +7,9 @@ BEGIN {
 
   use SVG;
   use strict;
+  use CGI ':new :header';
+  my $p = CGI->new;
+  $| = 1;
 
   my $svg= SVG->new(width=>200,height=>200); 
 
@@ -30,16 +33,17 @@ BEGIN {
   
   # an anchor with a rectangle within group within group z
 
-  $z -> anchor(
-		     -href   => 'http://somewhere.org/some/line.html',
+  my $k = $z -> anchor(
+		     -href   => 'http://test.hackmare.com/',
 		     -target => 'new_window_0') -> 
-                      $y->rectangle ( x=>20,
+                      rectangle ( x=>20,
                                       y=>50,
                                       width=>20,
                                       height=>30,
                                       rx=>10,
                                       ry=>5,
                                       id=>'rect_z',);
+  
 
- 
+  print $p->header('image/svg-xml');
   print $svg->xmlify;

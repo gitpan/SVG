@@ -1,12 +1,25 @@
-SVG.pm version 0.2
+SVG.pm version 0.25
 
 SVG.pm is a perl extention to generate SVG (scaleable vector graphics).
 
 Refer to the pod for full documentation and an example script. 
 
-Ronan Oger, RO IT Systems, GmbH
+(c) 2001 Ronan Oger, RO IT Systems, GmbH
 
-This program is provided as is without warranty. It is freely distributed under the general perl license.
+This program is provided as is and without warranty. 
+It is freely distributed under the general perl license.
+
+CONTENTS
+--------
+
+OVERVIEW
+INSTALLATION
+    *NIX AND WIN32 SYSTEMS WITH MAKE OR EQUIVALENT
+    WIN32 SYSTEMS WITHOUT MAKE OR EQUIVALENT
+
+KNOWN BUGS
+
+------------------------
 
 OVERVIEW
 
@@ -23,6 +36,8 @@ drawing of:
 -mpath
 -text
 -line
+-image
+
 
 generation of:
 -filter
@@ -35,34 +50,80 @@ generation of:
 -drawing description
 -object groups
 -anchors
+-use
+-desc
 
-
-
+------------------------
 
 INSTALLATION
+------------
+
+The easiest way to do this if your systems supports it is to use the perl CPAN module:
+
+
+Installation Without using the perl CPAN module
+----------------------------------
 
 First download the tar file
+Make sure you have the latest version by going to
 
-on the unix command line, type:
------------------------------
-tar -xvfz SVG-0.20.tar.gz
+ftp://test.hackmare.com/pub/Current
+ftp://roasp.com/pub/Current
 
-perl Makefile.PL
 
-make 
+UNIX, LINUX, BSD, OSX and WINDOWS with tar, a make program, and a c compiler
+----------------------------------------------------------------------------
 
-make test
+on the command line, type:
 
-make install
------------------------------
+	tar -xvfz SVG-0.20.tar.gz
+	
+	perl Makefile.PL
+
+	make 
+
+	make test
+
+	make install
+
+
+
+WIN32 SYSTEMS WITHOUT nmake
+---------------------------
+
+win32 note: There is no ppm yet for this module. 
+You need to either install it using nmake or you have to install to a local dirctory and explicitly call the module by using one of the following line in your calling program:
+
+#using use lib
+use lib 'path/where/the/release/is/located';
+
+-or-
+
+#using BEGIN block
+BEGIN {
+	push @INC 'path/to/svg.pm/file'; #where the SVG.pm file lives
+	push @INC 'path/to/svg.pm/file/SVG'; # where the Utils.pm file lives
+}
+
+
+------------------------
 
 KNOWN BUGS
 
 Does not work under -w. There are two lines which complain. 
 Will be addressed in the next release.
 
+Does not support in-line generation of SVG for XML. It's mostly there but
+there are still holes in the program.
+
 SUPPORT
 
 More information is available from
 
 http://roasp.com
+
+
+------------------------
+
+
+

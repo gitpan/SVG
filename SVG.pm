@@ -6,6 +6,9 @@ SVG - perl extention for  generating SVG (scalable-vector-graphics)
 
   use SVG;
   use strict;
+  use CGI ':new :header';
+  my $p = CGI->new;
+  $| = 1;
 
   my $svg= SVG->new(width=>200,height=>200); 
 
@@ -29,23 +32,24 @@ SVG - perl extention for  generating SVG (scalable-vector-graphics)
   
   # an anchor with a rectangle within group within group z
 
-  $z -> anchor(
-		     -href   => 'http://somewhere.org/some/line.html',
+  my $k = $z -> anchor(
+		     -href   => 'http://test.hackmare.com/',
 		     -target => 'new_window_0') -> 
-                      $y->rectangle ( x=>20,
+                      rectangle ( x=>20,
                                       y=>50,
                                       width=>20,
                                       height=>30,
                                       rx=>10,
                                       ry=>5,
                                       id=>'rect_z',);
+  
 
- 
+  print $p->header('image/svg-xml');
   print $svg->xmlify;
 
 =head1 DESCRIPTION
 
-SVG is a 100% perl module which generates a nested data structure which contains the DOM representation of an SVG image. Using SV, You can generate SVG objects, embed other SVG instances within it, access the DOM object, create and access javascript, and generate SMIL animation content.
+SVG is a 100% perl module which generates a nested data structure which contains the DOM representation of an SVG image. Using SV, You can generate SVG objects, embed other SVG instances within it, access the DOM object, create and access javascript, and generate SMIL animation content. 
 
 =head2 EXPORT
 
@@ -58,14 +62,14 @@ Ronan Oger, ronan@roasp.com
 
 =head1 SEE ALSO
 
-perl(1).
-SVG::Utils.
+perl(1)
+SVG::Utils
 http://roasp.com/
 
 =cut
 
 package SVG;
-$VERSION = "0.2";
+$VERSION = "0.25";
 use strict;
 use vars qw( @ISA $AUTOLOAD );
 @ISA = qw( SVG::Element );
@@ -84,7 +88,14 @@ Creates a new svg object.
 sub new {
 	my $class=shift @_;
 	my %attrs=@_;
-	my $self = $class->SUPER::new('svg',%attrs);
+  my $self;
+  if ($attrs{-inline}) {
+    $self = $class->SUPER::new('parent',%attrs);
+    delete $attrs{-inline};
+    $self->svg(%attrs);
+  } else {
+	  $self = $class->SUPER::new('svg',%attrs);
+  }
 	$self->{-level}=0;
 	$self->{-indent}="\t";
 	return($self);
@@ -92,18 +103,34 @@ sub new {
 
 =pod
 
-=item $xmlstring = $svg->xmlify
+=item $xmlstring = $svg->xmlify %attributes
 
 Returns xml representation of svg document.
+
+B<XML Declaration>
+ Name       Default Value
+ version         '1.0'
+ encoding        'UTF-8'
+ standalone      'yes'
+ namespace       'svg' 
+ -inline         '0'         If '1', then this is an inline document
+                             and is intended for use inside an XML document.
+
+ identifier      '-//W3C//DTD SVG 1.0//EN';
+ dtd             'http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd'  
 
 =cut
 
 sub xmlify {
-	my $self=shift @_;
-	my %attrs;
-	my $xml=svgdecl();
-	$xml.=$self->SUPER::xmlify;
-	return($xml);
+	my ($self,%attrs) =shift @_;
+  my ($xml,$ns);
+  if ($attrs{-inline}) {
+    ($xml,$ns)=parentdecl(%attrs)
+  } else {
+    ($xml,$ns)=dtddecl(%attrs)
+  }
+	$xml.=$self->SUPER::xmlify($ns);
+  return($xml);
 }
 
 package SVG::Element;
@@ -118,7 +145,7 @@ use SVG::Utils;
 
 
 sub xmlify {
-	my $self=shift @_;
+	my ($self,$ns) = shift @_;
 	my %attrs;
 	foreach my $k (keys(%{$self})) {
 		if($k=~/^\-/) { next; }
@@ -132,19 +159,19 @@ sub xmlify {
 	}
 	my $xml;
 	if(defined $self->{-cdata}) {
-		$xml=$self->{-indent} x $self->{-level} . xmltagopen($self->{-name},%attrs);
+		$xml=$self->{-indent} x $self->{-level} . xmltagopen($self->{-name},$ns,%attrs);
 		$xml.=xmlescp($self->{-cdata});
-		$xml.=xmltagclose_ln($self->{-name});
+		$xml.=xmltagclose_ln($self->{-name},$ns);
 	} elsif(defined $self->{-childs}) {
-		$xml=$self->{-indent} x $self->{-level} . xmltagopen_ln($self->{-name},%attrs);
+		$xml=$self->{-indent} x $self->{-level} . xmltagopen_ln($self->{-name},$ns,%attrs);
 		foreach my $k (@{$self->{-childs}}) {
 			if(ref($k)=~/^SVG::Element/) {
 				$xml.=$k->xmlify;
 			}
 		}
-		$xml.=$self->{-indent} x $self->{-level} . xmltagclose_ln($self->{-name});
+		$xml.=$self->{-indent} x $self->{-level} . xmltagclose_ln($self->{-name},$ns);
 	} else {
-		$xml=$self->{-indent} x $self->{-level} . xmltag_ln($self->{-name},%attrs);
+		$xml=$self->{-indent} x $self->{-level} . xmltag_ln($self->{-name},$ns,%attrs);
 	}
 	return($xml);
 }
@@ -208,6 +235,12 @@ sub anchor {
 	return($an);
 }
 
+
+sub svg {
+	my ($self,%attrs)=@_;
+	my $svg=$self->tag('svg',%attrs);
+	return($svg);
+}
 
 =item $tag = $svg->circle %properties
 
@@ -278,6 +311,77 @@ sub rectangle {
 	my $rectangle=$self->tag('rect',%attrs);
 	return($rectangle);
 }
+
+=pod
+
+=item $tag = $svg->image %properties
+
+draw an image at (x,y) with width 'width' and height 'height' linked to image resource '-href'.
+
+B<Example:>
+
+	$tag = $svg->image(	x=>100,
+                         	y=>100,
+                         	width=>300,
+                         	height=>200,
+                          '-href'=>"image.png"
+                         	id=>'image_1',);
+
+	$tag = $svg->image(	x=>100,
+                         	y=>100,
+                         	width=>300,
+                         	height=>200,
+                          '-href'=>"image.svg"
+                         	id=>'image_1',);
+
+
+B<Outputs:>
+
+ <image xlink:href="image.png" x="100" y="100" width="300" height="200"/>
+
+
+=cut
+
+sub image {
+	my ($self,%attrs)=@_;
+	my $im=$self->tag('image',%attrs);
+	$im->{'xlink:href'}=$attrs{-href} if(defined $attrs{-href});
+	return($im);
+}
+
+=pod
+
+=item $tag = $svg->use %properties
+
+Retrieve the content from an entity within an SVG document and apply it at (x,y) with width 'width' and height 'height' linked to image resource '-href'.
+
+B<Example:>
+
+	$tag = $svg->use(	x=>100,
+                         	y=>100,
+                         	width=>300,
+                         	height=>200,
+                          '-href'=>"image.svg#image_1"
+                         	id=>'image_1',);
+
+
+B<Outputs:>
+
+
+   <use xlink:href="image.svg#image_1"  x="100" y="100" width="300" height="200"/>
+
+
+According to the SVG specification, the 'use' element in SVG can point to a single element within an external SVG file.
+
+=cut
+
+sub use {
+	my ($self,%attrs)=@_;
+	my $u=$self->tag('image',%attrs);
+	$u->{'xlink:href'}=$attrs{-href} if(defined $attrs{-href});
+	return($u);
+}
+
 
 =pod
 
@@ -355,7 +459,8 @@ draw a straight line between two points (x1,y1),(x2,y2).
 
 B<Example:>
 
-  my $tag = $svg->line( id=>'l1',x1=>0
+  my $tag = $svg->line( id=>'l1',
+                        x1=>0,
                         y1=>0,
                         x2=>10,
                         y2=>10,);
@@ -610,7 +715,7 @@ sub animate {
 
 =item $tag = $svg->group %properties
 
-define a roup of objects with common properties. groups can have style, animation, filters, transformations, and mouse actions assigned to them.
+define a group of objects with common properties. groups can have style, animation, filters, transformations, and mouse actions assigned to them.
 
 B<Example:>
 
@@ -631,6 +736,26 @@ sub group {
 	my $an=$self->tag('g',%attrs);
 	return($an);
 }
+
+
+=item $tag = $svg->defs %properties
+
+define a definition segment. A Defs requires children
+
+B<Example:>
+
+	$tag = $svg->defs(id  =>  'def_con_one',);
+
+=cut
+
+sub group {
+	my ($self,%attrs)=@_;
+	my $an=$self->tag('g',%attrs);
+	return($an);
+}
+
+
+=pod
 
 =item $svg->style %styledef
 
@@ -731,18 +856,16 @@ sub AUTOLOAD {
 
 =item $tag = $svg->fe %properties
 
+Generate a filter element
+
 B<Example:>
 
-	$tag = $svg->fe(
-    -TYPE => 
-		id        => 'xvs000248',
-		style     => {
-			'font'      => [ qw( Arial Helvetica sans ) ],
-			'font-size' => 10,
-			'fill'      => 'red',
-		},
-		transform => 'rotate(-45)'
-	);
+	$tag = $svg->fe(-TYPE => 
+		              id        => 'filter_1',
+		              style     => {'font'      => [ qw( Arial Helvetica sans ) ],
+                                'font-size' => 10,
+                                'fill'      => 'red',},
+              		transform => 'rotate(-45)' );
 
 =cut
 
@@ -760,7 +883,15 @@ sub fe {
 
 __END__
 
+=pod 
+
+
+h1<The following elements have not yet been implemented as of this release:>
+
+Although these elements do not have an explicit constructor, they can be constructed using the $svg->tag(%attra) generic element.
+
 not-yet implemented elements: 
+
               altGlyph 
               altGlyphDef 
               altGlyphItem 
@@ -793,21 +924,14 @@ not-yet implemented elements:
               feSpotLight 
               feTile 
               feTurbulence 
-              filter 
-              font 
-              font-face 
               font-face-format 
               font-face-name 
               font-face-src 
               font-face-uri 
               foreignObject 
-              g 
               glyph 
               glyphRef 
               hkern 
-              image 
-              line 
-              linearGradient 
               marker 
               mask 
               metadata 
@@ -815,18 +939,15 @@ not-yet implemented elements:
               mpath 
               pattern 
               radialGradient 
-              rect 
-              script 
               set 
               stop 
-              style 
               switch 
               symbol 
-              text 
               textPath 
               title 
               tref 
               tspan 
-              use 
               view 
               vkern 
+
+=cut
