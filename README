@@ -27,7 +27,7 @@ SVG.pm makes it possible to generate fully-functional SVG images in perl.
 
 VERSION
 -------
-2.21 (20.06.02)
+2.22 (24.06.02)
 
 DOCUMENTATION
 -------------
@@ -104,7 +104,7 @@ ftp://roasp.com/pub/SVG-2.1/examples/
 
 KNOWN BUGS & ISSUES
 -------------------
-20.06.02
+24.06.02
 SVG
 There are some issues with cdata() when the text string contains newline 
 characters.

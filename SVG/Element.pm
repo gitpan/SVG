@@ -629,7 +629,7 @@ B<Example:>
 
 =cut
 
-sub SCRIPT($;@) {
+sub script($;@) {
 	my ($self,%attrs)=@_;
    	my $script = $self->tag('script',%attrs);
 	$script->{'xlink:href'}=$attrs{-href} if(defined $attrs{-href});
@@ -968,6 +968,11 @@ Sets/Replaces attributes for a tag.
 
 sub attrib ($$$) {
 	my ($self,$name,$val)=@_;
+
+	#verify that the current id is unique. compain on exception
+	$self->error("$self->{$name} Already Defined in document $self->{-docref}->{$name}" => "Illegally re-using $name $self->{$name} in element object $self of type ".$self->getElementName($self)) 
+		if defined ($self->{-docref}->{-idlist}->{$self->{$name}} && $name eq 'id');
+
 	$self->{$name}=$val;
 	return $self;
 }

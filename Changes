@@ -1,5 +1,9 @@
 Revision history for Perl extension SVG.
 
+2.22 Monday 24 June 2002
+	- Minor bug fix - method script was changed to uppercase accidentally. 
+	  Repaired this error.
+
 2.21 Thursday 20 June 2002
 	- Added the internal hash $svg->{-docref} which contains the -elist and -idlist hashes for 
 	  tracking the elements and ids in the document in the DOM

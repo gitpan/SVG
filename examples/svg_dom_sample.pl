@@ -47,17 +47,20 @@ foreach my $e_name (@e_names) {
 
 	foreach my $e (@{$s->getElements($e_name)}) {
 		my $e_id = $e->getElementID() || '0';
-		print "$e -->".$e->xmlify()."\n has id ".$e_id."\nwhich returns handle  -->\n".$s->getElementByID($e_id)."\nwhich renders as: -->\n".$s->getElementByID($e_id)->xmlify()."\n\n------------------\n";
+		print "$e -->".$e->xmlify()."\n has id ".$e_id."\nwhich returns handle  -->\n".$s->getElementByID($e_id)."\n
+		which renders as: -->\n";
+		if ($s->getElementByID($e_id)) {
+			print $s->getElementByID($e_id)->xmlify();
+		} else {
+			print "\n\nOops, I'm afraid that ".$s->getElementByID($e_id)." does not exist with element id '$e_id'\n\n";
+			print "That is because this element has no id. You will notice that \$s->getElementByID(\$e_id) is zero because there is no\n";
+		}
+		print "\n\n------------------\n";
 	}
 
 }
 
-
-
 print "-----------------\n","Let's get back to me and take a look at my attributes\n";
-
-
-
 
 print "\n-----------------\n","\n\nDo I have any child elements?\n";
 
@@ -103,7 +106,6 @@ foreach my $v (@a) {
 		print "attribute = $i value = $ref->{$i}\n";
 	}
 
-	
 	print "\n---------------\n";
 }
 
