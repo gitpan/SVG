@@ -954,28 +954,63 @@ sub mouseaction ($;@) {
 
 $SVG->attrib($name, $value)
 
-Sets/Adds mouse action definitions.
+Sets/Adds attributes of an element.
 
-$SVG->attrib $name, $value
+Retrieve an attribute:
 
-$SVG->attrib $name, \@value
+    $svg->attrib($name);
 
-$SVG->attrib $name, \%value
+Set a scalar attribute:
 
-Sets/Replaces attributes for a tag.
+    $SVG->attrib $name, $value
+
+Set a list attribute:
+
+    $SVG->attrib $name, \@value
+
+Set a hash attribute (i.e. style definitions):
+
+    $SVG->attrib $name, \%value
+
+Remove an attribute:
+
+    $svg->attrib($name,undef);
+
+B<Aliases:> attr attribute
 
 =cut
 
-sub attrib ($$$) {
+sub attrib ($$;$) {
 	my ($self,$name,$val)=@_;
 
 	#verify that the current id is unique. compain on exception
-	$self->error("$self->{$name} Already Defined in document $self->{-docref}->{$name}" => "Illegally re-using $name $self->{$name} in element object $self of type ".$self->getElementName($self)) 
-		if defined ($self->{-docref}->{-idlist}->{$self->{$name}} && $name eq 'id');
+    if ($name eq "id") {
+        if (defined $self->{-docref}->{-idlist}->{$self->{$name}}) {
+            $self->error(
+                "$self->{$name} already defined in document $self->{-docref}->{$name}",
+                "Illegally re-using $name $self->{$name} in element object $self of type ".
+					$self->getElementName($self)
+			);
+        }
+    }
 
-	$self->{$name}=$val;
+    if (not defined $val) {
+        if (scalar(@_)==2) {
+            # two arguments only - retrieve
+            return $self->{$name};
+        } else {
+            # 3rd argument is undef - delete
+            delete $self->{$name};
+        }
+    } else {
+        # 3 defined arguments - set
+	    $self->{$name}=$val;
+    }
+
 	return $self;
 }
+*attr=\&attrib;
+*attribute=\&attrib;
 
 =pod
 

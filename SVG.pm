@@ -16,7 +16,7 @@ use SVG::Element;
 
 @ISA = qw(SVG::Element Exporter );
 
-$VERSION = "2.23";
+$VERSION = "2.24"; # SVG OPEN 2002 edition. :))
 
 #-------------------------------------------------------------------------------
 
@@ -261,9 +261,10 @@ sub xmlify ($;@) {
 	
 	# Give the module and myself credit unless explicitly
 	# turned off by a programmer.
+	unless ($self->{docref}->{nocredits}) {
+		$self->comment("\n\tGenerated in Perl \n\tusing the SVG Module V.$VERSION\n\tby Ronan Oger\n\tInfo: http://www.roasp.com/\n" )
+	}
 
-	$credits = "\n<!-- \n\n\tGenerated in Perl \n\tusing the SVG Module V.$VERSION\n\tby Ronan Oger\n\tInfo: http://www.roasp.com/\n\n -->" 
-		unless ($self->{docref}->{nocredits});
 
 	foreach my $key (keys %attrs) {
 		next unless ($key =~ /^\-/);
@@ -275,8 +276,8 @@ sub xmlify ($;@) {
 		$attrs{$key} ||= $self->{$key};
 	}
 # return $decl.$self->SUPER::xmlify($ns);
-
-	 return $self->SUPER::xmlify($self->{-namespace}).$credits;
+	
+	 return $self->SUPER::xmlify($self->{-namespace});
 }
 
 *render=\&xmlify;

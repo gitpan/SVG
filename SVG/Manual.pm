@@ -8,7 +8,7 @@ SVG - Perl extension for generating Scalable Vector Graphics (SVG) documents
 
 =head2 VERSION
 
-Version 2.1 (17.03.02)
+Version 2.23 (Version 2.1 (17.03.02)
 
 =head1 SYNOPSIS
 
@@ -1065,6 +1065,40 @@ The following elements are generically supported by SVG:
 =back
 
 See e.g. L<"pattern"> for an example of the use of these methods.
+
+=head1 METHODS IMPORTED BY SVG::DOM
+
+The following L<SVG::DOM> elements are accessible through SVG:
+
+=over 4
+
+=item * getChildren
+
+=item * getFirstChild
+
+=item * getLastChild
+
+=item * getParent
+
+=item * getSiblings
+
+=item * getElementByID
+
+=item * getElementID
+
+=item * getElements
+
+=item * getElementName
+
+=item * getParentElement
+
+=item * getType
+
+=item * getAttributes
+
+=item * getAttribute
+
+=back
 
 =head1 SEE ALSO
 
