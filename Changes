@@ -18,3 +18,7 @@ Revision history for Perl extension SVG.
         - Repaired the pod file
         - Added title and desc support
 
+0.28 Mon Oct 8 18:05:40
+        - Got the program to pass -w
+	- Fixed user-reported bug in animate function $rtr{-method} was missing the minus.
+	- ran significant tests for complex files. Most work but some crash.

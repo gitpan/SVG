@@ -1,25 +1,35 @@
-SVG.pm version 0.25
+SVG.pm version 0.30
+07.10.01
 
 SVG.pm is a perl extention to generate SVG (scaleable vector graphics).
 
 Refer to the pod for full documentation and an example script. 
 
-(c) 2001 Ronan Oger, RO IT Systems, GmbH
+(c) 2001 Ronan Oger, RO IT Systems, GmbH ronan@roasp.com info@roitsystems.ch
 
-This program is provided as is and without warranty. 
+This software is provided as is and without warranty. 
 It is freely distributed under the general perl license.
 
 CONTENTS
 --------
 
 OVERVIEW
+
+DOCUMENTATION
+    POD in HTML format
+    Tutorials
 INSTALLATION
     *NIX AND WIN32 SYSTEMS WITH MAKE OR EQUIVALENT
     WIN32 SYSTEMS WITHOUT MAKE OR EQUIVALENT
 
 KNOWN BUGS
 
-------------------------
+--------
+
+
+
+
+
 
 OVERVIEW
 
@@ -37,23 +47,56 @@ drawing of:
 -text
 -line
 -image
+-filter
+-fe* (all of the filter sub-elements)
+
 
 
 generation of:
 -filter
 -svg object and embedded svg object
 -SMIL-compliant animation
--javascript
+-script (javascript & other supported scripts)
 -gradients
 -style definitions
 -DOM-compliant mouse events
 -drawing description
--object groups
+-groups
 -anchors
 -use
 -desc
+-title
+-set
+-defs
 
 ------------------------
+
+DOCUMENTATION
+-------------
+
+The following documentation is available:
+
+POD in HTML format
+
+Version 0.30 POD
+http://roasp.com/0.30/SVG.html
+http://test.hackmare.com/0.30/SVG.html
+Version 0.27 POD
+http://roasp.com/0.27/SVG.html
+http://test.hackmare.com/0.27/SVG.html
+Version 0.26 POD
+http://roasp.com/0.26/SVG.html
+http://test.hackmare.com/0.26/SVG.html
+Version 0.25 POD
+http://roasp.com/0.25/SVG.html
+http://test.hackmare.com/0.25/SVG.html
+
+
+Tutorials
+
+http://roasp.com/tutorial/
+http://test.hackmare.com/tutorial/
+
 
 INSTALLATION
 ------------
@@ -110,11 +153,14 @@ BEGIN {
 
 KNOWN BUGS
 
-Does not work under -w. There are two lines which complain. 
-Will be addressed in the next release.
-
+07.10.01
 Does not support in-line generation of SVG for XML. It's mostly there but
 there are still holes in the program.
+
+07.10.01
+When generating a path element by directly inputing the string data
+the path definition (d=>'M 1 1 L 2 2...'), rather than the hash output of the
+get_path method, the string must contain no new-line characters.
 
 SUPPORT
 

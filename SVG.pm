@@ -18,32 +18,40 @@ L<attrib> L<animate> L<cdata> L<circle>  L<defs> L<desc>  L<ellipse> L<fe> L<get
 =pod
 
 =head1 SYNOPSIS
+  #!/usr/bin/perl -w
 
   use SVG;
-  use strict;
+  use strict; 
+
+  #if we are generating a cgi document
+  #
+  #
   use CGI ':new :header';
   my $p = CGI->new;
   $| = 1;
+  print $p->header('image/svg-xml');
+  #
+  #
+  #Now we generate the SVG
 
+  #SVG part of the script
   my $svg= SVG->new(width=>200,height=>200); 
-
+  # use a method to generate a tag tag
   my $y=$svg->group( id     =>  'group_y',
-                     style  =>  {stroke=>'red', fill=>'green'} );
+     style  =>  {stroke=>'red', fill=>'green'} );
+
+
+  $y->circle(cx=>100,cy=>100,
+     r=>50,id=>'circle_y',);
+
+  # or use a generic method to generate the tag
 
   my $z=$svg->tag('g',  id=>'group_z',
-                        style=>{ stroke=>'rgb(100,200,50)', 
-                                 fill=>'rgb(10,100,150)'} );
+     style=>{ stroke=>'rgb(100,200,50)', 
+     fill=>'rgb(10,100,150)'} );
 
- 
-  $y->circle(cx=>100,
-             cy=>100,
-             r=>50, 
-             id=>'circle_y',);
-
-  $z->tag('circle',cx=>50,
-             cy=>50,
-             r=>100, 
-             id=>'circle_z',);
+  $z->tag('circle',cx=>50, cy=>50,
+     r=>100, id=>'circle_z',);
   
   # an anchor with a rectangle within group within group z
 
@@ -58,8 +66,8 @@ L<attrib> L<animate> L<cdata> L<circle>  L<defs> L<desc>  L<ellipse> L<fe> L<get
                                       ry=>5,
                                       id=>'rect_z',);
   
-
-  print $p->header('image/svg-xml');
+  
+  
   print $svg->xmlify;
 
 =cut
@@ -88,7 +96,7 @@ http://roasp.com/
 =cut
 
 package SVG;
-$VERSION = "0.27";
+$VERSION = "0.28";
 use strict;
 use vars qw( @ISA $AUTOLOAD );
 @ISA = qw( SVG::Element );
@@ -145,9 +153,11 @@ sub xmlify {
 	my ($self,%attrs) =shift @_;
   my ($xml,$ns);
   if ($attrs{-inline}) {
-    ($xml,$ns)=parentdecl(%attrs)
+#    print "printing parentdecl;";
+    ($xml,$ns)=parentdecl(%attrs);
   } else {
-    ($xml,$ns)=dtddecl(%attrs)
+#    print "printing dtddecl;";
+    ($xml,$ns)=dtddecl(%attrs);
   }
 	$xml.=$self->SUPER::xmlify($ns);
   return($xml);
@@ -330,6 +340,12 @@ B<Example:>
 =cut
 
 sub rectangle {
+	my ($self,%attrs)=@_;
+	my $rectangle=$self->tag('rect',%attrs);
+	return($rectangle);
+}
+
+sub rect {
 	my ($self,%attrs)=@_;
 	my $rectangle=$self->tag('rect',%attrs);
 	return($rectangle);
@@ -706,7 +722,7 @@ sub get_path {
     $points .=  ' z ' if (defined $attrs{-closed} && lc($attrs{-closed}));
     my %out = (d => $points);
     return \%out;
-  } elsif (lc($type) =~ /poly/){
+  } elsif (lc($type) =~ /^poly/){
       while (@x) {
       #scale each value
       my $x = shift @x;
@@ -717,6 +733,16 @@ sub get_path {
   } 
   my %out = ( points => $points);
   return \%out;
+}
+
+sub make_path {
+  my ($self,%attrs) = @_;
+  return get_path(%attrs);
+}
+
+sub set_path {
+  my ($self,%attrs) = @_;
+  return get_path(%attrs);
 }
 
 =pod
@@ -738,7 +764,7 @@ sub animate {
   $method = lc($method);
   
   # we do not want this to pollute the generation of the tag
-  delete $rtr{method}; 
+  delete $rtr{-method};  #bug report from briac.
 
 	my %animation_method = (transform=>'animateTransform',
 			 motion=>'animateMotion',
@@ -939,33 +965,215 @@ sub AUTOLOAD {
 }
 
 
-
 =pod
 
-=item $tag = $svg->fe %properties
+=item $tag = $svg->filter %properties
 
-Generate a filter element
+Generate a filter. Filter elements contain L<fe> filter sub-elements
 
 B<Example:>
 
-	$tag = $svg->fe(-TYPE => 
+	$filter = $svg->filter(filterUnits=>"objectBoundingBox",
+                      x=>"-10%",
+                      y=>"-10%",
+                      width=>"150%",
+                      height=>"150%",
+                      filterUnits=>'objectBoundingBox',);
+
+  $filter->fe();
+
+SEE ALSO:
+
+L<fe>.
+
+=cut
+
+
+sub filter {
+	my ($self,%attrs)=@_;
+	my $f=$self->tag('filter',%attrs);
+	return($f);
+}
+
+=pod
+
+=item $tag = $svg->fe (-type=>'type', %properties)
+
+Generate a filter sub-element Must be a child of a L<filter> element. 
+
+B<Example:>
+
+	$fe = $svg->fe(-type      => 'DiffuseLighting'  #Required. the name of the element with 'fe' ommitted
 		              id        => 'filter_1',
 		              style     => {'font'      => [ qw( Arial Helvetica sans ) ],
                                 'font-size' => 10,
                                 'fill'      => 'red',},
               		transform => 'rotate(-45)' );
 
+The following filter elements are currently supported:
+
+feBlend, 
+feColorMatrix, 
+feComponentTransfer, 
+feComposite,
+feConvolveMatrix, 
+feDiffuseLighting, 
+feDisplacementMap, 
+feDistantLight, 
+feFlood, 
+feFuncA, 
+feFuncB, 
+feFuncG, 
+feFuncR, 
+feGaussianBlur, 
+feImage, 
+feMerge, 
+feMergeNode, 
+feMorphology, 
+feOffset, 
+fePointLight,
+feSpecularLighting, 
+feSpotLight, 
+feTile, 
+feTurbulence, 
+
+
+SEE ALSO:
+
+L<filter>.
+
 =cut
 
 sub fe {
   my ($self,%attrs) = @_;
-  return 0 unless  ($attrs{'-TYPE'});
-#  next if ($attrs{-TYPE} eq 'feDiffuseLighting');
-  my $tag_name = $attrs{'-TYPE'};
-  delete  $attrs{'-TYPE'};
-  my $fe = $self->tag($tag_name, %attrs );
+  return 0 unless  ($attrs{'-type'});
+  my %allowed = (blend => 'feBlend',
+              colormatrix => 'feColorMatrix',
+              componenttrans => 'feComponentTrans',
+              composite => 'feComposite',
+              convolvematrix => 'feConvolveMatrix',
+              diffuselighting => 'feDiffuseLighting',
+              displacementmap => 'feDisplacementMap',
+              distantlight => 'feDistantLight',
+              flood => 'feFlood',
+              funca => 'feFuncA',
+              funcb => 'feFuncB',
+              funcg => 'feFuncG',
+              funcr => 'feFuncR',
+              gaussianblur => 'feGaussianBlur',
+              image => 'feImage',
+              merge => 'feMerge',
+              mergenode => 'feMergeNode',
+              morphology => 'feMorphology',
+              offset => 'feOffset',
+              pointlight => 'fePointLight',
+              specularlighting => 'feSpecularLighting',
+              spotlight => 'feSpotLight',
+              tile => 'feTile',
+              turbulence => 'feTurbulence',);
+
+  my $key = lc($attrs{'-type'});
+  my $fe_name = $allowed{$key} || 'error:illegal_filter_element';
+  delete  $attrs{'-type'};
+  my $fe = $self->tag($fe_name, %attrs );
 }
 
+
+=pod
+
+=item $tag = $svg->pattern %properties
+
+Define a pattern
+
+B<Example:>
+
+	my $pattern = $svg->pattern( id=>"Argyle_1",
+                        width=>"50",
+                        height=>"50",
+                        patternUnits=>"userSpaceOnUse",
+                        patternContentUnits=>"userSpaceOnUse");
+
+
+=cut
+
+sub pattern {
+	my ($self,%attrs)=@_;
+	my $pat=$self->tag('pattern',%attrs);
+	return $pat;
+}
+
+
+=pod
+
+=item $tag = $svg->set %properties
+
+set a value for an existing element
+
+B<Example:>
+
+	my $set = $svg->set( id=>"Argyle_1",
+                        width=>"50",
+                        height=>"50",
+                        patternUnits=>"userSpaceOnUse",
+                        patternContentUnits=>"userSpaceOnUse");
+
+
+=cut
+
+sub set {
+	my ($self,%attrs)=@_;
+	my $set=$self->tag('set',%attrs);
+	return($set);
+}
+
+
+=pod
+
+=item $tag = $svg->stop %properties
+
+Define a stop
+
+B<Example:>
+
+	my $pattern = $svg->stop( id=>"Argyle_1",
+                        width=>"50",
+                        height=>"50",
+                        patternUnits=>"userSpaceOnUse",
+                        patternContentUnits=>"userSpaceOnUse");
+
+
+=cut
+
+sub stop {
+	my ($self,%attrs)=@_;
+	my $stop=$self->tag('stop',%attrs);
+	return($stop);
+}
+
+=pod
+
+=item $tag = $svg->stop %properties
+
+Define a stop
+
+B<Example:>
+
+	my $gradient = $svg->gradient( -type=>'linear',
+                        id=>"gradient_1",);
+
+
+=cut
+
+sub gradient {
+	my ($self,%attrs)=@_;
+  my $type =  $attrs{-type} || 'linear';
+  unless ($type =~ /^(linear|radial)$/) {
+    $type = 'linear';
+  }  
+  delete $attrs{-type};
+  my $grad=$self->tag($type.'Gradient',%attrs);
+	return($grad);
+}
 
 1;
 
@@ -987,31 +1195,6 @@ not-yet implemented elements:
               color-profile 
               cursor 
               definition-src 
-              defs 
-              feBlend 
-              feColorMatrix 
-              feComponentTransfer 
-              feComposite 
-              feConvolveMatrix 
-              feDiffuseLighting 
-              feDisplacementMap 
-              feDistantLight 
-              feFlood 
-              feFuncA 
-              feFuncB 
-              feFuncG 
-              feFuncR 
-              feGaussianBlur 
-              feImage 
-              feMerge 
-              feMergeNode 
-              feMorphology 
-              feOffset 
-              fePointLight 
-              feSpecularLighting 
-              feSpotLight 
-              feTile 
-              feTurbulence 
               font-face-format 
               font-face-name 
               font-face-src 
@@ -1026,9 +1209,8 @@ not-yet implemented elements:
               missing-glyph 
               mpath 
               pattern 
-              radialGradient 
-              set 
-              stop 
+              radialGradient
+              linearGradient
               switch 
               symbol 
               textPath 

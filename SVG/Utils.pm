@@ -47,13 +47,14 @@ sub release {
 }
 
 sub xmlescp {
-	my $s=shift @_;
+	my $s=shift @_ || '';
 	$s=join(', ',@{$s}) if(ref($s) eq 'ARRAY');
 	$s=~s/&/&amp;/cg;
 	$s=~s/>/&gt;/cg;
 	$s=~s/</&lt;/cg;
 	$s=~s/"/&quot;/cg;
 	$s=~s/'/&apos;/cg;
+ 	$s=~s/`/&apos;/cg;
 	$s=~s/([\x00-\x1f])/sprintf('&#x%02X;',chr($1))/cg;
 	return($s);
 }
@@ -70,9 +71,9 @@ sub xmlattrib {
 
 sub xmltag {
 	my ($name,$ns,%attrs)=@_;
-  $ns .= ':' if ($ns);
-	my $at=xmlattrib(%attrs);
-	return(qq(<$ns$name $at/>));
+  $ns=$ns?"$ns:":'';
+  my $at=' '.xmlattrib(%attrs)||'';
+	return(qq(<$ns$name$at />));
 }
 
 sub xmltag_ln {
@@ -82,9 +83,9 @@ sub xmltag_ln {
 
 sub xmltagopen {
 	my ($name,$ns,%attrs)=@_;
-  $ns .= ':' if ($ns);
-	my $at=xmlattrib(%attrs);
-	return(qq(<$ns$name $at>));
+  $ns=$ns?"$ns:":'';
+  my $at=' '.xmlattrib(%attrs)||'';
+	return(qq(<$ns$name$at>));
 }
 
 sub xmltagopen_ln {
@@ -94,8 +95,8 @@ sub xmltagopen_ln {
 
 sub xmltagclose {
 	my ($name,$ns)=@_;
-  $ns = ':'.$ns if ($ns);
-	return(qq(</$name>));
+  $ns=$ns?"$ns:":'';
+  return(qq(</$ns$name>));
 }
 
 sub xmltagclose_ln {
@@ -140,6 +141,8 @@ sub dtddecl {
 
   my $identifier  = $attrs{identifier} || '-//W3C//DTD SVG 1.0//EN';
   my $dtd         = $attrs{dtd} || 
+  #old dtd
+  #'http://www.w3.org/TR/2000/CR-SVG-20001102/DTD/svg-20001102.dtd'; 
   'http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd';
   $decl.=n_processtag('DOCTYPE',
                 $ns,
@@ -161,7 +164,6 @@ sub parentdecl {
   my $ns_url      = $attrs{ns_url}    || 'svg';
   $decl.=p_processtag(xmlns=>$xmlns,"xmlns:$ns"=>$ns_url);
   return($decl,$ns);
-
 }
 
 
