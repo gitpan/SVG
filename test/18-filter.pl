@@ -2,7 +2,7 @@
 use strict;
 use SVG;
 
-# test: getElementTypes, getElementsByType, getElementType, getElementsByType, getElementTypes
+# test: fe
 
 my $svg=new SVG;
 my $parent=$svg->group();

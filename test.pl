@@ -27,6 +27,6 @@ print "1..",scalar(@tests),"\n";
 
 foreach my $test (@tests) {
   my $result=system("perl","-w",$test) >> 8;
-  print $result?($result==2?skipped:ok):not_ok;
+  print $result?($result==2?skipped:ok):" ".not_ok;
 }
 

@@ -1,5 +1,15 @@
 Revision history for Perl extension SVG.
-2.31	10 october, 2004	
+2.32	10 October, 2004
+	-bufgix to repair broken test which causes failure of make test
+	-added sorting to attribute list so output is consistent
+	-added generic support for -href for any method that adds it as an attribute
+	-added xlink support to any tag with an -href attribute
+	-added 'a' and 'g' autosubs
+	-added numerous tests including pi, polygon, script, anchor, style tests
+	-bugfix for pi() method
+	-repaired script and style examples
+
+2.31	8 October, 2004	
 	-bugfix to stop xml escaping of attribute data.
 	-additional support of making fe element types case insensitive
 

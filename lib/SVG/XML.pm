@@ -68,7 +68,7 @@ sub cssstyle {
 # Per suggestion from Adam Schneider
 sub xmlattrib {
     my %attrs=@_;
-   return(join(' ',map { qq($_=").$attrs{$_}.q(") } keys(%attrs)));
+   return(join(' ',map { qq($_=").$attrs{$_}.q(") } sort keys(%attrs)));
 }
 
 #sub xmlattrib {

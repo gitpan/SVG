@@ -581,8 +581,8 @@ B<Example:>
     # be careful to manage the javascript line ends.
     # qq|text| or qq§text§ where text is the script 
     # works well for this.
-
-    $tag->cdata(qq|function d(){
+    #make sure to use the CAPITAL CDATA to poulate the script.
+    $tag->CDATA(qq|function d(){
         //simple display function
         for(cnt = 0; cnt < d.length; cnt++)
             document.write(d[cnt]);//end for loop

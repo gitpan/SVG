@@ -20,7 +20,7 @@ L<http://www.w3c.org/Graphics/SVG/> SVG at the W3C
 
 package SVG::Element;
 
-$VERSION = "2.26";
+$VERSION = "2.27";
 
 use strict;
 use SVG::XML;
@@ -36,7 +36,8 @@ my @autosubs=qw(
     font-face-src font-face-url foreignObject glyph
     glyphRef hkern marker mask metadata missing-glyph
     mpath switch symbol textPath tref tspan view vkern marker textbox
-    flowText style
+    flowText style script
+    image a g
 );
 
 %autosubs=map { $_ => 1 } @autosubs;
@@ -48,7 +49,19 @@ sub new ($$;@) {
     my $class=ref($proto) || $proto;
     my $self={-name => $name};
     foreach my $key (keys %attrs) {
-        next if $key=~/^\-/;
+	#handle escapes for special elements such as anchor
+        if ($key=~/^\-/) {
+            if ($key eq '-href') {
+	        $self->{'xlink:href'} = $attrs{$key};
+		$self->{'xlink:type'} = $attrs{-type} if $attrs{-type}; 
+		$self->{'xlink:role'} = $attrs{-role} if $attrs{-role};
+	        $self->{'xlink:title'} = $attrs{-title} if $attrs{-title};
+		$self->{'xlink:show'} = $attrs{-show} if $attrs{-show};
+		$self->{'xlink:arcrole'} = $attrs{-arcrole} if $attrs{-arcrole};
+		$self->{'xlink:actuate'} = $attrs{-actuate} if $attrs{-actuate};
+        	next;
+            }
+	} 
         $self->{$key}=$attrs{$key};
     }
 
@@ -91,12 +104,10 @@ sub xmlify ($) {
     if($self->{-comment}) {
         $xml .= $self->xmlcomment($self->{-comment});
         return $xml;
-    } elsif($self->{-pi}) {
-        $xml .= $self->xmlpi($self->{-pi});
-        return $xml;
     } elsif ($self->{-name} eq 'document') {
         #write the xml header
         $xml .= $self->xmldecl;
+        $xml .= $self->xmlpi($self->{-document}->{-pi}) if $self->{-document}->{-pi};
         #and write the dtd if this is inline
         $xml .= $self->dtddecl unless $self->{-inline};
         foreach my $k (@{$self->{-childs}}) {
@@ -299,19 +310,43 @@ Generate an anchor element. Anchors are put around objects to make them
 'live' (i.e. clickable). It therefore requires a drawn object or group element
 as a child.
 
+
+=head3 optional anchor attributes
+
+the following attributes are expected for anchor tags (any any tags which use -href links):
+
+=item -href    required
+=item -type    optional
+=item -role    optional
+=item -title   optional
+=item -show    optional
+=item -arcrole optional
+=item -actuate optional
+=item target   optional
+
+For more information on the options, refer to the w3c XLink specification at 
+L<http://www.w3.org/TR/xlink/>
+
 B<Example:>
 
     # generate an anchor    
     $tag = $SVG->anchor(
-        -href=>'http://here.com/some/simpler/SVG.SVG'
+         -href=>'http://here.com/some/simpler/SVG.SVG'
+         -title => 'new window 2 example title',
+         -actuate => 'onLoad',
+         -show=> 'embed',
+
     );
+
+for more information about the options above, refer to Link  section in the SVG recommendation: L<http://www.w3.org/TR/SVG11/linking.html#Links>
+
     # add a circle to the anchor. The circle can be clicked on.
     $tag->circle(cx=>10,cy=>10,r=>1);
 
     # more complex anchor with both URL and target
     $tag = $SVG->anchor(
           -href   => 'http://somewhere.org/some/other/page.html',
-          -target => 'new_window'
+          target => 'new_window'
     );
 
 =cut
@@ -319,8 +354,8 @@ B<Example:>
 sub anchor {
     my ($self,%attrs)=@_;
     my $an=$self->tag('a',%attrs);
-    $an->{'xlink:href'}=$attrs{-href} if(defined $attrs{-href});
-    $an->{'target'}=$attrs{-target} if(defined $attrs{-target});
+    #$an->{'xlink:href'}=$attrs{-href} if(defined $attrs{-href});
+    #$an->{'target'}=$attrs{-target} if(defined $attrs{-target});
     return($an);
 }
 
@@ -420,12 +455,12 @@ B<Output:>
 
 =cut
 
-sub image ($;@) {
-    my ($self,%attrs)=@_;
-    my $im=$self->tag('image',%attrs);
-    $im->{'xlink:href'}=$attrs{-href} if(defined $attrs{-href});
-    return $im;
-}
+#sub image ($;@) {
+#    my ($self,%attrs)=@_;
+#    my $im=$self->tag('image',%attrs);
+#    #$im->{'xlink:href'}=$attrs{-href} if(defined $attrs{-href});
+#    return $im;
+#}
 
 =pod
 
@@ -641,25 +676,31 @@ sub comment ($;@) {
 
 $tag = $SVG->pi(@pi)
 
-Generate a set of processing instructions
+Generate (or adds) a set of processing instructions which go at 
+the beginning of the document after the xml start tag
 
 B<Example:>
 
     my $tag = $SVG->pi('instruction one','instruction two','instruction three');
 
     returns: 
-      <lt>?instruction one?<gt>
-      <lt>?instruction two?<gt>
-      <lt>?instruction three?<gt>
+      <?instruction one?>
+      <?instruction two?>
+      <?instruction three?>
 
 =cut
 
+#add 
 
 sub pi ($;@) {
     my ($self,@text)=@_;
+    return $self->{-document}->{-pi} unless scalar @text;
+    my @pi; 
+    @pi = @{$self->{-document}->{-pi}} if $self->{-document}->{-pi};	
+    unshift(@text,@pi) if @pi;
+    $self->{-document}->{-pi} = \@text;
     my $tag = $self->tag('pi');
-    $tag->{-pi} = [@text];
-    return $tag;
+    return $tag
 }
 
 =pod
@@ -673,29 +714,49 @@ ECMAscript, Javascript or other compatible scripting language.
 
 B<Example:>
 
-    my $tag = $SVG->script(-type=>"text/ecmascript");
+    my $tag = $SVG->script(type=>"text/ecmascript");
 
     # populate the script tag with cdata
     # be careful to manage the javascript line ends.
     # qq|text| or qq§text§ where text is the script 
     # works well for this.
 
-    $tag->cdata(qq|function d(){
+    $tag->CDATA(qq|function d(){
         //simple display function
         for(cnt = 0; cnt < d.length; cnt++)
             document.write(d[cnt]);//end for loop
         document.write("<BR>");//write a line break
       }|
     );
+    # create an svg external script reference to an outside file
+    my $tag2 = SVG->script(type=>"text/ecmascript", -href="/scripts/example.es");
 
-=cut
+=pod
 
-sub script($;@) {
-    my ($self,%attrs)=@_;
-       my $script = $self->tag('script',%attrs);
-    $script->{'xlink:href'}=$attrs{-href} if(defined $attrs{-href});
-    return $script;
-}
+=head2 style
+
+$tag = $SVG->style(%attributes)
+
+Generate a style container for inline or xlink:href based styling instructions
+
+B<Example:>
+    
+    my $tag = $SVG->style(type=>"text/css");
+
+    # populate the style tag with cdata
+    # be careful to manage the line ends.
+    # qq|text| or qq§text§ where text is the script
+    # works well for this.
+
+    $tag1->CDATA(qq|
+	rect     fill:red;stroke:green;
+	circle   fill:red;stroke:orange;
+	ellipse  fill:none;stroke:yellow;
+	text     fill:black;stroke:none;
+   	|);
+    
+    # create a external css stylesheet reference
+    my $tag2 = $SVG->style(type=>"text/css", -href="/resources/example.css");
 
 =pod
 
