@@ -6,6 +6,11 @@
 #
 #
 
+BEGIN {
+  push @INC , '../';  
+  push @INC , '../SVG';
+}
+
   use SVG;
   use strict;
   use CGI ':new :header';

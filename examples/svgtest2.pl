@@ -3,6 +3,11 @@
 use strict;
 use CGI;
 
+BEGIN {
+  push @INC , '../';  
+  push @INC , '../SVG';
+}
+
 use SVG;
 
 my $VERSION = 3;
@@ -27,7 +32,6 @@ my $width = $p->param('w') || 800;
 
 my $svg= SVG->new(width=>$width,height=>$height); 
 
-
 my $y=$svg->group( id=>'group_generated_group',style=>{ stroke=>'red', fill=>'green' });
 
 my $z=$svg->tag('g',  id=>'tag_generated_group',style=>{ stroke=>'red', fill=>'black' });
@@ -47,11 +51,11 @@ my $line = $svg->line(id=>'l1',x1=>(rand()*$width+5),
           style=>&obj_style,);
 
 #---------
-foreach  (1..&round_up(rand(10))) {
-    my $myX = -$width*rand();
-    my $myY = -$height*rand();
+foreach  (1..&round_up(rand(20))) {
+    my $myX = $width-rand(2*$width);
+    my $myY = $height-rand(2*$height);
 
-    $y->rectangle (x=>$width/2,
+    my $rect = $y->rectangle (x=>$width/2,
                    y=>$height/2,
                    width=>(50+50*rand()),
                    height=>(50+50*rand()),
@@ -60,11 +64,11 @@ foreach  (1..&round_up(rand(10))) {
                    id=>'rect_1',
                    style=>&obj_style);
 
-    $y->animate(attributeName=>'transform', 
+    $rect->animate(attributeName=>'transform', 
                 attributeType=>'XML',
                 from=>'0 0',
                 to=>$myX.' '.$myY,
-                dur=>20*rand().'s',
+                dur=>&round_up(rand(20),2).'s',
                 repeatCount=>&round_up(rand(30)),
                 restart=>'always',
                 -method=>'Transform',);
@@ -87,7 +91,7 @@ my $a2 = $z -> anchor(
 #---------
 
 my $c;
-foreach  (1..&round_up(rand(10))) {
+foreach  (1..&round_up(rand(5))) {
 
     $c= $a->circle(cx=>($width-20)*rand(),
                     cy=>($height-20)*rand(),

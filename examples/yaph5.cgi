@@ -1,5 +1,10 @@
 #!/usr/bin/perl -w
 
+BEGIN {
+  push @INC , '../';  
+  push @INC , '../SVG';
+}
+
 use strict;
 use CGI;
 use SVG;

@@ -11,3 +11,4 @@ examples/image_sample.pl
 examples/inline_sample.pl
 examples/yaph5.cgi
 examples/starpath.cgi
+examples/svg.pl
