@@ -1,13 +1,77 @@
-=title SVG.pm - perl-module to generate scalable-vector-graphics
+=head1 NAME
+
+SVG - perl extention for  generating SVG (scalable-vector-graphics)
+
+=head1 SYNOPSIS
+
+  use SVG;
+  use strict;
+
+  my $svg= SVG->new(width=>200,height=>200); 
+
+  my $y=$svg->group( id     =>  'group_y',
+                     style  =>  {stroke=>'red', fill=>'green'} );
+
+  my $z=$svg->tag('g',  id=>'group_z',
+                        style=>{ stroke=>'rgb(100,200,50)', 
+                                 fill=>'rgb(10,100,150)'} );
+
+ 
+  $y->circle(cx=>100,
+             cy=>100,
+             r=>50, 
+             id=>'circle_y',);
+
+  $z->tag('circle',cx=>50,
+             cy=>50,
+             r=>100, 
+             id=>'circle_z',);
+  
+  # an anchor with a rectangle within group within group z
+
+  $z -> anchor(
+		     -href   => 'http://somewhere.org/some/line.html',
+		     -target => 'new_window_0') -> 
+                      $y->rectangle ( x=>20,
+                                      y=>50,
+                                      width=>20,
+                                      height=>30,
+                                      rx=>10,
+                                      ry=>5,
+                                      id=>'rect_z',);
+
+ 
+  print $svg->xmlify;
+
+=head1 DESCRIPTION
+
+SVG is a 100% perl module which generates a nested data structure which contains the DOM representation of an SVG image. Using SV, You can generate SVG objects, embed other SVG instances within it, access the DOM object, create and access javascript, and generate SMIL animation content.
+
+=head2 EXPORT
+
+None
+
+
+=head1 AUTHOR
+
+Ronan Oger, ronan@roasp.com
+
+=head1 SEE ALSO
+
+perl(1).
+SVG::Utils.
+http://roasp.com/
 
 =cut
 
 package SVG;
-
+$VERSION = "0.2";
 use strict;
 use vars qw( @ISA $AUTOLOAD );
 @ISA = qw( SVG::Element );
 use SVG::Utils;
+
+=pod
 
 =head2 SVG
 
@@ -25,6 +89,8 @@ sub new {
 	$self->{-indent}="\t";
 	return($self);
 }
+
+=pod
 
 =item $xmlstring = $svg->xmlify
 
@@ -47,13 +113,9 @@ use vars qw( @ISA $AUTOLOAD );
 @ISA = qw( SVG::Utils );
 use SVG::Utils;
 
-=head2 SVG::Element
 
-=item $xmlstring = $svg->xmlify
 
-Returns xml representation of tag and childs.
 
-=cut
 
 sub xmlify {
 	my $self=shift @_;
@@ -93,6 +155,8 @@ sub addchilds {
 	return($self);
 }
 
+=cut
+
 =item $tag = $svg->tag $name, %properties
 
 Creates element $name with %properties.
@@ -114,15 +178,21 @@ sub tag {
 
 =item $tag = $svg->anchor %properties
 
-B<Example:>
+create a url anchor tag. requires a child drawn object or group element.	
 
+B<Example:>
+	# a complete anchor with a child tag	
 	$tag = $svg->anchor(
 		-href=>'http://here.com/some/simpler/svg.svg'
 	);
+	$tag->circle(cx=>10,cy=>10,r=>1);
+
+	# alternate tag definitions
 	$tag = $svg->anchor(
 		-href   => 'http://somewhere.org/some/other/page.html',
 		-target => 'new_window'
 	);
+
 	$tag = $svg->anchor(
 		-href   => 'http://someotherwhere.net',
 		-target => '_top'
@@ -141,12 +211,13 @@ sub anchor {
 
 =item $tag = $svg->circle %properties
 
+draw a circle at cx,xy with radius r 
+
 B<Example:>
 
-	$tag = $svg->circle(cx=>4
-                      cy=>2
-                      r=>1,);
-	);
+	$tag = $svg->circle(	cx=>4
+                      		cy=>2
+                      		r=>1,);
 
 =cut
 
@@ -159,6 +230,8 @@ sub circle {
 =pod
 
 =item $tag = $svg->ellipse %properties
+
+draw an ellipse at cx,cy with radii rx,ry
 
 B<Example:>
 
@@ -185,15 +258,17 @@ sub ellipse {
 
 =item $tag = $svg->rectangle %properties
 
+draw a rectangle at (x,y) with width 'width' and height 'height' and side radii 'rx' and 'ry'
+
 B<Example:>
 
-	$tag = $svg->rectangle(x=>1,
-                         y=>2,
-                         width=>4,
-                         height=>5,
-                         rx=>.2,
-                         ry=>.4,
-                         id=>'rect_1',);
+	$tag = $svg->rectangle(	x=>10,
+                         	y=>20,
+                         	width=>4,
+                         	height=>5,
+                         	rx=>5.2,
+                         	ry=>2.4,
+                         	id=>'rect_1',);
 
 
 =cut
@@ -207,6 +282,8 @@ sub rectangle {
 =pod
 
 =item $tag = $svg->polygon %properties
+
+draw an n-sided polygon with vertices at points defined by string 'x1 y1,x2 y2,x3 y3,...xy yn'. use method get_path to generate the string.
 
 B<Example:>
 
@@ -234,6 +311,9 @@ sub polygon {
 =pod
 
 =item $tag = $svg->polyline %properties
+
+draw an n-point polyline with points defined by string 'x1 y1,x2 y2,...xn yn'.
+use method get_path to generate the vertices from two array references.
 
 B<Example:>
 
@@ -271,6 +351,8 @@ sub polyline {
 
 =item $tag = $svg->line %properties
 
+draw a straight line between two points (x1,y1),(x2,y2).
+
 B<Example:>
 
   my $tag = $svg->line( id=>'l1',x1=>0
@@ -287,11 +369,63 @@ sub line {
 	return($line);
 }
 
+=pod
+
+=item $text = $svg->text %properties
+
+define the container for a text string to be drawn in the image.
+
+B<Example:>
+
+  my $text = $svg->text( id=>'l1',x=>10
+                        y=>10,) -> cdata('hello, world');
+
+=cut
+
+
 sub text {
 	my ($self,%attrs)=@_;
 	my $text=$self->tag('text',%attrs);
 	return($text);
 }
+
+=pod
+
+=item $desc = $svg->desc %properties
+
+generate the description of the image.
+
+B<Example:>
+
+  my $desc = $svg->desc( id=>'root-desc')->cdata('hello this is a description');
+
+=cut
+
+
+sub desc {
+	my ($self,%attrs)=@_;
+	my $desc=$self->tag('desc',%attrs);
+	return($desc);
+}
+
+
+=pod
+
+=item $script = $svg->script %properties
+
+B<Example:>
+
+  my $text = $svg->script(type=>"text/ecmascript");
+
+=cut
+
+
+sub script {
+	my ($self,%attrs)=@_;
+  my $script=$self->tag('text',%attrs);
+	return($script);
+}
+
 
 =pod
 
@@ -339,10 +473,11 @@ A method which returns the text string of points correctly formatted to be incor
 
 input:
 
-output: a hash reference consisting of:
+output: a hash reference consisting of the following key-value pair:
 points = the appropriate points-definition string
-
-
+type = path|polygon|polyline
+-relative = 1 (points define relative position rather than absolute position)
+-closed = 1 (close the curve - path and polygon only)
 
 B<Example:>
 
@@ -414,17 +549,9 @@ sub get_path {
 Generate an SMIL animation tag. This is allowed within any of the nonempty tags.
 Refer to the W3C for detailed information on the subtleties of the animate SMIL commands.
 
-=cut
+inputs: -method = Transform | Motion | Color
 
-#XXXXX
-sub animate_not_me {
-	my ($self,%attrs)=@_;
-	$self->{animate}=$self->{animate} || {};
-	foreach my $k (keys %attrs) {
-		$self->{animate}->{$k}=$attrs{$k};
-	}
-	return($self);
-}
+=cut
 
 sub animate {
 	my ($self,%attrs) = @_;
@@ -483,6 +610,8 @@ sub animate {
 
 =item $tag = $svg->group %properties
 
+define a roup of objects with common properties. groups can have style, animation, filters, transformations, and mouse actions assigned to them.
+
 B<Example:>
 
 	$tag = $svg->group(
@@ -520,7 +649,7 @@ sub style {
 
 =item $svg->mouseaction %styledef
 
-Sets/Adds mouse action definitions.
+Sets/Adds mouse action definitions for tag
 
 =cut
 
@@ -532,6 +661,13 @@ sub mouseaction {
 	}
 	return($self);
 }
+
+=item $svg->mouseaction %styledef
+
+Sets/Adds mouse action definitions.
+
+=cut
+
 
 =item $svg->attrib $name, $val
 
@@ -555,11 +691,15 @@ Sets cdata to $text.
 
 B<Example:>
 
-	$svg->text(style=>{'font'=>'Arial','font-size'=>20})->cdata('This is a hello to svg !');
+	$svg->text(style=>{'font'=>'Arial','font-size'=>20})->cdata('SVG.pm is a perl module on CPAN!');
+
+  my $text = $svg->text(style=>{'font'=>'Arial','font-size'=>20});
+  $text->cdata('SVG.pm is a perl module on CPAN!');
+
 
 B<Result:>
 
-	E<lt>text style="font: Arial; font-size: 20" E<gt> This is a hello to svg ! E<lt>/text E<gt>
+	E<lt>text style="font: Arial; font-size: 20" E<gt>SVG.pm is a perl module on CPAN!E<lt>/text E<gt>
 
 =cut
 
@@ -571,19 +711,6 @@ sub cdata {
 
 
 #----------------------
-
-
-#----------------------
-
-
-
-
-
-
-
-
-
-
 
 sub AUTOLOAD {
         my($class,$sub)=($AUTOLOAD=~/(.*)::([^:]+)$/);
@@ -621,13 +748,12 @@ B<Example:>
 
 sub fe {
   my ($self,%attrs) = @_;
-  return 0 unless  ($attrs{-TYPE});
+  return 0 unless  ($attrs{'-TYPE'});
 #  next if ($attrs{-TYPE} eq 'feDiffuseLighting');
-  my $tag_name = $attrs{-TYPE};
-  delete  $attrs{-TYPE};
-  my $fe = $self->tag($tag_name, %attrs);
+  my $tag_name = $attrs{'-TYPE'};
+  delete  $attrs{'-TYPE'};
+  my $fe = $self->tag($tag_name, %attrs );
 }
-
 
 
 1;
@@ -643,7 +769,6 @@ not-yet implemented elements:
               cursor 
               definition-src 
               defs 
-              desc 
               feBlend 
               feColorMatrix 
               feComponentTransfer 
@@ -695,7 +820,6 @@ not-yet implemented elements:
               set 
               stop 
               style 
-              svg 
               switch 
               symbol 
               text 

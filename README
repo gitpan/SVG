@@ -1,11 +1,68 @@
-SVG.pm version 0.1
-Refer to the pod for the API documentation
+SVG.pm version 0.2
 
-SVG.pm
+SVG.pm is a perl extention to generate SVG (scaleable vector graphics).
+
+Refer to the pod for full documentation and an example script. 
+
 Ronan Oger, RO IT Systems, GmbH
 
-A CPAN module to generate SVG images.
+This program is provided as is without warranty. It is freely distributed under the general perl license.
+
+OVERVIEW
+
+SVG.pm makes it possible to generate fully-functional SVG images in perl.
+The following are functionality is supported:
+
+drawing of:
+-circle
+-ellipse
+-rectangle
+-polyline
+-polygon
+-path
+-mpath
+-text
+-line
+
+generation of:
+-filter
+-svg object and embedded svg object
+-SMIL-compliant animation
+-javascript
+-gradients
+-style definitions
+-DOM-compliant mouse events
+-drawing description
+-object groups
+-anchors
+
+
+
+
+INSTALLATION
+
+First download the tar file
+
+on the unix command line, type:
+-----------------------------
+tar -xvfz SVG-0.20.tar.gz
+
+perl Makefile.PL
+
+make 
+
+make test
+
+make install
+-----------------------------
+
+KNOWN BUGS
+
+Does not work under -w. There are two lines which complain. 
+Will be addressed in the next release.
+
+SUPPORT
 
 More information is available from
 
-http://roasp.com/svg
+http://roasp.com

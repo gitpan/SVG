@@ -4,5 +4,6 @@ MANIFEST
 Makefile.PL
 SVG/Utils.pm 
 examples/svgtest2.pl
+examples/SVG_02_sample.pl
 SVG.pm
 test.pl
