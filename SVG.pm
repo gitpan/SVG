@@ -12,7 +12,7 @@ use Exporter;
 use SVG::Utils;
 @ISA = qw(Exporter SVG::Element);
 
-$VERSION = "1.12";
+$VERSION = "1.13";
 
 #-------------------------------------------------------------------------------
 
@@ -20,11 +20,11 @@ $VERSION = "1.12";
 
 =head2 VERSION
 
-Version 1.12, 18 October 2001
+Version 1.13, 28 October 2001
 
 =head1 METHODS
 
-L<"animate">, L<"cdata">, L<"circle">, L<"defs">, L<"desc">,
+L<"animate">, L<"cdata">, L<"CDATA">, L<"circle">, L<"defs">, L<"desc">,
 L<"ellipse">, L<"fe">, L<"get_path">, L<"group">, L<"image">, L<"line">,
 L<"mouseaction">, L<"new">, L<"path">, L<"polygon">, L<"polyline">, L<"rectangle (alias: rect)">, L<"script">,
 L<"style">, L<"text">, L<"title">, L<"use">, L<"xmlify (alias: to_xml render)">
@@ -450,6 +450,10 @@ sub xmlify ($$) {
     if(defined $self->{-cdata}) {
         $xml.=xmltagopen($self->{-name},$ns,%attrs);
         $xml.=xmlescp($self->{-cdata});
+        $xml.=xmltagclose_ln($self->{-name},$ns);
+    } elsif(defined $self->{-CDATA}) {
+        $xml.=xmltagopen($self->{-name},$ns,%attrs);
+        $xml.='<![CDATA['.$self->{-CDATA}.']]>';
         $xml.=xmltagclose_ln($self->{-name},$ns);
     } elsif(defined $self->{-childs}) {
         $xml.=xmltagopen_ln($self->{-name},$ns,%attrs);
@@ -932,7 +936,7 @@ B<Example:>
 
 sub script ($;@) {
     my ($self,%attrs)=@_;
-    return $self->tag('text',%attrs);
+    return $self->tag('script',%attrs);
 }
 
 =pod
@@ -1329,6 +1333,80 @@ sub cdata ($@) {
 
 =pod
 
+=head2 CDATA
+
+ $script = $svg->script();
+ $script->CDATA($text);
+
+
+Generates a <![CDATA[ ... ]]> tag with the contents of $text rendered exactly as supplied. SVG.pm allows you to set cdata for any tag. If the tag is
+meant to be an empty tag, SVG.pm will not complain, but the rendering agent will
+fail. In the SVG DTD, cdata is generally only meant for adding text or script
+content.
+
+B<Example:>
+
+      my $text = qq§
+        var SVGDoc;
+        var groups = new Array();
+        var last_group;
+        
+        /*****
+        *
+        *   init
+        *
+        *   Find this SVG's document element
+        *   Define members of each group by id
+        *
+        *****/
+        function init(e) {
+            SVGDoc = e.getTarget().getOwnerDocument();
+            append_group(1, 4, 6); // group 0
+            append_group(5, 4, 3); // group 1
+            append_group(2, 3);    // group 2
+        }§;
+        $svg->script()->CDATA($text);
+
+
+B<Result:>
+
+    E<lt>script E<gt>
+      <gt>![CDATA[
+        var SVGDoc;
+        var groups = new Array();
+        var last_group;
+        
+        /*****
+        *
+        *   init
+        *
+        *   Find this SVG's document element
+        *   Define members of each group by id
+        *
+        *****/
+        function init(e) {
+            SVGDoc = e.getTarget().getOwnerDocument();
+            append_group(1, 4, 6); // group 0
+            append_group(5, 4, 3); // group 1
+            append_group(2, 3);    // group 2
+        }
+        ]]E<gt>
+
+SEE ALSO:
+
+  L<"cdata">, L<"script">.
+
+=cut
+
+sub CDATA ($@) {
+    my ($self,@txt)=@_;
+    $self->{-CDATA}=join('\n',@txt);
+    return($self);
+}
+
+
+=pod
+
 =head2 filter
 
 $tag = $svg->filter(%attributes)
@@ -1675,6 +1753,15 @@ sub autoload {
         eval "sub $package\:\:$sub (\$;\@) { return shift->tag('$tag',\@_) }";
         return $self->$sub(@_) if $self;
     }
+}
+
+
+#-------------------------------------------------------------------------------
+# GD Routines
+
+sub colorAllocate ($$$$) {
+    my ($self,$red,$green,$blue)=@_;
+    return 'rgb('.int($red).','.int($green).','.int($blue).')';
 }
 
 #-------------------------------------------------------------------------------

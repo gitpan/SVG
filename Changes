@@ -1,5 +1,10 @@
 Revision history for Perl extension SVG.
 
+1.13 Sun Oct 28 20:35
+        - Repaired script method (was generating a text tag)
+	- Added CDATA method to generate a <![CDATA[...]]> tag
+	- Added an example script roadselect.pl which uses the script and CDATA tags
+
 1.12 Thu Oct 18 00:25
         - Repaired Animate command
 	- Added import functionality
