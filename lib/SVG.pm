@@ -17,7 +17,7 @@ use SVG::Extension;
 
 @ISA = qw(SVG::Element SVG::Extension);
 
-$VERSION = "2.29";
+$VERSION = "2.30";
 
 #-------------------------------------------------------------------------------
 
@@ -54,10 +54,10 @@ http://www.roasp.com/index.shtml?svg.pod
 =head1 SEE ALSO
 
 perl(1),L<SVG>,L<SVG::DOM>,L<SVG::XML>,L<SVG::Element>,L<SVG::Parser>, L<SVG::Manual> L<SVG::Extension>
-http://www.roasp.com/
-http://www.perlsvg.com/
-http://www.roitsystems.com/
-http://www.w3c.org/Graphics/SVG/
+L<http://www.roasp.com/> ROASP.com: Serverside SVG server
+L<http://www.vectoreal.com/> Vectoreal: Commercal SVG Application solutions
+L<http://www.roitsystems.com/> ROIT Systems: Commercial SVG perl solutions
+L<http://www.w3c.org/Graphics/SVG/> SVG at the W3C
 
 =cut
 

@@ -547,13 +547,10 @@ Ronan Oger, ronan@roasp.com
 
 perl(1), L<SVG>, L<SVG::XML>, L<SVG::Element>, L<SVG::Parser>, L<SVG::Manual>
 
-<http://www.roasp.com/>
-
-<http://www.perlsvg.com/>
-
-<http://www.roitsystems.com/>
-
-<http://www.w3c.org/Graphics/SVG/>
+L<http://www.roasp.com/> ROASP.com: Serverside SVG server
+L<http://www.vectoreal.com/> Vectoreal: Commercal SVG Application solutions
+L<http://www.roitsystems.com/> ROIT Systems: Commercial SVG perl solutions
+L<http://www.w3c.org/Graphics/SVG/> SVG at the W3C
 
 =cut
 

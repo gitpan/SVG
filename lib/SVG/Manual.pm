@@ -1,6 +1,9 @@
 package SVG::Manual;
 
-=pod 
+our $VERSION = 2.26;
+use vars qw($VERSION);
+
+$VERSION = eval $VERSION;
 
 =head1 NAME
 
@@ -8,8 +11,7 @@ SVG - Perl extension for generating Scalable Vector Graphics (SVG) documents
 
 =head2 VERSION
 
-Version 2.25 (21.09.04)
-Covers SVG-2.29 distribution
+Covers SVG-2.30 distribution
 
 =head1 SYNOPSIS
 
@@ -168,9 +170,12 @@ B<Example:>
 
 =head1 SEE ALSO
 
-    perl(1), L<SVG::XML>, L<SVG::Element>, L<SVG::DOM>, L<SVG::Parser>
-    http://roasp.com/
-    http://www.w3c.org/Graphics/SVG/
+perl(1), L<SVG::XML>, L<SVG::Element>, L<SVG::DOM>, L<SVG::Parser>
+L<http://www.roasp.com/> ROASP.com: Serverside SVG server
+L<http://www.vectoreal.com/> Vectoreal: Commercal SVG Application solutions
+L<http://www.roitsystems.com/> ROIT Systems: Commercial SVG perl solutions
+L<http://www.w3c.org/Graphics/SVG/> SVG at the W3C
+	
 
 =head1 AUTHOR
 
@@ -1130,10 +1135,12 @@ L<SVG::Element>,
 L<SVG::Parser>, 
 L<SVG::Manual>, 
 L<SVG::Extension>
+Serverside SVG Portal - Perl focused SVG site with discussion board and examples:
+L<http://www.roasp.com/>
+L<http://www.perlsvg.com/>
+SVG at the W3C: L<http://www.w3c.org/Graphics/SVG/>
+For Commercial Perl/SVG development, refer to the following sites:
+Vectoreal:  L<http://www.vectoreal.com>
+RO IT Systems: L<http://www.roitsystems.com/>
 
-http://www.roasp.com/
-http://www.perlsvg.com/
-http://www.roitsystems.com/
-http://www.w3c.org/Graphics/SVG/
-http://www.vectoreal.com
 =cut
