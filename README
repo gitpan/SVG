@@ -1,0 +1,11 @@
+SVG.pm version 0.1
+Refer to the pod for the API documentation
+
+SVG.pm
+Ronan Oger, RO IT Systems, GmbH
+
+A CPAN module to generate SVG images.
+
+More information is available from
+
+http://roasp.com/svg

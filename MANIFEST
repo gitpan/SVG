@@ -1,0 +1,8 @@
+Changes
+README
+MANIFEST
+Makefile.PL
+SVG/Utils.pm 
+examples/svgtest2.pl
+SVG.pm
+test.pl
