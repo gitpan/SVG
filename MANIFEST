@@ -24,6 +24,7 @@ test/14-attributes.pl
 test/15-parentage.pl
 test/16-siblings.pl
 test/17-tagtypes.pl
+test/18-filter.pl
 examples/svgtest2.pl
 examples/SVG_02_sample.pl
 examples/image_sample.pl

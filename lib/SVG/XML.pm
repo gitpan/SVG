@@ -66,15 +66,15 @@ sub cssstyle {
 }
 
 # Per suggestion from Adam Schneider
-#sub xmlattrib {
-#    my %attrs=@_;
-#    return(join(' ',map { qq($_=").$attrs{$_}.q(") } keys(%attrs)));
-#}
-
 sub xmlattrib {
     my %attrs=@_;
-    return(join(' ',map { qq($_=").xmlescp($attrs{$_}).q(") } keys(%attrs)));
+   return(join(' ',map { qq($_=").$attrs{$_}.q(") } keys(%attrs)));
 }
+
+#sub xmlattrib {
+#    my %attrs=@_;
+#    return(join(' ',map { qq($_=").xmlescp($attrs{$_}).q(") } keys(%attrs)));
+#}
 
 sub xmltag ($$;@) {
     my ($name,$ns,%attrs)=@_;

@@ -17,7 +17,7 @@ use SVG::Extension;
 
 @ISA = qw(SVG::Element SVG::Extension);
 
-$VERSION = "2.30";
+$VERSION = "2.31";
 
 #-------------------------------------------------------------------------------
 
@@ -25,7 +25,7 @@ $VERSION = "2.30";
 
 =head2 VERSION
 
-Version 2.29, 20 September, 2004
+Version 2.29, 10 october, 2004
 
 Refer to L<SVG::Manual> for the complete manual
 

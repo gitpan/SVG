@@ -1231,7 +1231,7 @@ Generate a filter sub-element. Must be a child of a L<"filter"> element.
 B<Example:>
 
     my $fe = $SVG->fe(
-        -type     => 'DiffuseLighting'  # required - element name omiting 'fe'
+        -type     => 'diffuselighting'  # required - element name in lower case omiting 'fe'
         id        => 'filter_1',
         style     => {
             'font'      => [ qw(Arial Helvetica sans) ],
@@ -1242,6 +1242,7 @@ B<Example:>
     );
 
 Note that the following filter elements are currently supported:
+Also note that the elelemts are defined in lower case in the module, but as of version 2.31, any case combination is allowed.
 
 =over 4
 
@@ -1309,6 +1310,7 @@ sub fe ($;@) {
         blend => 'feBlend',
         colormatrix => 'feColorMatrix',
         componenttrans => 'feComponentTrans',
+        Componenttrans => 'feComponentTrans',
         composite => 'feComposite',
         convolvematrix => 'feConvolveMatrix',
         diffuselighting => 'feDiffuseLighting',
@@ -1333,7 +1335,7 @@ sub fe ($;@) {
     );
 
     my $key = lc($attrs{'-type'});
-    my $fe_name = $allowed{$key} || 'error:illegal_filter_element';
+    my $fe_name = $allowed{lc($key)} || 'error:illegal_filter_element';
     delete $attrs{'-type'};
 
     return $self->tag($fe_name, %attrs);

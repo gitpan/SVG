@@ -187,7 +187,7 @@ Peter Wainwright, peter@roasp.com Excellent ideas, beta-testing, SVG::Parser
 Fredo, http://www.penguin.at0.net/~fredo/ - provided initial feedback
 for early SVG.pm versions
 Adam Schneider, improvements to xmlescp providing improved character support
-Brial Pilpré, I do not remember.
+Brial Pilpré, I do not remember what.
 
 =head1 EXAMPLES
 
