@@ -2,7 +2,7 @@ package SVG::Extension;
 use strict;
 
 use vars qw(@ISA $VERSION @TYPES %TYPES);
-$VERSION = "0.1";
+$VERSION = "0.2";
 
 # although DTD declarations are not elements, we use the same API so we can
 # manipulate the internal DTD subset using the same methods available for
@@ -39,6 +39,11 @@ sub internal_subset {
 
     return $document->{-internal};
 }
+=item extension
+
+return the element object
+
+=cut 
 
 sub extension {
     my $self=shift;
@@ -49,12 +54,24 @@ sub extension {
 
 #-----------------
 
+=item element_decl
+
+generate an element declaration in the DTD
+
+=cut
+
 sub element_decl {
     my ($self,%attrs)=@_;
     my $subset=$self->internal_subset();
 
     return $subset->extension('ELEMENT',%attrs);
 }
+
+=item attribute_decl
+
+return generate an attribute list for an element
+
+=cut
 
 sub attribute_decl {
     my ($element_decl,%attrs)=@_;
@@ -66,6 +83,10 @@ sub attribute_decl {
 
     return $element_decl->extension('ATTLIST',%attrs);
 }
+
+=item attlist_decl
+
+=cut
 
 sub attlist_decl {
     my ($self,%attrs)=@_;
@@ -80,12 +101,25 @@ sub attlist_decl {
     return $element_decl->attribute_decl(%attrs);
 }
 
+=item notation_decl(%attrs)
+
+return an extention object of type NOTATION
+
+=cut
+
 sub notation_decl {
     my ($self,%attrs)=@_;
     my $subset=$self->internal_subset();
 
     return $subset->extension('NOTATION',%attrs);
 }
+
+
+=item entity_decl(%attrs) 
+
+return an extension object of type 'ENTITY'
+
+=cut
 
 sub entity_decl {
     my ($self,%attrs)=@_;
@@ -100,6 +134,11 @@ sub entity_decl {
 # format of one parent 'internal' element containing a list of
 # extension elements. A hierarchical model will follow in time
 # with the same render API.
+
+=item xmilfy
+
+=cut
+
 sub xmlify {
     my $self=shift;
     my $decl="";
@@ -171,16 +210,62 @@ sub xmlify {
 
     return $decl.$result;
 }
+
+#some aliases for xmilfy
+
+=item render
+
+alias for xmlify
+
+=item to_xml
+
+alias for xmlify
+
+=item serialise
+
+alias for xmlify
+
+=item serialise
+
+alias for xmlify
+
+=cut
+
 *render=\&xmlify;
 *to_xml=\&xmlify;
+*serialise=\&xmlify;
+*serialize=\&xmlify;
 
 #-----------------
+
+=item getDeclName
+
+Simply an alias for the general method for SVG::Extension objects
+
+=item getExtensionName
+
+alias to getDeclName
+
+=cut
 
 # simply an alias for the general method for SVG::Extension objects
 sub getDeclName {
     return shift->SUPER::getElementName();
 }
 *getExtensionName=\&getDeclName;
+
+=item getDeclNames
+
+return list of existing decl types by extracting it from the overall list
+of existing element types
+
+sub getDeclNames {
+
+=item getExtensionNames
+
+alias to getDeclNames
+
+=cut
 
 # return list of existing decl types by extracting it from the overall list
 # of existing element types

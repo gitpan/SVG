@@ -2,12 +2,12 @@ Changes
 README
 MANIFEST
 Makefile.PL
-SVG.pm
-SVG/XML.pm
-SVG/DOM.pm
-SVG/Element.pm
-SVG/Extension.pm
-SVG/Manual.pm
+lib/SVG.pm
+lib/SVG/XML.pm
+lib/SVG/DOM.pm
+lib/SVG/Element.pm
+lib/SVG/Extension.pm
+lib/SVG/Manual.pm
 test.pl
 test/01-loadsvg.pl
 test/02-simpledoc.pl
@@ -38,3 +38,4 @@ examples/inlinesvg.pl
 examples/svg_dom_sample.pl
 examples/attributeManip.pl
 examples/svg_gd_simple_1.pl
+META.yml                                 Module meta-data (added by MakeMaker)

@@ -17,7 +17,7 @@ use SVG::Extension;
 
 @ISA = qw(SVG::Element SVG::Extension);
 
-$VERSION = "2.28";
+$VERSION = "2.29";
 
 #-------------------------------------------------------------------------------
 
@@ -25,7 +25,7 @@ $VERSION = "2.28";
 
 =head2 VERSION
 
-Version 2.26, 12.01.03
+Version 2.29, 20 September, 2004
 
 Refer to L<SVG::Manual> for the complete manual
 
@@ -53,7 +53,7 @@ http://www.roasp.com/index.shtml?svg.pod
 
 =head1 SEE ALSO
 
-perl(1),L<SVG>,L<SVG::DOM>,L<SVG::XML>,L<SVG::Element>,L<SVG::Parser>, L<SVG::Manual>
+perl(1),L<SVG>,L<SVG::DOM>,L<SVG::XML>,L<SVG::Element>,L<SVG::Parser>, L<SVG::Manual> L<SVG::Extension>
 http://www.roasp.com/
 http://www.perlsvg.com/
 http://www.roitsystems.com/
@@ -82,6 +82,7 @@ my %default_attrs = (
     -version    => '1.0',
     -extension  => '',
     -encoding   => 'UTF-8',
+    -xml_xlink  =>'http://www.w3.org/1999/xlink',
     -standalone => 'yes',
     -pubid      => "-//W3C//DTD SVG 1.0//EN", # formerly -identifier
     -sysid      => 'http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd',
@@ -159,6 +160,8 @@ B<Example:>
         -indent     => '  ',
     -elsep      =>"\n",  # element line (vertical) separator
         -docroot => 'svg', #default document root element (SVG specification assumes svg). Defaults to 'svg' if undefined
+ 
+	-xml_xlink => 'http://www.w3.org/1999/xlink', #required by Mozilla's embedded SVG engine
         -sysid      => 'abc', #optional system identifyer 
         -pubid      => "-//W3C//DTD SVG 1.0//EN", #public identifyer default value is "-//W3C//DTD SVG 1.0//EN" if undefined
         -namespace => 'mysvg',
@@ -217,6 +220,7 @@ sub new ($;@) {
     }
     $self = $class->SUPER::new('document');
     $self->{-docref} = $self unless ($self->{-docref});
+    $attrs{'xml:xlink'} = $attrs{'xml:xlink'} || $attrs{'-xml_xlink'};
     $self->{-level} = 0;
     $self->{$_} = $attrs{$_} foreach keys %default_attrs;
 
@@ -238,7 +242,7 @@ sub new ($;@) {
 
 =pod
 
-=head2 xmlify (alias: to_xml render)
+=head2 xmlify (alias: to_xml render, serialize, serialise)
 
 $string = $svg->xmlify(%attributes);
 
@@ -283,8 +287,19 @@ sub xmlify ($;@) {
 
     return $self->SUPER::xmlify($self->{-namespace});
 }
+
+
 *render=\&xmlify;
 *to_xml=\&xmlify;
+*serialise=\&xmlify;
+*serialize=\&xmlify;
+
+
+=head2 perlify ()
+
+return the perl code which generates the SVG document as it currently exists.
+
+=cut
 
 sub perlify ($;@) {
     return shift->SUPER::perlify();

@@ -8,8 +8,8 @@ SVG - Perl extension for generating Scalable Vector Graphics (SVG) documents
 
 =head2 VERSION
 
-Version 2.24 (29.01.03)
-Covers SVG-2.27 distribution
+Version 2.25 (21.09.04)
+Covers SVG-2.29 distribution
 
 =head1 SYNOPSIS
 
@@ -18,7 +18,8 @@ Covers SVG-2.27 distribution
     use SVG;
 
     # create an SVG object
-    my $svg= SVG->new(width=>200,height=>200);
+    my $svg= SVG->new(width=>200,height=>200,
+	'xmlns:xlink'=>'http://www.w3.org/1999/xlink');
 
     # use explicit element constructor to generate a group element
     my $y=$svg->group(
@@ -1089,9 +1090,13 @@ The following L<SVG::DOM> elements are accessible through SVG:
 
 =item * getFirstChild
 
+=item * getNextChild
+
 =item * getLastChild
 
 =item * getParent
+
+=item * getParentElement
 
 =item * getSiblings
 
@@ -1102,8 +1107,6 @@ The following L<SVG::DOM> elements are accessible through SVG:
 =item * getElements
 
 =item * getElementName
-
-=item * getParentElement
 
 =item * getType
 
@@ -1119,10 +1122,18 @@ The following L<SVG::DOM> elements are accessible through SVG:
 
 =head1 SEE ALSO
 
-perl(1),L<SVG>,L<SVG::DOM>,L<SVG::XML>,L<SVG::Element>,L<SVG::Parser>, L<SVG::Manual>
+perl(1),
+L<SVG>,
+L<SVG::DOM>,
+L<SVG::XML>,
+L<SVG::Element>,
+L<SVG::Parser>, 
+L<SVG::Manual>, 
+L<SVG::Extension>
+
 http://www.roasp.com/
 http://www.perlsvg.com/
 http://www.roitsystems.com/
 http://www.w3c.org/Graphics/SVG/
-
+http://www.vectoreal.com
 =cut
