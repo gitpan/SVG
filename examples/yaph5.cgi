@@ -3,6 +3,9 @@
 use strict;
 use CGI;
 use SVG;
+
+my $VERSION = 3;
+
 $| = 1;
 my $p = new CGI ':header';
 # open the header and start sending

@@ -6,11 +6,6 @@
 #
 #
 
-BEGIN {
-  push @INC , '../';  
-  push @INC , '../SVG';
-}
-
   use SVG;
   use strict;
 
@@ -52,4 +47,4 @@ BEGIN {
   $svg->text(x=>200,y=>385,style=>{fill=>'red','fill-opacity'=>0.2})->cdata("This image was generated with perl using Ronan Oger's SVG module");  
 
 
-  print $svg->xmlify(namespace=>'svg',);
+  print $svg->xmlify(namespace=>'abc',);

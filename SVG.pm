@@ -23,52 +23,50 @@ L<attrib> L<animate> L<cdata> L<circle>  L<defs> L<desc>  L<ellipse> L<fe> L<get
   use SVG;
   use strict; 
 
-  #if we are generating a cgi document
-  #
-  #
-  use CGI ':new :header';
-  my $p = CGI->new;
-  $| = 1;
-  print $p->header('image/svg-xml');
-  #
-  #
-  #Now we generate the SVG
-
   #SVG part of the script
   my $svg= SVG->new(width=>200,height=>200); 
-  # use a method to generate a tag tag
+
+  # use a specific constructor method to generate a group tag
   my $y=$svg->group( id     =>  'group_y',
      style  =>  {stroke=>'red', fill=>'green'} );
-
 
   $y->circle(cx=>100,cy=>100,
      r=>50,id=>'circle_y',);
 
-  # or use a generic method to generate the tag
+  # or use a generic method to generate the tag by name
 
-  my $z=$svg->tag('g',  id=>'group_z',
+  my $z=$svg->tag('g',  id=>'group_z', 
      style=>{ stroke=>'rgb(100,200,50)', 
      fill=>'rgb(10,100,150)'} );
 
   $z->tag('circle',cx=>50, cy=>50,
-     r=>100, id=>'circle_z',);
+     r=>100, id=>'circle_in_group_z',);
   
   # an anchor with a rectangle within group within group z
 
-  my $k = $z -> anchor(
+  my $k = $z -> anchor(id=>'anchor_k'
 		     -href   => 'http://test.hackmare.com/',
 		     -target => 'new_window_0') -> 
-                      rectangle ( x=>20,
-                                      y=>50,
-                                      width=>20,
-                                      height=>30,
-                                      rx=>10,
-                                      ry=>5,
-                                      id=>'rect_z',);
+                      rectangle ( x=>20, y=>50,
+                                  width=>20, height=>30,
+                                  rx=>10, ry=>5,
+                                  id=>'rect_k_in_anchor_k_in_group_z',);
   
   
   
-  print $svg->xmlify;
+  print $svg->xmlify; #implicitly use namespace svg
+  
+  # or....
+  # explicitly use namespace svg and generate a document with its own DTD
+
+  print $svg->xmlify(-namespace=>'svg'); 
+
+  # or....
+  #explicitly use namespace svg and generate an in-line docunent
+  
+  print $svg->xmlify(-namespace=>'svg',
+         -inline=>1,
+         xmlns=>'http://roasp.com'); 
 
 =cut
 
@@ -115,7 +113,7 @@ http://roasp.com/
 
 package SVG;
 
-$VERSION = "0.30";
+$VERSION = "0.31";
 
 use strict;
 use vars qw( @ISA $AUTOLOAD );
@@ -186,8 +184,7 @@ sub xmlify {
   } else {
     ($xml,$ns)=dtddecl(%attrs);
   }
-  print "\nns = $ns\n";
-	$xml.=$self->SUPER::xmlify($ns);
+  $xml.=$self->SUPER::xmlify($ns);
   return($xml);
 }
 
