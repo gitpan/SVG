@@ -24,7 +24,7 @@ http://www.w3c.org/Graphics/SVG/
 
 package SVG::Element;
 
-$VERSION = "1.21";
+$VERSION = "1.22";
 
 use strict;
 use vars qw(@ISA $AUTOLOAD %autosubs);
@@ -32,7 +32,7 @@ use SVG::XML;
 use SVG::DOM;
 
 my @autosubs=qw(
-	animateTransform circle ellipse rect polyline 
+	animateMotion animateColor animateTransform circle ellipse rect polyline 
 	path polygon line title desc defs
 	altGlyph altGlyphDef altGlyphItem clipPath color-profile
 	cursor definition-src font-face-format font-face-name
@@ -196,8 +196,8 @@ sub tag ($$;@) {
 		unless (defined $tag->{-docref}->{-idlist});
 	
 	#verify that the current id is unique. compain on exception
-	$self->error("$tag->{id} Already Defined in document $tag->{-docref}->{name}" => "Illegally re-using ID $tag->{id} in element object $tag") 
-		if defined ($tag->{-docref}->{-idlist}->{$tag->{id}});
+#	$self->error("tag","attribute id=$tag->{id} is already in use") 
+#		if defined ($tag->{-docref}->{-idlist}->{$tag->{id}});
 
 	#add the current id reference to the document id hash
 	$tag->{-docref}->{-idlist}->{$tag->{id}} = $tag if defined ($tag->{id});

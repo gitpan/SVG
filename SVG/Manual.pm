@@ -1068,7 +1068,7 @@ See e.g. L<"pattern"> for an example of the use of these methods.
 
 =head1 SEE ALSO
 
-perl(1),L<SVG>,L<SVG::XML>,L<SVG::Element>,L<SVG::Parser>, L<SVG::Manual>
+perl(1),L<SVG>,L<SVG::DOM>,L<SVG::XML>,L<SVG::Element>,L<SVG::Parser>, L<SVG::Manual>
 http://www.roasp.com/
 http://www.perlsvg.com/
 http://www.roitsystems.com/

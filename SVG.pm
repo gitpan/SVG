@@ -16,7 +16,7 @@ use SVG::Element;
 
 @ISA = qw(SVG::Element Exporter );
 
-$VERSION = "2.22";
+$VERSION = "2.23";
 
 #-------------------------------------------------------------------------------
 
@@ -51,7 +51,7 @@ http://www.roasp.com/index.shtml?svg.pod
 
 =head1 SEE ALSO
 
-perl(1),L<SVG>,L<SVG::XML>,L<SVG::Element>,L<SVG::Parser>, L<SVG::Manual>
+perl(1),L<SVG>,L<SVG::DOM>,L<SVG::XML>,L<SVG::Element>,L<SVG::Parser>, L<SVG::Manual>
 http://www.roasp.com/
 http://www.perlsvg.com/
 http://www.roitsystems.com/
