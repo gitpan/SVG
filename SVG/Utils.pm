@@ -2,7 +2,7 @@ package SVG::Utils;
 use strict;
 use vars qw($VERSION @ISA @EXPORT );
 
-$VERSION = "0.311";
+$VERSION = "0.401";
 
 require Exporter;
 @ISA = qw(Exporter);
@@ -138,15 +138,14 @@ sub xmldecl ($;@) {
 
 sub dtddecl {
     my %attrs=@_;
-
-    my $version     = $attrs{version} || '1.0';
-    my $encoding    = $attrs{encoding} || 'UTF-8';
-    my $standalone  = $attrs{standalone} ||'yes';
-    my $ns          = $attrs{namespace} || '';
+    my $version     = $attrs{-version} || '1.0';
+    my $encoding    = $attrs{-encoding} || 'UTF-8';
+    my $standalone  = $attrs{-standalone} ||'yes';
+    my $ns          = $attrs{-namespace} || '';
     my $dtd_ns = $ns || 'svg';
     my $decl=qq§<?xml version="$version" encoding="$encoding" standalone="$standalone"?>§."\n";
-    my $identifier  = $attrs{identifier} || '-//W3C//DTD SVG 1.0//EN';
-    my $dtd         = $attrs{dtd} || 
+    my $identifier  = $attrs{-identifier} || '-//W3C//DTD SVG 1.0//EN';
+    my $dtd         = $attrs{-dtd} || 
       #old dtd
       #'http://www.w3.org/TR/2000/CR-SVG-20001102/DTD/svg-20001102.dtd'; 
       'http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd';
@@ -161,14 +160,13 @@ sub dtddecl {
 
 sub parentdecl {
     my %attrs=@_;
-
-    my $version    = $attrs{version} || '1.0';
-    my $encoding   = $attrs{encoding} || 'UTF-8';
-    my $standalone = $attrs{standalone} ||'yes';
-    my $ns         = $attrs{namespace} || 'svg';
+    my $version    = $attrs{-version} || '1.0';
+    my $encoding   = $attrs{-encoding} || 'UTF-8';
+    my $standalone = $attrs{-standalone} ||'yes';
+    my $ns         = $attrs{-namespace} || 'svg';
     my $decl=qq§<?xml version="$version" encoding="$encoding" standalone="$standalone"?>§."\n";
-    my $xmlns      = $attrs{xmlns} || 'http://missing.xmlns.attribute';
-    my $ns_url     = $attrs{ns_url}|| 'http://missing.ns_url.attribute';
+    my $xmlns      = $attrs{-xmlns} || 'http://missing.xmlns.attribute';
+    my $ns_url     = $attrs{-ns_url}|| 'http://missing.ns_url.attribute';
     $decl.=p_processtag($ns,xmlns=>$xmlns,"xmlns:$ns"=>$ns_url);
 
     return ($decl,$ns);

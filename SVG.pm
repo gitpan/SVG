@@ -1,30 +1,33 @@
-package SVG;
-use strict;
-
-use vars qw($VERSION @ISA $AUTOLOAD);
-use SVG::Utils;
-@ISA = qw(SVG::Element);
-
-$VERSION = "0.50";
-
-#-------------------------------------------------------------------------------
-
-=pod
-
 =head1 NAME
 
 SVG - Perl extension for generating Scalable Vector Graphics (SVG) documents
 
+=cut
+
+package SVG;
+use strict;
+
+use vars qw($VERSION @ISA $AUTOLOAD);
+use Exporter;
+use SVG::Utils;
+@ISA = qw(Exporter SVG::Element);
+
+$VERSION = "1.12";
+
+#-------------------------------------------------------------------------------
+
+=pod 
+
 =head2 VERSION
 
-Version 0.50, 12 October 2001
+Version 1.12, 18 October 2001
 
 =head1 METHODS
 
-    C<attrib>, C<animate>, C<cdata>, C<circle>, C<defs>, C<desc>,
-    C<ellipse>, C<fe>, C<get_path>, C<group>, C<image>, C<line>,
-    C<mouseaction>, C<new>, C<path>, C<polygon>, C<rectangle>, C<script>,
-    C<style>, C<SVG>, C<text>, C<title>, C<use>, C<xmlify>
+L<"animate">, L<"cdata">, L<"circle">, L<"defs">, L<"desc">,
+L<"ellipse">, L<"fe">, L<"get_path">, L<"group">, L<"image">, L<"line">,
+L<"mouseaction">, L<"new">, L<"path">, L<"polygon">, L<"polyline">, L<"rectangle (alias: rect)">, L<"script">,
+L<"style">, L<"text">, L<"title">, L<"use">, L<"xmlify (alias: to_xml render)">
 
 =head1 SYNOPSIS
 
@@ -55,7 +58,7 @@ Version 0.50, 12 October 2001
 
     # create and add a circle using the generic 'tag' method
     $z->tag('circle', cx=>50, cy=>50, r=>100, id=>'circle_in_group_z');
-  
+
     # create an anchor on a rectangle within a group within the group z
     my $k = $z->anchor(
         id      => 'anchor_k',
@@ -76,9 +79,9 @@ Version 0.50, 12 October 2001
 
     # or, explicitly use svg namespace and generate an in-line docunent
     print $svg->xmlify(
-        namespace => "svg",
-        ns_url    => "http://www.w3.org/2000/svg", # SVG namespace
-        xmlns     => "http://roasp.com/",          # Document namespace
+        -namespace => "svg",
+        -ns_url    => "http://www.w3.org/2000/svg", # SVG namespace
+        -xmlns     => "http://roasp.com/",          # Document namespace
         -inline   => 1
     );
 
@@ -95,17 +98,17 @@ Generating SVG is a simple three step process:
 
 =over 4
 
-=item 1 The first step is to construct a new SVG object with C<new>.
+=item 1 The first step is to construct a new SVG object with L<"new">.
 
 =item 2 The second step is to call element constructors to create SVG elements.
-Examples of element constructors are C<circle> and C<path>.
+Examples of element constructors are L<"circle"> and L<"path">.
 
 =item 3 The third and last step is to render the SVG object into XML using the
-C<xmlify> method.
+L<"xmlify"> method.
 
 =back
 
-The C<xmlify> method takes a number of optional arguments that control how SVG
+The L<"xmlify"> method takes a number of optional arguments that control how SVG
 renders the object into XML, and in particular determine whether a stand-alone
 SVG document or an inline SVG document fragment is generated:
 
@@ -129,7 +132,51 @@ from which they can be accessed and modified.
 
 =head2 EXPORTS
 
-None
+None. However, SVG permits both options and additional element methods to be
+specified in the import list. These options and elements are then available
+for all SVG instances that are created with the L<"new"> constructor. For example,
+to change the indent string to two spaces per level:
+
+    use SVG qw(-indent => "  ");
+
+With the exception of -auto, all options may also be specified to the L<"new">
+constructor. The currently supported options are:
+
+    -auto        enable autoloading of all unrecognised method calls (0)
+    -indent      the indent to use when rendering the SVG into XML ("\t")
+    -inline      whether the SVG is to be standalone or inlined (0)
+    -printerror  print SVG generation errors to standard error (1)
+    -raiseerror  die if a generation error is encountered (1)
+
+SVG also allows additional element generation methods to be specified in the
+import list. For example to generate 'star' and 'planet' element methods:
+
+    use SVG qw(star planet);
+
+or:
+
+    use SVG ("star","planet");
+
+This will add 'star' to the list of elements supported by SVG.pm (but not of
+course other SVG parsers...). Alternatively the '-auto' option will allow
+any unknown method call to generate an element of the same name:
+
+    use SVG (-auto => 1, "star", "planet");
+
+Any elements specified explicitly (as 'star' and 'planet' are here) are
+predeclared; other elements are defined as and when they are seen by Perl. Note
+that enabling '-auto' effectively disables compile-time syntax checking for
+valid method names.
+
+B<Example:>
+
+    use SVG (
+        -auto       => 0,
+        -indent     => "  ",
+        -raiserror  => 0,
+        -printerror => 1,
+        "star", "planet", "moon"
+    );
 
 =head1 AUTHOR
 
@@ -141,32 +188,128 @@ Ronan Oger, ronan@roasp.com
     http://roasp.com/
     http://www.w3c.org/Graphics/SVG/
 
+=cut
+
+#-------------------------------------------------------------------------------
+
+my %default_attrs = (
+    -auto       => 0,    # permit arbitrary autoloads (only at import)
+    -indent     => "\t", # what to indent with
+    -inline     => 0,    # inline or stand alone
+    -printerror => 1,    # print error messages to STDERR
+    -raiseerror => 1,    # die on errors (implies -printerror)
+);
+
+sub import {
+    my $package=shift;
+
+    my $attr=undef;
+    foreach (@_) {
+        if ($attr) {
+            $default_attrs{$attr}=$_;
+            undef $attr;
+        } elsif (exists $default_attrs{$_}) {
+            $attr=$_;
+        } else {
+            /^-/ and die "Unknown attribute '$_' in import list\n";
+            $SVG::Element::autosubs{$_}=1; # add to list of autoloadable tags
+        }
+    }
+
+    # switch on AUTOLOADer, if asked.
+    if ($default_attrs{'-auto'}) {
+        *SVG::Element::AUTOLOAD=\&SVG::Element::autoload;
+    }
+
+    # predeclare any additional elements asked for by the user
+    foreach my $sub (keys %SVG::Element::autosubs) {
+        $SVG::Element::AUTOLOAD=("SVG::Element::$sub");
+        SVG::Element::autoload();
+    }
+
+    delete $default_attrs{-auto}; # -auto is only allowed here, not in new
+
+    return ();
+}
+
+#-------------------------------------------------------------------------------
+
+=pod
+
 =head1 Methods
 
 SVG provides both explicit and generic element constructor methods. Explicit
 generators are generally (with a few exceptions) named for the element they
 generate.
 
-All element constructors take a hash of element attributes and instructions;
-element attributes such as 'id' are passed by name, while instructions for the
+All element constructors take a hash of element attributes and options;
+element attributes such as 'id' are passed by name, while options for the
 method (such as the type of an element that supports multiple alternate forms)
 are passed preceded by a hyphen, e.g '-type'. Both types may be freely
-intermixed; see the C<fe> method and code examples througout the documentation
+intermixed; see the L<"fe"> method and code examples througout the documentation
 for more examples.
 
 =head2 new (constructor)
 
-=item $svg = SVG->new(%attributes)
+$svg = SVG->new(%attributes)
 
-Creates a new SVG object.
+Creates a new SVG object. Attributes of the root SVG element be passed as
+an optional list of key value pairs. Additionally, SVG options (prefixed with
+a hyphen) may be set on a per object basis:
+
+B<Example:>
+
+    my $svg1=new SVG;
+
+    my $svg2=new SVG(id => 'root_element');
+
+    my $svg3=new SVG(
+        -printerror => 1,
+        -raiseerror => 0,
+        -indent     => '  ',
+        -namespace => "mysvg",
+        -ns_url    => "http://www.w3.org/2000/svg", # SVG namespace
+        -xmlns     => "http://roasp.com/",          # Document namespace
+        -inline   => 1
+        id          => 'root_element'
+        width       => 300,
+        height      => 200,
+    );
+
+Default SVG options may also be set in the import list. See L<"EXPORTS"> above
+for more on the available options. 
+
+Furthermore, the following options:
+
+  
+    -version
+    -encoding
+    -standalone
+    -namespace
+    -xmlns (inline)
+    -ns_url (inline)
+    -inline
+    -identifier
+    -dtd (standalone)
+
+may also be set in xmlify, overriding any corresponding values set in the SVG->new declaration
 
 =cut
+
+#-------------------------------------------------------------------------------
 
 sub new ($;@) {
     my ($proto,%attrs)=@_;
     my $class=ref $proto || $proto;
-
     my $self;
+
+    # establish defaults for unspecified attributes
+    foreach my $attr (keys %default_attrs) {
+	      $attrs{$attr}=$default_attrs{$attr} 
+                        unless exists $attrs{$attr}
+    }
+
+    # create SVG object according to inline attribute
     if ($attrs{-inline}) {
         $self = $class->SUPER::new('parent',%attrs);
         delete $attrs{-inline};
@@ -174,45 +317,54 @@ sub new ($;@) {
     } else {
         $self = $class->SUPER::new('svg',%attrs);
     }
-    $self->{-level}=0;
-    $self->{-indent}="\t";
 
+    # add -attributes to SVG object
+    $self->{$_}=$attrs{$_} foreach keys %default_attrs;
+    $self->{-level}=0;
+    $self->{-version}   = $attrs{-version}    if ($attrs{-version});
+    $self->{-encoding}  = $attrs{-encoding}   if ($attrs{-encoding});
+    $self->{-standalone}= $attrs{-standalone} if ($attrs{-standalone});
+    $self->{-identifyer}= $attrs{-identifyer} if ($attrs{-identifyer});
+    $self->{-dtd}       = $attrs{-dtd}        if ($attrs{-dtd});
+    $self->{-namespace} = $attrs{-namespace}  if ($attrs{-namespace});
+    $self->{-ns_url}    = $attrs{-ns_url}     if ($attrs{-ns_url});
+    $self->{-xmlns}     = $attrs{-xmlns}      if ($attrs{-xmlns});   
     return $self;
 }
 
+#-------------------------------------------------------------------------------
+
 =pod
 
-=over 4
+=head2 xmlify (alias: to_xml render)
 
-=head2 xmlify
-
-=item $xmlstring = $svg->xmlify(%attributes)
+$xmlstring = $svg->xmlify(%attributes)
 
 Returns xml representation of svg document.
 
 B<XML Declaration>
 
-    B<Name>           B<Default Value>
-    version           '1.0'
-    encoding          'UTF-8'
-    standalone        'yes'
-    namespace         'svg'                - namespace for elements
-    xmlns (inline)    'http://example.org' - see <parent> tag below
-    ns_url (inline)   'the url of the xml' - see <parent> tag below
+    Name               Default Value
+    -version           '1.0'               
+    -encoding          'UTF-8'
+    -standalone        'yes'
+    -namespace         'svg'                - namespace for elements
+    -xmlns (inline)    'http://example.org' - see <parent> tag below
+    -ns_url (inline)   'the url of the xml' - see <parent> tag below
     -inline           '0' - If '1', then this is an inline document.
-    identifier        '-//W3C//DTD SVG 1.0//EN';
-    dtd (standalone)  'http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd'
+    -identifier        '-//W3C//DTD SVG 1.0//EN';
+    -dtd (standalone)  'http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd'
 
 B<Parent tag>:
 
-    <parent xmlns="[xmlns]" xmlns:[namespace]="[ns_url]">
+    <parent xmlns="[-xmlns]" xmlns:[-namespace]="[-ns_url]">
 
 For example:
 
     print $svg->xmlify(
-        namespace => "mysvg",
-        ns_url    => "http://www.w3.org/2000/svg", # SVG namespace
-        xmlns     => "http://roasp.com/",          # Document namespace
+        -namespace => "mysvg",
+        -ns_url    => "http://www.w3.org/2000/svg", # SVG namespace
+        -xmlns     => "http://roasp.com/",          # Document namespace
         -inline   => 1
     );
 
@@ -227,8 +379,16 @@ B<Output>:
 
 sub xmlify ($;@) {
     my ($self,%attrs) = @_;
-
     my ($decl,$ns);
+    $attrs{-version} = $self->{-version} if ($self->{-version});
+    $attrs{-encoding} = $self->{-encoding} if ($self->{-encoding});
+    $attrs{-standalone} = $self->{-standalone} if ($self->{-standalone});
+    $attrs{-identifyer} = $self->{-identifyer} if ($self->{-identifyer});
+    $attrs{-dtd} = $self->{-dtd} if ($self->{-dtd});
+    $attrs{-namespace} = $self->{-namespace} if ($self->{-namespace});
+    $attrs{-ns_url} = $self->{-ns_url} if ($self->{-ns_url});
+    $attrs{-xmlns} = $self->{-xmlns} if ($self->{-xmlns});
+
     if ($attrs{'-inline'}) {
         ($decl,$ns)=parentdecl(%attrs);
     } else {
@@ -239,14 +399,31 @@ sub xmlify ($;@) {
     return $decl.$self->SUPER::xmlify($ns);
 }
 
+*render=\&xmlify;
+
+*to_xml=\&xmlify;
 #-------------------------------------------------------------------------------
 
 package SVG::Element;
 
 use strict;
-use vars qw( @ISA $AUTOLOAD );
+use vars qw(@ISA $AUTOLOAD %autosubs);
 @ISA = qw( SVG::Utils );
 use SVG::Utils;
+
+my @autosubs=qw(
+    altGlyph altGlyphDef altGlyphItem clipPath color-profile
+    cursor definition-src font-face-format font-face-name
+    font-face-src font-face-url foreignObject glyph
+    glyphRef hkern marker mask metadata missing-glyph
+    mpath switch symbol textPath tref tspan view vkern
+);
+
+=pod
+
+=cut
+
+%autosubs=map { $_ => 1 } @autosubs;
 
 sub xmlify ($$) {
     my ($self,$ns) = @_;
@@ -266,6 +443,10 @@ sub xmlify ($$) {
 
     #prep the tag
     my $xml=$self->{-indent} x $self->{-level};
+    if(defined $self->{-comment} ) {
+        $xml.=xmlcomment($self->{-comment});
+        return $xml;
+    }
     if(defined $self->{-cdata}) {
         $xml.=xmltagopen($self->{-name},$ns,%attrs);
         $xml.=xmlescp($self->{-cdata});
@@ -287,6 +468,7 @@ sub xmlify ($$) {
     return $xml;
 }
 
+
 sub addchilds ($@) {
     my $self=shift;
     push @{$self->{-childs}},@_;
@@ -296,8 +478,8 @@ sub addchilds ($@) {
 =pod
 
 =head2 tag (alias: element)
-
-=item $tag = $svg->tag($name, %attributes)
+ 
+$tag = $svg->tag($name, %attributes)
 
 Generic element generator. Creates the element named $name with the attributes
 specified in %attributes. This method is the basis of most of the explicit
@@ -312,6 +494,12 @@ B<Example:>
 sub tag ($$;@) {
     my ($self,$name,%attrs)=@_;
     my $tag=SVG::Element->new($name,%attrs);
+    unless (defined $tag->{-level}) { 
+      $tag->{-level}=0;
+    }
+    unless (defined $self->{-level}) { 
+      $self->{-level}=0;
+    }
     $tag->{-level}=$self->{-level}+1;
     $tag->{-indent}=$self->{-indent};
     $self->addchilds($tag);
@@ -324,7 +512,7 @@ sub tag ($$;@) {
 
 =head2 anchor
 
-=item $tag = $svg->anchor(%attributes)
+$tag = $svg->anchor(%attributes)
 
 Generate an anchor element. Anchors are put around objects to make them
 'live' (i.e. clickable). It therefore requires a drawn object or group element
@@ -341,8 +529,8 @@ B<Example:>
 
     # more complex anchor with both URL and target
     $tag = $svg->anchor(
-	-href   => 'http://somewhere.org/some/other/page.html',
-	-target => 'new_window'
+	      -href   => 'http://somewhere.org/some/other/page.html',
+	      -target => 'new_window'
     );
 
 =cut
@@ -365,7 +553,7 @@ sub svg {
 
 =head2 circle
 
-=item $tag = $svg->circle(%attributes)
+$tag = $svg->circle(%attributes)
 
 Draw a circle at (cx,cy) with radius r.
 
@@ -384,7 +572,7 @@ sub circle ($;@) {
 
 =head2 ellipse
 
-=item $tag = $svg->ellipse(%attributes)
+$tag = $svg->ellipse(%attributes)
 
 Draw an ellipse at (cx,cy) with radii rx,ry.
 
@@ -414,7 +602,7 @@ sub ellipse ($;@) {
 
 =head2 rectangle (alias: rect)
 
-=item $tag = $svg->rectangle(%attributes)
+$tag = $svg->rectangle(%attributes)
 
 Draw a rectangle at (x,y) with width 'width' and height 'height' and side radii
 'rx' and 'ry'.
@@ -441,10 +629,10 @@ sub rectangle ($;@) {
 
 =head2 image
 
-=item  $tag = $svg->image(%attributes)
+ $tag = $svg->image(%attributes)
 
 Draw an image at (x,y) with width 'width' and height 'height' linked to image
-resource '-href'. See also C<use>.
+resource '-href'. See also L<"use">.
 
 B<Example:>
 
@@ -472,7 +660,7 @@ sub image ($;@) {
 
 =head2 use
 
-=item $tag = $svg->use(%attributes)
+$tag = $svg->use(%attributes)
 
 Retrieve the content from an entity within an SVG document and apply it at
 (x,y) with width 'width' and height 'height' linked to image resource '-href'.
@@ -506,10 +694,10 @@ sub use ($;@) {
 
 =head2 polygon
 
-=item $tag = $svg->polygon(%attributes)
+$tag = $svg->polygon(%attributes)
 
 Draw an n-sided polygon with vertices at points defined by a string of the form
-'x1,y1,x2,y2,x3,y3,... xy,yn'. The C<get_path> method is provided as a
+'x1,y1,x2,y2,x3,y3,... xy,yn'. The L<"get_path"> method is provided as a
 convenience to generate a suitable string from coordinate data.
 
 B<Example:>
@@ -531,7 +719,7 @@ B<Example:>
 
 SEE ALSO:
 
-    C<polyline>, C<path>, C<get_path>.
+L<"polyline">, L<"path">, L<"get_path">.
 
 =cut
 
@@ -545,10 +733,10 @@ sub polygon {
 
 =head2 polyline
 
-=item $tag = $svg->polyline(%attributes)
+$tag = $svg->polyline(%attributes)
 
 Draw an n-point polyline with points defined by a string of the form
-'x1,y1,x2,y2,x3,y3,... xy,yn'. The C<get_path> method is provided as a
+'x1,y1,x2,y2,x3,y3,... xy,yn'. The L<"get_path"> method is provided as a
 convenience to generate a suitable string from coordinate data.
 
 B<Example:>
@@ -583,7 +771,7 @@ sub polyline ($;@) {
 
 =head2 line
 
-=item $tag = $svg->line(%attributes)
+$tag = $svg->line(%attributes)
 
 Draw a straight line between two points (x1,y1) and (x2,y2).
 
@@ -595,7 +783,7 @@ B<Example:>
         x2=>10, y2=>0
     );
 
-To draw multiple connected lines, use C<polyline>.
+To draw multiple connected lines, use L<"polyline">.
 
 =cut
 
@@ -608,11 +796,19 @@ sub line ($;@) {
 
 =head2 text
 
-=item $text = $svg->text(%attributes)->cdata();
+$text = $svg->text(%attributes)->cdata();
 
-=item $text = $svg->text(%attributes,-cdata=>'textstring');
+$text_path = $svg->text(-type=>'path');
+$text_span = $text_path->text(-type=>'span')->cdata('A');
+$text_span = $text_path->text(-type=>'span')->cdata('B');
+$text_span = $text_path->text(-type=>'span')->cdata('C');
+$text = $svg->text(%attributes,-cdata=>'textstring');
 
 define the container for a text string to be drawn in the image.
+
+B<Input:> 
+    -type     = path type (path | polyline | polygon)
+    -type     = text element type  (path | span | normal [default])
 
 B<Example:>
 
@@ -620,18 +816,32 @@ B<Example:>
         id=>'l1', x=>10, y=>10
     )->cdata('hello, world');
 
-    my $text2 = $svg->text(id=>'l1', x=>10, y=>10, -cdata=>'hello, world');
+    my $text2 = $svg->text(
+        id=>'l1', x=>10, y=>10, -cdata=>'hello, world');
 
+    my $text = $svg->text(
+        id=>'tp', x=>10, y=>10 -type=>path)
+        ->text(id=>'ts' -type=>'span')
+        ->cdata('hello, world');
 
 SEE ALSO:
 
-    C<desc>, C<cdata>.
+    L<"desc">, L<"cdata">.
 
 =cut
 
 sub text ($;@) {
     my ($self,%attrs)=@_;
-    my $text=$self->tag('text',%attrs);
+    my $pre = '';
+    $pre = $attrs{-type} || 'std';
+    my %get_pre = (std=>'text',
+                   path=>'textPath',
+                   span=>'tspan',);
+
+    $pre = $get_pre{lc($pre)};
+    my $text=$self->tag($pre,%attrs);
+    $text->{'xlink:href'} = $attrs{-href} if(defined $attrs{-href});
+   	$text->{'target'} = $attrs{-target} if(defined $attrs{-target});
     return($text);
 }
 
@@ -639,7 +849,7 @@ sub text ($;@) {
 
 =head2 title
 
-=item $tag = $svg->title(%attributes)
+$tag = $svg->title(%attributes)
 
 Generate the title of the image.
 
@@ -658,7 +868,7 @@ sub title ($;@) {
 
 =head2 desc
 
-=item $tag = $svg->desc(%attributes)
+$tag = $svg->desc(%attributes)
 
 Generate the description of the image.
 
@@ -675,9 +885,28 @@ sub desc ($;@) {
 
 =pod
 
+=head2 comment
+
+$tag = $svg->comment(@comments)
+
+Generate the description of the image.
+
+B<Example:>
+
+    my $tag = $svg->comment('comment 1','comment 2','comment 3');
+
+=cut
+
+sub comment ($;@) {
+    my ($self,@text)=@_;
+    return $self->tag('comment',-comment=>[@text]);
+}
+
+=pod
+
 =head2 script
 
-=item $tag = $svg->script(%attributes)
+$tag = $svg->script(%attributes)
 
 Generate a script container for dynamic (client-side) scripting using
 ECMAscript, Javascript or other compatible scripting language.
@@ -710,10 +939,10 @@ sub script ($;@) {
 
 =head2 path
 
-=item $tag = $svg->path(%attributes)
+$tag = $svg->path(%attributes)
 
 Draw a path element. The path vertices may be imputed as a parameter or
-calculated usingthe C<get_path> method.
+calculated usingthe L<"get_path"> method.
 
 B<Example:>
 
@@ -741,7 +970,7 @@ B<Example:>
 
 SEE ALSO:
 
-    L<get_path>.
+L<"get_path">.
 
 =cut
 
@@ -754,7 +983,7 @@ sub path ($;@) {
 
 =head2 get_path
 
-=item $path = $svg->get_path(%attributes)
+$path = $svg->get_path(%attributes)
 
 Returns the text string of points correctly formatted to be incorporated into
 the multi-point SVG drawing object definitions (path, polyline, polygon)
@@ -848,13 +1077,44 @@ sub set_path ($;@) {
 
 =head2 animate
 
-=item animate(%attributes)
+$tag = $svg->animate(%attributes)
 
 Generate an SMIL animation tag. This is allowed within any nonempty tag. Refer\
 to the W3C for detailed information on the subtleties of the animate SMIL
 commands.
 
 B<Inputs:> -method = Transform | Motion | Color
+
+  my $an_ellipse = $svg->ellipse(
+      cx=>30,cy=>150,rx=>10,ry=>10,id=>'an_ellipse',
+      stroke=>'rgb(130,220,70)',fill=>'rgb(30,20,50)'); 
+
+  $an_ellipse-> animate(
+      attributeName=>"cx",values=>"20; 200; 20",dur=>"10s", repeatDur=>'indefinite');
+
+  $an_ellipse-> animate(
+      attributeName=>"rx",values=>"10;30;20;100;50",
+      dur=>"10s", repeatDur=>'indefinite');
+
+  $an_ellipse-> animate(
+      attributeName=>"ry",values=>"30;50;10;20;70;150",
+      dur=>"15s", repeatDur=>'indefinite');
+
+  $an_ellipse-> animate(
+      attributeName=>"rx",values=>"30;75;10;100;20;20;150",
+      dur=>"20s", repeatDur=>'indefinite');
+
+  $an_ellipse-> animate(
+      attributeName=>"fill",values=>"red;green;blue;cyan;yellow",
+      dur=>"5s", repeatDur=>'indefinite');
+
+  $an_ellipse-> animate(
+      attributeName=>"fill-opacity",values=>"0;1;0.5;0.75;1",
+      dur=>"20s",repeatDur=>'indefinite');
+
+  $an_ellipse-> animate(
+      attributeName=>"stroke-width",values=>"1;3;2;10;5",
+      dur=>"20s",repeatDur=>'indefinite');
 
 =cut
 
@@ -872,14 +1132,15 @@ sub animate ($;@) {
         transform=>'animateTransform',
         motion=>'animateMotion',
         color=>'animateColor',
-        set=>'set'
+        set=>'set',
+        attribute=>'animate'
     );
 	
-    my $name = $animation_method{$method} || 'simple';
+    my $name = $animation_method{$method} || 'animate';
 	
-    #list oflegal entities for each of the 5 methods of animations
+    #list of legal entities for each of the 5 methods of animations
     my %legal = (
-        simple =>	
+        animate =>	
           qq§ begin dur  end  min  max  restart  repeatCount 
               repeatDur  fill  attributeType attributeName additive
               accumulate calcMode  values  keyTimes  keySplines
@@ -904,8 +1165,10 @@ sub animate ($;@) {
     );
 
     foreach my $k (keys %rtr) {
-        if ($legal{$name} !~ /$k/gs) {
-            $self->{errors}{"$name.$k"} = 'Illegal animation command';
+        next if ($k =~ /\-/);
+
+        if ($legal{$name} !~ /\b$k\b/) {
+            $self->error("$name.$k" => "Illegal animation command");
         }
     }
 
@@ -916,7 +1179,7 @@ sub animate ($;@) {
 
 =head2 group
 
-=item $tag = $svg->group(%attributes)
+$tag = $svg->group(%attributes)
 
 Define a group of objects with common properties. groups can have style,
 animation, filters, transformations, and mouse actions assigned to them.
@@ -944,7 +1207,7 @@ sub group ($;@) {
 
 =head2 defs
 
-=item $tag = $svg->defs(%attributes)
+$tag = $svg->defs(%attributes)
 
 define a definition segment. A Defs requires children when defined using SVG.pm
 B<Example:>
@@ -962,7 +1225,7 @@ sub defs ($;@) {
 
 =head2 style
 
-=item $svg->style(%styledef)
+$svg->style(%styledef)
 
 Sets/Adds style-definition for the following objects being created.
 
@@ -986,7 +1249,7 @@ sub style ($;@) {
 
 =head2 mouseaction
 
-=item $svg->mouseaction(%attributes)
+$svg->mouseaction(%attributes)
 
 Sets/Adds mouse action definitions for tag
 
@@ -1005,15 +1268,15 @@ sub mouseaction ($;@) {
 
 =pod
 
-=item $svg->attrib($name, $value)
+$svg->attrib($name, $value)
 
 Sets/Adds mouse action definitions.
 
-=item $svg->attrib $name, $value
+$svg->attrib $name, $value
 
-=item $svg->attrib $name, \@value
+$svg->attrib $name, \@value
 
-=item $svg->attrib $name, \%value
+$svg->attrib $name, \%value
 
 Sets/Replaces attributes for a tag.
 
@@ -1029,7 +1292,7 @@ sub attrib ($$$) {
 
 =head2 cdata
 
-=item $svg->cdata($text)
+$svg->cdata($text)
 
 Sets cdata to $text. SVG.pm allows you to set cdata for any tag. If the tag is
 meant to be an empty tag, SVG.pm will not complain, but the rendering agent will
@@ -1054,7 +1317,7 @@ B<Result:>
 
 SEE ALSO:
 
-  C<desc>, C<title>, C<text>, C<script>.
+  L<"desc">, L<"title">, L<"text">, L<"script">.
 
 =cut
 
@@ -1068,9 +1331,9 @@ sub cdata ($@) {
 
 =head2 filter
 
-=item $tag = $svg->filter(%attributes)
+$tag = $svg->filter(%attributes)
 
-Generate a filter. Filter elements contain L<fe> filter sub-elements.
+Generate a filter. Filter elements contain L<"fe"> filter sub-elements.
 
 B<Example:>
 
@@ -1087,7 +1350,7 @@ B<Example:>
 
 SEE ALSO:
 
-    C<fe>.
+L<"fe">.
 
 =cut
 
@@ -1100,9 +1363,9 @@ sub filter ($;@) {
 
 =head2 fe
 
-=item $tag = $svg->fe(-type=>'type', %attributes)
+$tag = $svg->fe(-type=>'type', %attributes)
 
-Generate a filter sub-element. Must be a child of a C<filter> element.
+Generate a filter sub-element. Must be a child of a L<"filter"> element.
 
 B<Example:>
 
@@ -1119,7 +1382,7 @@ B<Example:>
 
 Note that the following filter elements are currently supported:
 
-=over
+=over 4
 
 =item * feBlend 
 
@@ -1173,7 +1436,7 @@ Note that the following filter elements are currently supported:
 
 SEE ALSO:
 
-   C<filter>.
+L<"filter">.
 
 =cut
 
@@ -1219,7 +1482,7 @@ sub fe ($;@) {
 
 =head2 pattern
 
-=item $tag = $svg->pattern(%attributes)
+$tag = $svg->pattern(%attributes)
 
 Define a pattern for later reference by url.
 
@@ -1244,7 +1507,7 @@ sub pattern ($;@) {
 
 =head2 set
 
-=item $tag = $svg->set(%attributes)
+$tag = $svg->set(%attributes)
 
 Set a definition for an SVG object in one section, to be referenced in other
 sections as needed.
@@ -1270,9 +1533,9 @@ sub set ($;@) {
 
 =head2 stop
 
-=item $tag = $svg->stop(%attributes)
+$tag = $svg->stop(%attributes)
 
-Define a stop boundary for C<gradients>
+Define a stop boundary for L<"gradient">
 
 B<Example:>
 
@@ -1293,7 +1556,7 @@ sub stop ($;@) {
 
 =pod
 
-=item $tag = $svg->gradient(%attributes)
+$tag = $svg->gradient(%attributes)
 
 Define a color gradient. Can be of type B<linear> or B<radial>
 
@@ -1303,8 +1566,6 @@ B<Example:>
         -type => "linear",
         id    => "gradient_1"
     );
-
-=back
 
 =cut
 
@@ -1322,11 +1583,11 @@ sub gradient ($;@) {
 
 =pod
 
-=head1 TO DO
+=head1 GENERIC ELEMENT METHODS
 
-The following elements have not yet been implemented as of this release:
+The following elements are generically supported by SVG:
 
-=over
+=over 4
 
 =item * altGlyph
 
@@ -1368,72 +1629,54 @@ The following elements have not yet been implemented as of this release:
 
 =item * mpath
 
-=item * pattern
-
 =item * switch
 
 =item * symbol
 
-=item * textPath
-
 =item * tref
-
-=item * tspan
 
 =item * view
 
 =item * vkern
 
-Although these elements do not have an explicit constructor, they can be
-constructed using the generic element constructor C<tag>.
+=back
+
+See e.g. L<"pattern"> for an example of the use of these methods.
 
 =cut
 
 #-------------------------------------------------------------------------------
+# Internal methods
 
-sub AUTOLOAD {
-    my($class,$sub)=($AUTOLOAD=~/(.*)::([^:]+)$/);
-    my $self=shift;
+sub error ($$$) {
+    my ($self,$command,$error)=@_;
 
-    ##	print STDERR qq(Undefined call to class='$class' sub='$sub' vars=').join(',',@_).qq('\n);
-    if($sub eq 'something') {
-    } elsif($sub eq 'DESTROY') {
-        $self->release;
-    } else {
-        $self->{$sub}=$_[0];
+    if ($self->{-raiseerror}) {
+        die "$command: $error\n";
+    } elsif ($self->{-printerror}) {
+        print STDERR "$command: $error\n";
     }
 
-    return $self;
+    $self->{errors}{$command}=$error;
+}
+
+# This AUTOLOAD method is activated when '-auto' is passed to SVG.pm
+sub autoload {
+    my $self=shift;
+    my ($package,$sub)=($AUTOLOAD=~/(.*)::([^:]+)$/);
+
+    if ($sub eq 'DESTROY') {
+        return $self->release();
+    } else {
+    	# the import routine may call us with a tag name involving '-'s
+    	my $tag=$sub; $sub=~tr/-/_/;
+        # N.B.: The \ on \@_ makes sure that the incoming arguments are
+        # used and not the ones passed when the subroutine was created.
+        eval "sub $package\:\:$sub (\$;\@) { return shift->tag('$tag',\@_) }";
+        return $self->$sub(@_) if $self;
+    }
 }
 
 #-------------------------------------------------------------------------------
 
 1;
-
-
-
-__END__
-
-<<<
-* Is it necessary to specify an id? Required if needed for reference
-  (e.g. use tag) 
-  -Not necessary. id is not a required element. 
-* Can a style be specified for anything? Some examples have one, some don't
-  -Almost anything.
-* How about letting get_path accept a hash of coordinates, too?
-  -good idea.
-* Can I add more than one object to an anchor, or only one?
-  -more than one. There is no limit to how many as the anchor is a non-empty tag.
-* How do I repeat a drawn element? Do I clone it? Clone method?
-  -you invoke a new draw element. each time it's an individual element
-* I don't like 'xmlify' as a method name. I would prefer 'render' or 'toxml'
-  -i agree. was thinking of using render.
-* We need an SVG::Parser class, don't we? (turn SVG documents into SVG objects)
-  -i'll be working on that yet.
-* SVG::Compress ( subclass, uses Perl GZ module, provides $svg->gzxmlify )
-  -am looking for that.
-* I feel that the aspect of stand-alone vs in-line is a rendering one, not an
-  aspect of the SVG elements themselves.
-  -well, that's the way it's implemented, isn't it?
-* What's up with that AUTOLOAD method?
-<<<

@@ -1,5 +1,16 @@
 Revision history for Perl extension SVG.
 
+1.12 Thu Oct 18 00:25
+        - Repaired Animate command
+	- Added import functionality
+	- Improved AUTOLOAD functionality
+	- Improved POD
+	- Tested significantly
+	- Modified constructor to accept XML-definition parameters
+	  in preparation for supporting SVG::Parser
+
+0.60-1.0 Internal releases 
+        - Not released to public.
 
 0.50 Sat Oct 13 12:00
 	- Maintenance release.

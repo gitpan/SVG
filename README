@@ -21,7 +21,7 @@ DOCUMENTATION
 INSTALLATION
     *NIX AND WIN32 SYSTEMS WITH MAKE OR EQUIVALENT
     WIN32 SYSTEMS WITHOUT MAKE OR EQUIVALENT
-
+EXAMPLES
 KNOWN BUGS
 
 --------
@@ -34,42 +34,7 @@ KNOWN BUGS
 OVERVIEW
 
 SVG.pm makes it possible to generate fully-functional SVG images in perl.
-The following are functionality is supported:
-
-drawing of:
--circle
--ellipse
--rectangle
--polyline
--polygon
--path
--mpath
--text
--line
--image
--filter
--fe* (all of the filter sub-elements)
-
-
-
-generation of:
--filter
--svg object and embedded svg object
--SMIL-compliant animation
--script (javascript & other supported scripts)
--gradients
--style definitions
--DOM-compliant mouse events
--drawing description
--groups
--anchors
--use
--desc
--title
--set
--defs
--inline SVG or XML content
-------------------------
+100% of the SVG tags are supported.
 
 DOCUMENTATION
 -------------
@@ -78,7 +43,7 @@ The following documentation is available:
 
 POD in HTML format
 
-Version 0.50 POD
+Version 1.10 POD 17 October, 2001
 http://roasp.com/SVG.html
 
 http://roasp.com/tutorial/
@@ -134,6 +99,24 @@ BEGIN {
 	push @INC 'path/to/svg.pm/file'; #where the SVG.pm file lives
 	push @INC 'path/to/svg.pm/file/SVG'; # where the Utils.pm file lives
 }
+
+------------------------
+
+EXAMPLES
+
+The following files are supplied as example scripts:
+examples/svgtest2.pl
+examples/SVG_02_sample.pl
+examples/image_sample.pl
+examples/inline_sample.pl
+examples/yaph5.cgi
+examples/starpath.cgi
+examples/svg.pl
+examples/sun_text_sample.pl
+examples/svg.pl
+examples/inlinesvg.pl
+
+These files are installed where the SVG directory lives in the perl installation.
 
 
 ------------------------
