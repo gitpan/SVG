@@ -1,6 +1,12 @@
+=pod
+
 =head1 NAME
 
 SVG - perl extention for  generating SVG (scalable-vector-graphics)
+
+=cut
+
+=pod
 
 =head1 SYNOPSIS
 
@@ -47,6 +53,10 @@ SVG - perl extention for  generating SVG (scalable-vector-graphics)
   print $p->header('image/svg-xml');
   print $svg->xmlify;
 
+=cut
+
+=pod
+
 =head1 DESCRIPTION
 
 SVG is a 100% perl module which generates a nested data structure which contains the DOM representation of an SVG image. Using SV, You can generate SVG objects, embed other SVG instances within it, access the DOM object, create and access javascript, and generate SMIL animation content. 
@@ -69,7 +79,7 @@ http://roasp.com/
 =cut
 
 package SVG;
-$VERSION = "0.25";
+$VERSION = "0.26";
 use strict;
 use vars qw( @ISA $AUTOLOAD );
 @ISA = qw( SVG::Element );
@@ -108,6 +118,7 @@ sub new {
 Returns xml representation of svg document.
 
 B<XML Declaration>
+
  Name       Default Value
  version         '1.0'
  encoding        'UTF-8'
@@ -139,9 +150,6 @@ use strict;
 use vars qw( @ISA $AUTOLOAD );
 @ISA = qw( SVG::Utils );
 use SVG::Utils;
-
-
-
 
 
 sub xmlify {
@@ -182,7 +190,7 @@ sub addchilds {
 	return($self);
 }
 
-=cut
+=pod
 
 =item $tag = $svg->tag $name, %properties
 
@@ -202,6 +210,8 @@ sub tag {
 	$self->addchilds($tag);
 	return($tag);
 }
+
+=pod
 
 =item $tag = $svg->anchor %properties
 
@@ -241,6 +251,10 @@ sub svg {
 	my $svg=$self->tag('svg',%attrs);
 	return($svg);
 }
+
+
+
+=pod
 
 =item $tag = $svg->circle %properties
 
@@ -314,7 +328,7 @@ sub rectangle {
 
 =pod
 
-=item $tag = $svg->image %properties
+=item  $tag = $svg->image %properties
 
 draw an image at (x,y) with width 'width' and height 'height' linked to image resource '-href'.
 
@@ -328,17 +342,16 @@ B<Example:>
                          	id=>'image_1',);
 
 	$tag = $svg->image(	x=>100,
-                         	y=>100,
-                         	width=>300,
-                         	height=>200,
-                          '-href'=>"image.svg"
-                         	id=>'image_1',);
+                      y=>100,
+                      width=>300,
+                      height=>200,
+                      '-href'=>"image.svg"
+                      id=>'image_1',);
 
 
 B<Outputs:>
 
  <image xlink:href="image.png" x="100" y="100" width="300" height="200"/>
-
 
 =cut
 
@@ -358,20 +371,23 @@ Retrieve the content from an entity within an SVG document and apply it at (x,y)
 B<Example:>
 
 	$tag = $svg->use(	x=>100,
-                         	y=>100,
-                         	width=>300,
-                         	height=>200,
-                          '-href'=>"image.svg#image_1"
-                         	id=>'image_1',);
+                    y=>100,
+                    width=>300,
+                    height=>200,
+                    '-href'=>"image.svg#image_1"
+                    id=>'image_1',);
 
 
 B<Outputs:>
-
 
    <use xlink:href="image.svg#image_1"  x="100" y="100" width="300" height="200"/>
 
 
 According to the SVG specification, the 'use' element in SVG can point to a single element within an external SVG file.
+
+SEE ALSO:
+
+L<anchor>.
 
 =cut
 
@@ -381,7 +397,6 @@ sub use {
 	$u->{'xlink:href'}=$attrs{-href} if(defined $attrs{-href});
 	return($u);
 }
-
 
 =pod
 
@@ -404,6 +419,15 @@ B<Example:>
   $c = $a->polygon (%$points,
                     id=>'pgon1',
                     style=>\%polygon_style);
+
+SEE ALSO:
+
+L<polyline>.
+
+L<path>.
+
+L<get_path>.
+
 =cut
 
 sub polygon {
@@ -432,7 +456,7 @@ B<Example:>
                         -type=>'polyline',
                         -closed=>'true'); #specify that the polyline is closed.
 
-  $c = $a->polyline (%$points,
+  my $tag = $a->polyline (%$points,
                     id=>'pline_1',
                     style=>{'fill-opacity'=>0,
                             'stroke-color'=>'rgb(250,123,23)'}
@@ -465,6 +489,10 @@ B<Example:>
                         x2=>10,
                         y2=>10,);
 
+SEE ALSO:
+
+L<polyline>.
+
 =cut
 
 
@@ -485,6 +513,12 @@ B<Example:>
   my $text = $svg->text( id=>'l1',x=>10
                         y=>10,) -> cdata('hello, world');
 
+SEE ALSO:
+
+L<desc>.
+
+L<cdata>.
+
 =cut
 
 
@@ -496,13 +530,32 @@ sub text {
 
 =pod
 
-=item $desc = $svg->desc %properties
+=item $tag = $svg->title %properties
 
 generate the description of the image.
 
 B<Example:>
 
-  my $desc = $svg->desc( id=>'root-desc')->cdata('hello this is a description');
+  my $tag = $svg->title( id=>'root-title')->cdata('hello this is the title');
+
+=cut
+
+
+sub title {
+	my ($self,%attrs)=@_;
+	my $title=$self->tag('title',%attrs);
+	return($title);
+}
+
+=pod
+
+=item $tag = $svg->desc %properties
+
+generate the description of the image.
+
+B<Example:>
+
+  my $tag = $svg->desc( id=>'root-desc')->cdata('hello this is a description');
 
 =cut
 
@@ -516,11 +569,22 @@ sub desc {
 
 =pod
 
-=item $script = $svg->script %properties
+=item $tag = $svg->script %properties
 
 B<Example:>
 
-  my $text = $svg->script(type=>"text/ecmascript");
+  my $tag = $svg->script(type=>"text/ecmascript");
+
+  # populate the script tag with cdata
+  # be careful to manage the javascript line ends.
+  # qq|text| or qq§text§ where text is the script 
+  # works well for this.
+
+  $tag->cdata(qq|function d(){//simple display function
+        for(cnt = 0; cnt < d.length; cnt++)
+          document.write(d[cnt]);//end for loop
+        document.write("<BR>");//write a line break
+      }//end function|);
 
 =cut
 
@@ -538,7 +602,7 @@ sub script {
 
 B<Example:>
 
-  # a 10-pointsaw-tooth pattern
+  # a 10-pointsaw-tooth pattern drawn with a path definition
 
   my $xv = [0,1,2,3,4,5,6,7,8,9];
 
@@ -576,16 +640,15 @@ sub path {
 
 A method which returns the text string of points correctly formatted to be incorporated into the multi-point SVG drawing object definitions (path, polyline, polygon)
 
-input:
+ input:
 
-output: a hash reference consisting of the following key-value pair:
-points = the appropriate points-definition string
-type = path|polygon|polyline
--relative = 1 (points define relative position rather than absolute position)
--closed = 1 (close the curve - path and polygon only)
+ output: a hash reference consisting of the following key-value pair:
+ points = the appropriate points-definition string
+ type = path|polygon|polyline
+ -relative = 1 (points define relative position rather than absolute position)
+ -closed = 1 (close the curve - path and polygon only)
 
 B<Example:>
-
 
  #generate an open path definition for a path.
  my ($points,$p);
@@ -654,7 +717,7 @@ sub get_path {
 Generate an SMIL animation tag. This is allowed within any of the nonempty tags.
 Refer to the W3C for detailed information on the subtleties of the animate SMIL commands.
 
-inputs: -method = Transform | Motion | Color
+ inputs: -method = Transform | Motion | Color
 
 =cut
 
@@ -712,6 +775,7 @@ sub animate {
 }
 
 
+=pod
 
 =item $tag = $svg->group %properties
 
@@ -737,6 +801,7 @@ sub group {
 	return($an);
 }
 
+=pod
 
 =item $tag = $svg->defs %properties
 
@@ -759,7 +824,9 @@ sub group {
 
 =item $svg->style %styledef
 
-Sets/Adds style-definition.
+Sets/Adds style-definition for the following objects being created.
+
+Style definitions apply to an object and all its children for all properties for which the value of the property is not redefined by the child.
 
 =cut
 
@@ -771,6 +838,8 @@ sub style {
 	}
 	return($self);
 }
+
+=pod
 
 =item $svg->mouseaction %styledef
 
@@ -787,12 +856,11 @@ sub mouseaction {
 	return($self);
 }
 
+=pod
+
 =item $svg->mouseaction %styledef
 
 Sets/Adds mouse action definitions.
-
-=cut
-
 
 =item $svg->attrib $name, $val
 
@@ -800,7 +868,8 @@ Sets/Adds mouse action definitions.
 
 =item $svg->attrib $name, \%val
 
-Sets attribute to val.
+Sets attribute to val for a tag.
+}
 
 =cut
 
@@ -809,6 +878,8 @@ sub attrib {
 	$self->{$name}=$val;
 	return($self);
 }
+
+=pod
 
 =item $svg->cdata $text
 
@@ -825,6 +896,14 @@ B<Example:>
 B<Result:>
 
 	E<lt>text style="font: Arial; font-size: 20" E<gt>SVG.pm is a perl module on CPAN!E<lt>/text E<gt>
+
+  SEE ALSO:
+
+  L<desc>.
+
+  L<text>.
+
+  L<script>.
 
 =cut
 
@@ -852,7 +931,7 @@ sub AUTOLOAD {
 
 
 
-
+=pod
 
 =item $tag = $svg->fe %properties
 
@@ -881,7 +960,7 @@ sub fe {
 
 1;
 
-__END__
+
 
 =pod 
 
@@ -944,7 +1023,6 @@ not-yet implemented elements:
               switch 
               symbol 
               textPath 
-              title 
               tref 
               tspan 
               view 

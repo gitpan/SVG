@@ -21,6 +21,7 @@ BEGIN {
 
   $svg->desc( id=>'root-desc')->cdata('hello this is a description');
 
+  $svg->title( id=>'root-title')->cdata('Dynamic SVG - Image usage within SVG using Perl');
 
   #use another SVG component as an image inside our image
 
