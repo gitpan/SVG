@@ -41,7 +41,6 @@ The following URLs offer additional resources for users of SVG.pm:
 * SVG.pm on-line manual http://roasp.com/man/SVG.html
 * Perl SVG tutorials http://roasp.com/tutorial/
 * Perl SVG Zone homepage http://roasp.com/
-* example scripts using SVG.pm ftp://roasp.com/pub/SVG-2.1/examples/
 * gallery of the use of SVG.pm on the web http://roasp.com/gallery/svg/index.html 
 
 INSTALLATION INSTRUCTIONS
@@ -66,9 +65,10 @@ INSTALLATION INSTRUCTIONS
 
 	3/ The hard way (requires make or nmake, tar, gunzip, and gcc):
 	---------------------------------------------------------------
-	This method was tested in DOS, Windows, AS400, Linux, Unix, BSD, Mac
+	This method was tested in DOS, Windows, AS400, Linux, Unix, BSD, Mac.
 	Hard-headed users can directly get the distribution from 
-	ftp:/roasp.com/pub/SVG-2.1/
+	http://www.roasp.com/PPM/SVG/SVG-2.26.tar.gz or 
+	http://www.roasp.com/PPM/SVG/ .
 	First download the source.
 	Then, in a shell:
 	/home/somewhere% gunzip SVG-2.1.tar.gz
@@ -118,4 +118,4 @@ SVG::Element
 
 CHANGE LOG
 ----------
-A poor version of the change history is available in the CHANGES file.
+A poor version of the change history is available in the Changes file.

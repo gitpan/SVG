@@ -1,5 +1,16 @@
 Revision history for Perl extension SVG.
 
+2.26 Sunday 4 August 2002 (PW)
+    - Moved all -specialarguments to %default_attrs so they can be set at import time
+	- Added strict checking for duplicate IDs in tag() and attribute(). All IDs must be unique
+	- Peter Wainwright created a test suite of 17 initial regession test scripts (2 are disabled)
+	- Improved 
+
+2.25 Sunday 13 July 2002 (PW)
+	- Extended DOM module to cover many more DOM functions
+	- Rewrote attrib() to also set and delete attributes
+	- Added 'attribute' and 'attr' aliases for attrib()
+
 2.22 Monday 24 June 2002
 	- Minor bug fix - method script was changed to uppercase accidentally. 
 	  Repaired this error.

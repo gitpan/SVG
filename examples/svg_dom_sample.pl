@@ -1,123 +1,147 @@
-#!/usr/bin/perl
-
-print "Hello, World...\n";
-
-use SVG;
-
-my $s = SVG->new(width=>100,height=>50);
-my $g1 = $s->group();
-my $g2 = $s->group();
-$g1->circle(width=>1,height=>1,id=>'test_id');
-$g1->rect(id=>'id_2');
-$g1->rect(id=>'id_3');
-$g1->rect(id=>'id_4',x=>15,y=>150);
-$g1->anchor(-xref=>'http://www.roasp.com/tutorial/',id=>'anchor_1')
-	->text(id=>'text_1',x=>15,y=>150,stroke=>'red')->cdata('Hello, World');
-$g2->ellipse(id=>'id_5');
-$g2->ellipse(id=>'id_6');
-$g2->ellipse(id=>'id_7');
-$s->ellipse(id=>'id_8');
-$s->ellipse(id=>'id_9');
-
-print "I am an SVG document.\n";
-print "Here is my XML markup:\n----\n";
-print $s->xmlify();
-
-#
-# Test of getElementName
-#
-print "\n\n\nI am actually an element of type ".$s->getElementName()."\n\n\n";
-print "-----------------\n","Let's take a look at my attributes\n";
-
-#
-# Test of getAttributes
-#
-show_attributes($s);
-
-print "Let's take a look at the getElement support...";
-#
-# Test of getElements
-#
-my @e_names = qw/rect ellipse a g svg/;
-
-foreach my $e_name (@e_names) {
-
-	print "\n\n\nThere are ".scalar @{$s->getElements($e_name)}." '$e_name' elements\n";
-	print "\nThis is what they render as using xmlify:\n";
-
-	foreach my $e (@{$s->getElements($e_name)}) {
-		my $e_id = $e->getElementID() || '0';
-		print "$e -->".$e->xmlify()."\n has id ".$e_id."\nwhich returns handle  -->\n".$s->getElementByID($e_id)."\n
-		which renders as: -->\n";
-		if ($s->getElementByID($e_id)) {
-			print $s->getElementByID($e_id)->xmlify();
-		} else {
-			print "\n\nOops, I'm afraid that ".$s->getElementByID($e_id)." does not exist with element id '$e_id'\n\n";
-			print "That is because this element has no id. You will notice that \$s->getElementByID(\$e_id) is zero because there is no\n";
-		}
-		print "\n\n------------------\n";
-	}
-
-}
-
-print "-----------------\n","Let's get back to me and take a look at my attributes\n";
-
-print "\n-----------------\n","\n\nDo I have any child elements?\n";
-
-my $kids = $s->getChildren();
-
-print "Look at that, I have  ",scalar (@$kids)," child (\$n should be 1)\n";
-#foreach my $v (@$kids) {print $kids->[$v]->xmlify()."\n\n";}
-
-foreach my $v (@$kids) {print "Element name = ",$v->getElementName(),"\n\n";show_attributes($v);}
-
-#
-# Test of getChildren
-#
-my $childs = $g1->getChildren();
-my $n = scalar (@$childs) -1 ;
-my @a = (0..$n);
-foreach my $v (@a) {
-	print $childs->[$v]->xmlify();
-	#
-	# Test of getParent
-	#
-	my $parent = $childs->[$v]->getParent();
-	print "its parent contains\n".$parent->xmlify();
-
-	#
-	# Test of getElementName on the parent
-	#
-	my $name = $parent->getElementName;
-	print "the parent is an <".$name."></$name> element and";
-	#
-	# Test of getElementName on itself
-	#
-	my $name = $childs->[$v]->getElementName;
-	print "the child element is an <".$name."></$name> element\n\n";
-
-	#
-	# Test of getAttributes
-	#
-	my $ref = $childs->[$v]->getAttributes();
-	my @attrs = keys %$ref;
-	print "The child has " . scalar @attrs . " attributes:\n";
-	foreach my $i (@attrs) {
-		print "attribute = $i value = $ref->{$i}\n";
-	}
-
-	print "\n---------------\n";
-}
-
-#
-# print out the attributes list
-#
-sub show_attributes ($) {
-	$node = shift;
-	my $ref = $node->getAttributes();
-	my @attrs = keys %$ref;
-	print "I have " . scalar @keys . " attributes:\n";
-	foreach my $i (@attrs) {
-		print "attribute='$i' value='$ref->{$i}'\n";
-	}
-}
+#!/usr/bin/perl -w
+use strict;
+use SVG(-indent=>"  ");
+
+# subroutine to print out attributes
+#
+sub show_attributes ($) {
+    my $node = shift;
+    my $ref = $node->getAttributes();
+    my @attrs = keys %$ref;
+    print "This node has ".(scalar @attrs)." attributes:\n";
+    foreach my $i (@attrs) {
+        print "  $i=\"$ref->{$i}\"\n";
+    }
+}
+
+my $s = SVG->new(width=>100,height=>50);
+my $g1 = $s->group(id=>'group_1');
+$g1->circle(width=>1,height=>1,id=>'test_id');
+$g1->rect(id=>'id_2');
+$g1->rect(id=>'id_3');
+$g1->rect(id=>'id_4',x=>15,y=>150);
+$g1->anchor(-xref=>'http://www.roasp.com/tutorial/',id=>'anchor_1')
+    ->text(id=>'text_1',x=>15,y=>150,stroke=>'red')->cdata('Hello, World');
+
+my $g2 = $s->group(id=>'group_2');
+$g2->ellipse(id=>'id_5');
+$g2->ellipse(id=>'id_6');
+$g2->ellipse(id=>'id_7');
+
+$s->ellipse(id=>'id_8');
+$s->ellipse(id=>'id_9');
+
+print "SVG::DOM Demonstration\n";
+print "\n","="x40,"\n\n";
+print "The example document looks like this:\n\n";
+print $s->xmlify();
+print "\n\n","="x40,"\n\n";
+
+#
+# Test of getElementName
+#
+print "The document element is of type \"".$s->getElementName()."\"\n";
+
+#
+# Test of getAttributes
+#
+show_attributes($s);
+
+print "\n","-"x40,"\n\n";
+print "Document contents by element type:\n";
+#
+# Test of getElements
+#
+my @e_names = qw/rect ellipse a g svg/;
+
+foreach my $e_name (@e_names) {
+
+    print "  There are ".scalar @{$s->getElements($e_name)}." '$e_name' elements\n";
+
+    foreach my $e (@{$s->getElements($e_name)}) {
+        if (my $e_id = $e->getElementID) {
+            print "    $e has id \"$e_id\"\n";
+            die "The id should always map back to the element"
+                unless $s->getElementByID($e_id)==$e;
+        } else {
+            print "    $e has no id\n";
+        }
+    }
+
+}
+
+print "\n","-"x40,"\n\n";
+
+my @kids = $s->getChildren();
+print "The document element has ",scalar (@kids)," children (should be 1)\n";
+
+foreach my $kid (@kids) {
+    print "Found a <",$kid->getElementName(),"> child element:\n";
+    show_attributes($kid);
+}
+
+# Test of getElementByID
+#
+my $group=$s->getElementByID("group_1");
+print "Group 1 relocated by id group_1\n" if $group==$g1;
+
+print "\n","="x40,"\n";
+
+# Test of getChildren
+#
+my $children = $group->getChildren();
+foreach my $v (0..$#{$children}) {
+    # Test of getElementName on this child
+    #
+    my $name = $children->[$v]->getElementName;
+    print "\nChild element $v is is a <$name> element.\n";
+
+    print "It looks like this:\n\n"; 
+    print $children->[$v]->xmlify();
+    print "\n";
+
+    # Test of getParent 
+    #
+    my $parent = $children->[$v]->getParent;
+    my $parent_name = $parent->getElementName;
+    print "Its parent is a <$parent_name> element\n";
+
+    # Test of getChildIndex
+    #
+    print "It is index number ",$children->[$v]->getChildIndex()," in the parent.\n";
+
+    # Test of getAttributes
+    #
+    my $ref = $children->[$v]->getAttributes();
+    my @attrs = keys %$ref;
+    print "It has ".(scalar @attrs)." attribute".($#attrs?"s":"").":\n";
+    foreach my $attr (@attrs) {
+        print "  $attr=\"$ref->{$attr}\"\n";
+    }
+
+    # Test of getPreviousSibling
+    #
+    if (my $prev = $children->[$v]->getPreviousSibling) {
+        print "The element before it is a <".$prev->getElementName.">\n";
+    } else {
+        print "It is the first child element\n";
+    }
+
+    # Test of getNextSibling
+    #
+    if (my $next = $children->[$v]->getNextSibling) {
+        print "The element after it is a <".$next->getElementName.">\n";
+    } else {
+        print "It is the last child element\n";
+    }
+
+    print "\n","-"x40,"\n";
+}
+
+# Test of getCDATA
+#
+my $text_element=$s->getElementByID("text_1");
+print "\nAnd finally, element 'text_1' says ",$text_element->getCDATA(),"!\n";
+
+print "\n","="x40,"\n";
+

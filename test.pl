@@ -1,36 +1,29 @@
-BEGIN { $| = 1; print "1..3\n"; }
+#!/usr/bin/perl -w
 
-#################################
+use strict;
+use vars qw($loaded);
 
-{
-   my $ntest=1;
+#-------------------------------------------------------------------------------
 
-   sub ok {
-       return "ok ".$ntest++."\n";
-   }
+$| = 1;
 
-   sub not_ok {
-       return "not ok ".$ntest++."\n";
-   }
-}
-
-### Tests #######################
-
-END {print "not ok 1\n" unless $loaded;}
-use SVG;
-$loaded = 1;
-print ok;
+#-------------------------------------------------------------------------------
 
 {
-    my $svg=new SVG;
-	print $svg?ok:not_ok;
+    my $ntest=1;
+    sub ok      { return "ok ".$ntest++."\n"; }
+    sub not_ok  { return "not ok ".$ntest++."\n"; }
+    sub skipped { return "skipped ".$ntest++."\n"; }
 }
 
-{
-	my $svg=new SVG;
-	my $tag=$svg->circle();
-	print $tag?ok:not_ok;
-}
+#-------------------------------------------------------------------------------
 
-#################################
+my @tests=<test/*.pl>;
+
+print "1..",scalar(@tests),"\n";
+
+foreach my $test (@tests) {
+  my $result=system("perl","-w",$test) >> 8;
+  print $result?($result==2?skipped:ok):not_ok;
+}
 
