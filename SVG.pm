@@ -96,13 +96,19 @@ http://roasp.com/
 =cut
 
 package SVG;
-$VERSION = "0.28";
+
+$VERSION = "0.29";
 use strict;
 use vars qw( @ISA $AUTOLOAD );
 @ISA = qw( SVG::Element );
 use SVG::Utils;
 
 =pod
+
+=head1 Methods
+
+SVG uses explicit tag generation methods and generic constructors.
+Explicit generators are named using the name of the tag, or a similar name. When using explicit generator methods, the attributes for the tag are passed by name, and data for the method such as type of a specific tag (see fe tag) are passed preceeded with a dash.
 
 =head2 SVG
 
@@ -418,7 +424,7 @@ L<anchor>.
 
 sub use {
 	my ($self,%attrs)=@_;
-	my $u=$self->tag('image',%attrs);
+	my $u=$self->tag('use',%attrs);
 	$u->{'xlink:href'}=$attrs{-href} if(defined $attrs{-href});
 	return($u);
 }
@@ -598,7 +604,7 @@ sub desc {
 
 B<Example:>
 
-  my $tag = $svg->script(type=>"text/ecmascript");
+  my $tag = $svg->script(-type=>"text/ecmascript");
 
   # populate the script tag with cdata
   # be careful to manage the javascript line ends.
@@ -669,7 +675,7 @@ A method which returns the text string of points correctly formatted to be incor
 
  output: a hash reference consisting of the following key-value pair:
  points = the appropriate points-definition string
- type = path|polygon|polyline
+ -type = path|polygon|polyline
  -relative = 1 (points define relative position rather than absolute position)
  -closed = 1 (close the curve - path and polygon only)
 
@@ -677,7 +683,7 @@ B<Example:>
 
  #generate an open path definition for a path.
  my ($points,$p);
- $points = $svg->get_path(x=>\@x,y=>\@y,-relative=>1,type=>'path');
+ $points = $svg->get_path(x=>\@x,y=>\@y,-relative=>1,-type=>'path');
  
  #add the path to the SVG document 
  my $p = $svg->path( %$path,
@@ -1166,11 +1172,11 @@ B<Example:>
 
 sub gradient {
 	my ($self,%attrs)=@_;
-  my $type =  $attrs{-type} || 'linear';
+  my $type =  $attrs{'-type'} || 'linear';
   unless ($type =~ /^(linear|radial)$/) {
     $type = 'linear';
   }  
-  delete $attrs{-type};
+  delete $attrs{'-type'};
   my $grad=$self->tag($type.'Gradient',%attrs);
 	return($grad);
 }
