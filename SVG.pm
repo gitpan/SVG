@@ -8,6 +8,15 @@ SVG - perl extention for  generating SVG (scalable-vector-graphics)
 
 =pod
 
+=head1 METHODS
+
+L<attrib> L<animate> L<cdata> L<circle>  L<defs> L<desc>  L<ellipse> L<fe> L<get_path> L<group> L<image> L<line> L<mouseaction>  L<new>  L<path> L<polygon> L<rectangle> L<script> L<style> L<SVG> L<text> L<title>  L<use> L<xmlify> 
+
+
+=cut
+
+=pod
+
 =head1 SYNOPSIS
 
   use SVG;
@@ -79,7 +88,7 @@ http://roasp.com/
 =cut
 
 package SVG;
-$VERSION = "0.26";
+$VERSION = "0.27";
 use strict;
 use vars qw( @ISA $AUTOLOAD );
 @ISA = qw( SVG::Element );
@@ -813,10 +822,10 @@ B<Example:>
 
 =cut
 
-sub group {
+sub defs {
 	my ($self,%attrs)=@_;
-	my $an=$self->tag('g',%attrs);
-	return($an);
+	my $defs=$self->tag('defs',%attrs);
+	return($defs);
 }
 
 
