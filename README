@@ -1,9 +1,9 @@
-SVG.pm version 0.29
-09.10.01
+SVG.pm version 0.30
+10.10.01
 
-SVG.pm is a perl extention to generate SVG (scaleable vector graphics).
+SVG.pm is a perl extention to generate stand-alone or inline SVG (scaleable vector graphics) images using the W3C SVG xml recommendation.
 
-Refer to the pod for full documentation and an example script. 
+Refer to the pod for full documentation and an example script, or to http://roasp.com/SVG.html . 
 
 (c) 2001 Ronan Oger, RO IT Systems, GmbH ronan@roasp.com info@roitsystems.ch
 
@@ -68,7 +68,7 @@ generation of:
 -title
 -set
 -defs
-
+-inline SVG or XML content
 ------------------------
 
 DOCUMENTATION
@@ -154,14 +154,9 @@ BEGIN {
 KNOWN BUGS
 
 07.10.01
-Does not support in-line generation of SVG for XML. It's mostly there but
-there are still holes in the program.
-
-07.10.01
 When generating a path element by directly inputing the string data
 the path definition (d=>'M 1 1 L 2 2...'), rather than the hash output of the
 get_path method, the string must contain no new-line characters.
-
 
 09.10.01 Does not support the path element d definition 'A' or 'a'
 SUPPORT

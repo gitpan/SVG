@@ -20,6 +20,8 @@ require Exporter;
 	parentdecl
 );
 
+$VERSION = 0.3;
+
 sub new {
 	my ($class,$name,%attrs)=@_;
 	my $self={};
@@ -47,7 +49,8 @@ sub release {
 }
 
 sub xmlescp {
-	my $s=shift @_ || '';
+	my $s=shift @_ ;
+  $s = '0' unless defined $s;
 	$s=join(', ',@{$s}) if(ref($s) eq 'ARRAY');
 	$s=~s/&/&amp;/cg;
 	$s=~s/>/&gt;/cg;
@@ -134,9 +137,9 @@ sub dtddecl {
   my $version     = $attrs{version} || '1.0';
   my $encoding    = $attrs{encoding} || 'UTF-8';
   my $standalone  = $attrs{standalone} ||'yes';
-  my $ns          = $attrs{namespace} || 'svg';
-  my $inline      = $attrs{-inline} || 0;
-    
+  my $ns          = $attrs{namespace} || '';
+  my $dtd_ns = $ns || 'svg';
+  
   my $decl=qq§<?xml version="$version" encoding="$encoding" standalone="$standalone"?>§."\n";
 
   my $identifier  = $attrs{identifier} || '-//W3C//DTD SVG 1.0//EN';
@@ -145,7 +148,7 @@ sub dtddecl {
   #'http://www.w3.org/TR/2000/CR-SVG-20001102/DTD/svg-20001102.dtd'; 
   'http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd';
   $decl.=n_processtag('DOCTYPE',
-                $ns,
+                $dtd_ns,
                 'PUBLIC',
                 qq§"$identifier"§,
                 qq§"$dtd"§ );
@@ -160,12 +163,11 @@ sub parentdecl {
   my $standalone  = $attrs{standalone} ||'yes';
   my $ns          = $attrs{namespace} || 'svg';
   my $decl=qq§<?xml version="$version" encoding="$encoding" standalone="$standalone"?>§."\n";
-  my $xmlns       = $attrs{xmlns} || 'svg';
-  my $ns_url      = $attrs{ns_url}    || 'svg';
-  $decl.=p_processtag(xmlns=>$xmlns,"xmlns:$ns"=>$ns_url);
+  my $xmlns       = $attrs{xmlns} || 'http://you.forgot.to.enter.the.xmlns.attribute';
+  my $ns_url      = $attrs{ns_url}    || 'http://you.forgot.to.enter.the.ns_url.attribute';
+  $decl.=p_processtag($ns,xmlns=>$xmlns,"xmlns:$ns"=>$ns_url);
   return($decl,$ns);
 }
-
 
 1;
 

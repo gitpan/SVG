@@ -78,6 +78,24 @@ L<attrib> L<animate> L<cdata> L<circle>  L<defs> L<desc>  L<ellipse> L<fe> L<get
 
 SVG is a 100% perl module which generates a nested data structure which contains the DOM representation of an SVG image. Using SV, You can generate SVG objects, embed other SVG instances within it, access the DOM object, create and access javascript, and generate SMIL animation content. 
 
+=head2 General Steps to generating an SVG document
+
+The SVG generation process is a three step process.
+
+First step is to construct a new SVG object.
+
+Second step is to call constructor methods as needed (such as the circle() or path() metohds.
+
+Third step is to generate the XML text using the xmlify command.
+
+The L<xmlify> command takes optional arguments to instruct the SVG object to generate the XML for the main expected required possibilities:
+
+-stand-alone document requiring its own DTD with or without namespace declarations on thet tags, such as <svg:use />.
+
+-in-line SVG to be embedded within other XML content, without a DTD, but with a namespace definition and
+
+Until the third step is reached, no XML content is generated and all data generated so far is stored in a DOM-like data structure.
+
 =head2 EXPORT
 
 None
@@ -97,7 +115,8 @@ http://roasp.com/
 
 package SVG;
 
-$VERSION = "0.29";
+$VERSION = "0.30";
+
 use strict;
 use vars qw( @ISA $AUTOLOAD );
 @ISA = qw( SVG::Element );
@@ -142,29 +161,32 @@ Returns xml representation of svg document.
 
 B<XML Declaration>
 
- Name       Default Value
- version         '1.0'
- encoding        'UTF-8'
- standalone      'yes'
- namespace       'svg' 
+ B<Name>       			B<Default Value>
+ version         		'1.0'
+ encoding        		'UTF-8'
+ standalone      		'yes'
+ namespace       		'svg'  the namespace for the dtd and for the tags
+ xmlns (only for inline)          "http://example.org" - see <parent > tag below
+ ns_url(only for inline)          'the url of the xml' - see <parent > tag below
+ <parent xmlns="[xmlns]"
+  xmlns:[namespace]="[ns_url]"> 
  -inline         '0'         If '1', then this is an inline document
                              and is intended for use inside an XML document.
 
- identifier      '-//W3C//DTD SVG 1.0//EN';
- dtd             'http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd'  
+ identifier      		'-//W3C//DTD SVG 1.0//EN';
+ dtd (not for inline)           'http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd'  
 
 =cut
 
 sub xmlify {
-	my ($self,%attrs) =shift @_;
+	my ($self,%attrs) = @_;
   my ($xml,$ns);
-  if ($attrs{-inline}) {
-#    print "printing parentdecl;";
+  if ($attrs{'-inline'}) {
     ($xml,$ns)=parentdecl(%attrs);
   } else {
-#    print "printing dtddecl;";
     ($xml,$ns)=dtddecl(%attrs);
   }
+  print "\nns = $ns\n";
 	$xml.=$self->SUPER::xmlify($ns);
   return($xml);
 }
@@ -178,8 +200,9 @@ use SVG::Utils;
 
 
 sub xmlify {
-	my ($self,$ns) = shift @_;
+	my ($self,$ns) = @_;
 	my %attrs;
+  #prep the attributes
 	foreach my $k (keys(%{$self})) {
 		if($k=~/^\-/) { next; }
 		if(ref($self->{$k}) eq 'ARRAY') {
@@ -190,6 +213,7 @@ sub xmlify {
 			$attrs{$k}=$self->{$k};
 		}
 	}
+  #prep the tag
 	my $xml;
 	if(defined $self->{-cdata}) {
 		$xml=$self->{-indent} x $self->{-level} . xmltagopen($self->{-name},$ns,%attrs);
@@ -199,13 +223,14 @@ sub xmlify {
 		$xml=$self->{-indent} x $self->{-level} . xmltagopen_ln($self->{-name},$ns,%attrs);
 		foreach my $k (@{$self->{-childs}}) {
 			if(ref($k)=~/^SVG::Element/) {
-				$xml.=$k->xmlify;
+				$xml.=$k->xmlify($ns);
 			}
 		}
 		$xml.=$self->{-indent} x $self->{-level} . xmltagclose_ln($self->{-name},$ns);
 	} else {
 		$xml=$self->{-indent} x $self->{-level} . xmltag_ln($self->{-name},$ns,%attrs);
 	}
+  #return the finished tag
 	return($xml);
 }
 
@@ -1215,8 +1240,6 @@ not-yet implemented elements:
               missing-glyph 
               mpath 
               pattern 
-              radialGradient
-              linearGradient
               switch 
               symbol 
               textPath 

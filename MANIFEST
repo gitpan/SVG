@@ -2,10 +2,11 @@ Changes
 README
 MANIFEST
 Makefile.PL
+SVG.pm
 SVG/Utils.pm 
+test.pl
 examples/svgtest2.pl
 examples/SVG_02_sample.pl
 examples/image_sample.pl
+examples/inline_sample.pl
 examples/yaph5.cgi
-SVG.pm
-test.pl
