@@ -10,8 +10,10 @@ Ronan Oger, ronan@roasp.com
 
 =head1 SEE ALSO
 
-perl(1),L<SVG>, L<SVG::Element>, L<SVG::DOM>, L<SVG::Manual>, L<SVG::Parser> 
-http://roasp.com/index.shtml?XML.pm
+perl(1),L<SVG>,L<SVG::XML>,L<SVG::Element>,L<SVG::Parser>, L<SVG::Manual>
+http://www.roasp.com/
+http://www.perlsvg.com/
+http://www.roitsystems.com/
 http://www.w3c.org/Graphics/SVG/
 
 =cut

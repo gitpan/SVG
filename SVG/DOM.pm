@@ -2,7 +2,7 @@
 
 =head1 NAME
 
-SVG::DOM - Perform DOM manipulations of the SVG object
+SVG::DOM - Perform DOM (Document object model) manipulations of the SVG object.
 
 =head1 SUMMARY
 
@@ -15,68 +15,88 @@ Ronan Oger, ronan@roasp.com
 =head1 SEE ALSO
 
 perl(1),L<SVG>,L<SVG::XML>,L<SVG::Element>,L<SVG::Parser>, L<SVG::Manual>
-http://roasp.com/
+http://www.roasp.com/
+http://www.perlsvg.com/
+http://www.roitsystems.com/
 http://www.w3c.org/Graphics/SVG/
 
 =cut
 
 package SVG::DOM;
 
-$VERSION = "0.1";
+$VERSION = "0.21";
 
 use strict;
+
 use vars qw($VERSION @ISA @EXPORT );
 
 require Exporter;
+
 @ISA = qw(Exporter);
+
 @EXPORT = qw(
   getChildren
   getFirstChild
   getLastChild
   getParent
   getSiblings
-  getElementbyID
-  getElement
+  getElementByID
+  getElementID
+  getElements
+  getElementName
+  getParentElement
   getType
+  getAttributes
   getAttribute
 );
 
 # Methods
+
 =pod
+
+=head1 Warning: This module is still in development and is subject to change.
 
 =head2 Methods
 
-getFirstChild ($ref) 
+ To pe provided:  $ref = $svg->getElementByID($id) 
+
+Return the reference to the element which has id $id
+
+ $ref = $svg->getFirstChild() 
 
 return the reference of the first defined child of the current node
 
-getLastChild ($ref) 
+ $ref = $svg->getLastChild() 
 
-return the reference of the last defined child of the current node
+return the array of references of the last defined child of the current node
 
-getChildren ($ref)
+ @array_of_Refs =  $svg->getChildren()
 
 return the reference of the children of the current node
 
-getParent ($ref)
+ $ref = $svg->getParent()
 
 return the reference of the parent of the current node
   
-getSiblings ($ref)
+ $ref = $svg->getSiblings()
   
 return the reference to an array composed of references of the siblings of the current node
 
-getElementbyID
+getElementName
   
-getElement ($ref)
+ $val = $svg->getElementName()
 
 return a string containing the element type of a reference to an node
   
-$ref = getAttributes ($ref)
+$ref = $ref->getAttributes()
 
 return a reference to a hash whose keys are the attribute name and the values are the attribute values.
 
-$ref = getCDATA ($ref)
+$ref = $ref->getAttribute('attributeName')
+
+return a string with the value of the attribute. $ref is the reference to the element that contains the attribute 'attributeName'.
+
+ To pe provided: $ref = getCDATA ($ref) 
 
 =cut
 
@@ -101,8 +121,7 @@ sub getLastChild ($) {
 
 sub getChildren ($) {
 	my $self = shift;
-	return [$self->{-childs}];
-
+	return $self->{-childs};
 }
 
 #-----------------
@@ -117,25 +136,47 @@ sub getParent {
 sub getSiblings {
 	my $self = shift;
 	my $par = $self->getParent();
-	$par->getChildren();
-
+	return $par->getChildren();
 }
 
-sub getElement ($) {
-
+sub getElementName ($) {
+	my $self = shift;
+	return $self->{-name};
 }
 
-sub getElementbyID () {
 
+sub getElements ($$) {
+	my $self = shift;
+	my $element = shift;
+	return $self->{-docref}->{-elist}->{$element};
 }
 
-sub getType  () {
-
+sub getElementID ($) {
+	my $self = shift;
+	return $self->{id};
 }
+
+sub getElementByID ($$) {
+	my $self = shift;
+	my $id = shift;
+	return $self->{-docref}->{-idlist}->{$id};
+}
+*getElementbyID=\&getElementByID;
+*getType=\&getElementName;
 
 sub getAttributes ($) {
 	my $self = shift;
-	return $self->{-parent};
+	my $out = {};
+	foreach my $i (keys %$self) {
+		$out->{$i} = $self->{$i} unless $i =~ /^-/;
+	}
+	return $out;
+}
+
+sub getAttribute ($$) {
+	my $self = shift;
+	my $attr = shift;
+	return $self->{$attr};
 }
 
 #-------------------------------------------------------------------------------

@@ -6,8 +6,8 @@ SVG.pm
 SVG/XML.pm
 SVG/DOM.pm
 SVG/Element.pm
+SVG/Manual.pm
 test.pl
-SVG/Manual.pod
 examples/svgtest2.pl
 examples/SVG_02_sample.pl
 examples/image_sample.pl
@@ -19,3 +19,4 @@ examples/sun_text_sample.pl
 examples/svg.pl
 examples/minsvg.pl
 examples/inlinesvg.pl
+examples/svg_dom_sample.pl

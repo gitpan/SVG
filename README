@@ -1,18 +1,20 @@
-SVG.pm version 2.1
-28.05.02
+README for SVG.pm
 
 SVG.pm is a perl extention to generate stand-alone or inline SVG 
 (scaleable vector graphics) images using the W3C SVG xml recommendation.
 
 Refer to the pod for full documentation and an example script, 
-or to http://roasp.com/man/SVG.html
+or to the following mirrors:
 
-The complete pod resides in SVG::Manual 
+1/ http://roasp.com/man/SVG.html
+2/ http://www.perlsvg.net/man/SVG.html
+3/ http://www.roitsystems.com/man/SVG.html
+
+The complete pod for SVG resides in SVG::Manual 
 type perldoc SVG::Manual on the command line
 
 (c) 2001,2002 Ronan Oger, RO IT Systems, GmbH 
 homepage: http://www.roitsystems.com
-ronan@roasp.com 
 ronan@cpan.org
 
 This software is provided as is and without warranty. 
@@ -25,7 +27,7 @@ SVG.pm makes it possible to generate fully-functional SVG images in perl.
 
 VERSION
 -------
-V.2.1 (28.05.02)
+2.21 (20.06.02)
 
 DOCUMENTATION
 -------------
@@ -102,12 +104,18 @@ ftp://roasp.com/pub/SVG-2.1/examples/
 
 KNOWN BUGS & ISSUES
 -------------------
-28.05.02 
+20.06.02
 SVG
 There are some issues with cdata() when the text string contains newline 
 characters.
-SVG::DOM is incomplete and essentially unusable except by truly determined
-people. It is included here only in case people want to mess with it.
+SVG::DOM is really a beta release.
 
 SEE ALSO:
 SVG::Parser
+SVG::DOM
+SVG::XML
+SVG::Element
+
+CHANGE LOG
+----------
+A poor version of the change history is available in the CHANGES file.

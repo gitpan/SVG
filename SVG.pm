@@ -7,17 +7,16 @@ SVG - Perl extension for generating Scalable Vector Graphics (SVG) documents
 =cut
 
 package SVG;
-use strict;
 
+use strict;
 use vars qw($VERSION @ISA $AUTOLOAD);
 use Exporter;
 use SVG::XML;
 use SVG::Element;
-use SVG::DOM;
 
-@ISA = qw(SVG::Element Exporter);
+@ISA = qw(SVG::Element Exporter );
 
-$VERSION = "2.1";
+$VERSION = "2.21";
 
 #-------------------------------------------------------------------------------
 
@@ -25,7 +24,7 @@ $VERSION = "2.1";
 
 =head2 VERSION
 
-Version 2.1, 27.05.02
+Version 2.2, 15.06.02
 
 Refer to L<SVG::Manual> for the complete manual
 
@@ -52,7 +51,11 @@ http://www.roasp.com/index.shtml?svg.pod
 
 =head1 SEE ALSO
 
-perl(1), L<SVG>, L<SVG::Element>,  L<SVG::DOM>, L<SVG::Manual>, L<SVG::Parser> 
+perl(1),L<SVG>,L<SVG::XML>,L<SVG::Element>,L<SVG::Parser>, L<SVG::Manual>
+http://www.roasp.com/
+http://www.perlsvg.com/
+http://www.roitsystems.com/
+http://www.w3c.org/Graphics/SVG/
 
 =cut
 
@@ -65,9 +68,8 @@ my %default_attrs = (
     -inline     => 0,    # inline or stand alone
     -printerror => 1,    # print error messages to STDERR
     -raiseerror => 1,    # die on errors (implies -printerror)
-    -raiseerror => 1,    # die on errors (implies -printerror)
-    -raiseerror => 1,    # die on errors (implies -printerror)
-    -docroot => 'svg',    # die on errors (implies -printerror)
+    -namespace  => '',   # The root element's (and it's children's) namespace 
+    -docroot => 'svg',   # The document's root element
 );
 
 sub import {
@@ -200,7 +202,7 @@ sub new ($;@) {
                         unless exists $attrs{$attr}
     }
     $self = $class->SUPER::new('document');
-
+	$self->{-docref} = $self unless ($self->{-docref});
     $self->{$_}=$attrs{$_} foreach keys %default_attrs;
     $self->{-level}=0;
     $self->{-version}   = $attrs{-version}    if ($attrs{-version});
@@ -210,7 +212,9 @@ sub new ($;@) {
     $self->{-identifier}= $attrs{-identifier} if ($attrs{-identifier});
     $self->{-dtd}       = $attrs{-dtd}        if ($attrs{-dtd});
     $self->{-namespace} = $attrs{-namespace}  if ($attrs{-namespace});
-    $self->{-inline}     = $attrs{-inline}    if ($attrs{-inline});   
+    $self->{-inline}     = $attrs{-inline}    if ($attrs{-inline});
+    $self->{-nocredits} = $attrs{-nocredits}  if ($attrs{-nocredits});
+
     # create SVG object according to inline attribute
     my $svg; 
     unless ($attrs{-nostub}) {
@@ -239,7 +243,9 @@ B<XML Declaration>
     -version           '1.0'               
     -encoding          'UTF-8'
     -standalone        'yes'
-    -namespace         'svg'                - namespace for elements
+    -namespace         'svg' - namespace for elements. 
+                               Can also be used in any element's method to over-ride
+                               the current namespace
     -inline            '0' - If '1', then this is an inline document.
     -pubid             '-//W3C//DTD SVG 1.0//EN';
     -dtd (standalone)  'http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd'
@@ -247,20 +253,30 @@ B<XML Declaration>
 =cut 
 
 sub xmlify ($;@) {
-    my ($self,%attrs) = @_;
-    my ($decl,$ns);
 
-  foreach my $key (keys %attrs) {
-    next unless ($key =~ /^\-/);
-    $self->{$key} = $attrs{$key};
-  }
+	my ($self,%attrs) = @_;
+	my ($decl,$ns);
 
-  foreach my $key (keys %$self) {
-    next unless ($key =~ /^\-/);
-    $attrs{$key} ||= $self->{$key};
-  }
-#    return $decl.$self->SUPER::xmlify($ns);
-    return $self->SUPER::xmlify($self->{-namespace})."\n<!-- Created with the Perl SVG Module V.$VERSION-->\n<!-- (c) 2002 Ronan Oger RO IT Systems GmbH. info:ronan\@roasp.com -->\n<!-- For Info go to: http://roasp.com/-->";
+	my $credits = ''; 
+	
+	# Give the module and myself credit unless explicitly
+	# turned off by a programmer.
+
+	$credits = "\n<!-- \n\n\tGenerated in Perl \n\tusing the SVG Module V.$VERSION\n\tby Ronan Oger\n\tInfo: http://www.roasp.com/\n\n -->" 
+		unless ($self->{docref}->{nocredits});
+
+	foreach my $key (keys %attrs) {
+		next unless ($key =~ /^\-/);
+		$self->{$key} = $attrs{$key};
+	}
+
+	foreach my $key (keys %$self) {
+		next unless ($key =~ /^\-/);
+		$attrs{$key} ||= $self->{$key};
+	}
+# return $decl.$self->SUPER::xmlify($ns);
+
+	 return $self->SUPER::xmlify($self->{-namespace}).$credits;
 }
 
 *render=\&xmlify;
