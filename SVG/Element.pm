@@ -10,7 +10,7 @@ Ronan Oger, ronan@roasp.com
 
 =head1 SEE ALSO
 
-perl(1),L<SVG>,L<SVG::XML>
+perl(1),L<SVG>, L<SVG::XML>, L<SVG::DOM>, L<SVG::Manual>, L<SVG::Parser> 
 http://roasp.com/
 http://www.w3c.org/Graphics/SVG/
 
@@ -18,7 +18,7 @@ http://www.w3c.org/Graphics/SVG/
 
 package SVG::Element;
 
-$VERSION = "1.0";
+$VERSION = "1.1";
 
 use strict;
 use vars qw(@ISA $AUTOLOAD %autosubs);
@@ -26,13 +26,13 @@ use vars qw(@ISA $AUTOLOAD %autosubs);
 use SVG::XML;
 
 my @autosubs=qw(
-    circle ellipse rect polyline 
-    path polygon line title desc defs
-    altGlyph altGlyphDef altGlyphItem clipPath color-profile
-    cursor definition-src font-face-format font-face-name
-    font-face-src font-face-url foreignObject glyph
-    glyphRef hkern marker mask metadata missing-glyph
-    mpath switch symbol textPath tref tspan view vkern
+	animateTransform circle ellipse rect polyline 
+	path polygon line title desc defs
+	altGlyph altGlyphDef altGlyphItem clipPath color-profile
+	cursor definition-src font-face-format font-face-name
+	font-face-src font-face-url foreignObject glyph
+	glyphRef hkern marker mask metadata missing-glyph
+	mpath switch symbol textPath tref tspan view vkern
 );
 
 =pod
@@ -44,102 +44,102 @@ my @autosubs=qw(
 #-------------------------------------------------------------------------------
 
 sub new ($$;@) {
-    my ($proto,$name,%attrs)=@_;
-    my $class=ref($proto) || $proto;
-    my $self={-name => $name};
-    foreach my $key (keys %attrs) {
-        next if $key=~/^\-/;
-        $self->{$key}=$attrs{$key};
-    }
-    
-    return bless($self,$class);
+	my ($proto,$name,%attrs)=@_;
+	my $class=ref($proto) || $proto;
+	my $self={-name => $name};
+	foreach my $key (keys %attrs) {
+		next if $key=~/^\-/;
+		$self->{$key}=$attrs{$key};
+	}
+	
+	return bless($self,$class);
 }
 
 #-------------------------------------------------------------------------------
 
 sub release ($) {
-    my $self=shift;
+	my $self=shift;
 
-    foreach my $key (keys(%{$self})) {
-        next if $key=~/^\-/;
-        if (ref($self->{$key})=~/^SVG/) {
-            eval { $self->{$key}->release; };
-        }
-        delete($self->{$key});
-    }
+	foreach my $key (keys(%{$self})) {
+		next if $key=~/^\-/;
+		if (ref($self->{$key})=~/^SVG/) {
+			eval { $self->{$key}->release; };
+		}
+		delete($self->{$key});
+	}
 
-    return $self;
+	return $self;
 }
 
 sub xmlify ($$) {
-    my ($self,$ns) = @_;
-    my $xml = '';
-    #prep the attributes
-    my %attrs;
-    foreach my $k (keys(%{$self})) {
-        if($k=~/^\-/) { next; }
-        if(ref($self->{$k}) eq 'ARRAY') {
-            $attrs{$k}=join(', ',@{$self->{$k}});
-        } elsif(ref($self->{$k}) eq 'HASH') {
-            $attrs{$k}=cssstyle(%{$self->{$k}});
-        } elsif(ref($self->{$k}) eq '') {
-            $attrs{$k}=$self->{$k};
-        }
-    }
+	my ($self,$ns) = @_;
+	my $xml = '';
+	#prep the attributes
+	my %attrs;
+	foreach my $k (keys(%{$self})) {
+		if($k=~/^\-/) { next; }
+		if(ref($self->{$k}) eq 'ARRAY') {
+			$attrs{$k}=join(', ',@{$self->{$k}});
+		} elsif(ref($self->{$k}) eq 'HASH') {
+			$attrs{$k}=cssstyle(%{$self->{$k}});
+		} elsif(ref($self->{$k}) eq '') {
+			$attrs{$k}=$self->{$k};
+		}
+	}
 
-    #prep the tag
-    $xml.=$self->{-indent} x $self->{-level};
-    if($self->{-comment}) {
-        $xml.=$self->xmlcomment($self->{-comment});
-        return $xml;
-    } elsif($self->{-pi}) {
-        $xml.=$self->xmlpi($self->{-pi});
-        return $xml;
-    } elsif(defined $self->{-cdata}) {
-        $xml.=xmltagopen($self->{-name},$ns,%attrs);
-        $xml.=xmlescp($self->{-cdata});
-        $xml.=xmltagclose_ln($self->{-name},$ns);
-    }  elsif(defined $self->{-CDATA}) {
-        $xml.=xmltagopen($self->{-name},$ns,%attrs);
-        $xml.='<![CDATA['.$self->{-CDATA}.']]>';
-        $xml.=xmltagclose_ln($self->{-name},$ns);
-    } elsif ($self->{-name} eq 'document') {
-        #write the xml header
-        $xml.=$self->xmldecl;
-        #and write the dtd if this is inline
-        $xml.=$self->dtddecl unless $self->{-inline};
+	#prep the tag
+	$xml.=$self->{-indent} x $self->{-level};
+	if($self->{-comment}) {
+		$xml.=$self->xmlcomment($self->{-comment});
+		return $xml;
+	} elsif($self->{-pi}) {
+		$xml.=$self->xmlpi($self->{-pi});
+		return $xml;
+	} elsif(defined $self->{-cdata}) {
+		$xml.=xmltagopen($self->{-name},$ns,%attrs);
+		$xml.=xmlescp($self->{-cdata});
+		$xml.=xmltagclose_ln($self->{-name},$ns);
+	}  elsif(defined $self->{-CDATA}) {
+		$xml.=xmltagopen($self->{-name},$ns,%attrs);
+		$xml.='<![CDATA['.$self->{-CDATA}.']]>';
+		$xml.=xmltagclose_ln($self->{-name},$ns);
+	} elsif ($self->{-name} eq 'document') {
+		#write the xml header
+		$xml.=$self->xmldecl;
+		#and write the dtd if this is inline
+		$xml.=$self->dtddecl unless $self->{-inline};
 
-        foreach my $k (@{$self->{-childs}}) {
-            if(ref($k)=~/^SVG::Element/) {
-                $xml.=$k->xmlify($ns);
-            }
-        }
-        return $xml;
-    } elsif(defined $self->{-childs}) {
-        $xml.=xmltagopen_ln($self->{-name},$ns,%attrs);
-        foreach my $k (@{$self->{-childs}}) {
-            if(ref($k)=~/^SVG::Element/) {
-                $xml.=$k->xmlify($ns);
-            }
-        }
-        #return without writing the tag out if it the document tag
-  #      return $xml if ($self->{-name} eq 'document');
+		foreach my $k (@{$self->{-childs}}) {
+			if(ref($k)=~/^SVG::Element/) {
+				$xml.=$k->xmlify($ns);
+			}
+		}
+		return $xml;
+	} elsif(defined $self->{-childs}) {
+		$xml.=xmltagopen_ln($self->{-name},$ns,%attrs);
+		foreach my $k (@{$self->{-childs}}) {
+			if(ref($k)=~/^SVG::Element/) {
+				$xml.=$k->xmlify($ns);
+			}
+		}
+		#return without writing the tag out if it the document tag
+  #	  return $xml if ($self->{-name} eq 'document');
 
-        $xml.=$self->{-indent} x $self->{-level};
-        $xml.=xmltagclose_ln($self->{-name},$ns);
-    } else {
-        $xml.=xmltag_ln($self->{-name},$ns,%attrs);
-    }
+		$xml.=$self->{-indent} x $self->{-level};
+		$xml.=xmltagclose_ln($self->{-name},$ns);
+	} else {
+		$xml.=xmltag_ln($self->{-name},$ns,%attrs);
+	}
 
-    #return the finished tag
-    return $xml;
+	#return the finished tag
+	return $xml;
 }
 
 
 sub addchilds ($@) {
-    my $self=shift;
-    push @{$self->{-childs}},@_;
-    return $self;
+	my $self=shift;
+	push @{$self->{-childs}},@_;
+	return $self;
 }
 
 =pod
@@ -154,29 +154,29 @@ element generators.
 
 B<Example:>
 
-    my $tag = $svg->tag('g', transform=>'rotate(-45)');
+	my $tag = $svg->tag('g', transform=>'rotate(-45)');
 
 =cut
 
 sub tag ($$;@) {
-    my ($self,$name,%attrs)=@_;
-    unless ($self->{-parent}) {
-      #traverse down the tree until you find a non-document entry
-      while ($self->{-document})  {$self = $self->{-document}}
-    }
-    my $tag=SVG::Element->new($name,%attrs);
-    unless (defined $tag->{-level}) { 
-      $tag->{-level}=0;
-    }
-    unless (defined $self->{-level}) { 
-      $self->{-level}=0;
-    }
-    $tag->{-level}=$self->{-level}+1;
-    $tag->{-indent}=$self->{-indent};
-    $tag->{-parent}=$self;
-    $tag->{-parentname}=$self->{-name};
-    $self->addchilds($tag);
-    return($tag);
+	my ($self,$name,%attrs)=@_;
+	unless ($self->{-parent}) {
+	  #traverse down the tree until you find a non-document entry
+	  while ($self->{-document})  {$self = $self->{-document}}
+	}
+	my $tag=SVG::Element->new($name,%attrs);
+	unless (defined $tag->{-level}) { 
+	  $tag->{-level}=0;
+	}
+	unless (defined $self->{-level}) { 
+	  $self->{-level}=0;
+	}
+	$tag->{-level}=$self->{-level}+1;
+	$tag->{-indent}=$self->{-indent};
+	$tag->{-parent}=$self;
+	$tag->{-parentname}=$self->{-name};
+	$self->addchilds($tag);
+	return($tag);
 }
 
 *element=\&tag;
@@ -193,18 +193,18 @@ as a child.
 
 B<Example:>
 
-    # generate an anchor	
-    $tag = $svg->anchor(
-        -href=>'http://here.com/some/simpler/svg.svg'
-    );
-    # add a circle to the anchor. The circle can be clicked on.
-    $tag->circle(cx=>10,cy=>10,r=>1);
+	# generate an anchor	
+	$tag = $svg->anchor(
+		-href=>'http://here.com/some/simpler/svg.svg'
+	);
+	# add a circle to the anchor. The circle can be clicked on.
+	$tag->circle(cx=>10,cy=>10,r=>1);
 
-    # more complex anchor with both URL and target
-    $tag = $svg->anchor(
-	      -href   => 'http://somewhere.org/some/other/page.html',
-	      -target => 'new_window'
-    );
+	# more complex anchor with both URL and target
+	$tag = $svg->anchor(
+		  -href   => 'http://somewhere.org/some/other/page.html',
+		  -target => 'new_window'
+	);
 
 =cut
 
@@ -236,7 +236,7 @@ Draw a circle at (cx,cy) with radius r.
 
 B<Example:>
 
-    my $tag = $svg->circlecx=>4, cy=>2, r=>1);
+	my $tag = $svg->circlecx=>4, cy=>2, r=>1);
 
 =cut
 
@@ -250,18 +250,18 @@ Draw an ellipse at (cx,cy) with radii rx,ry.
 
 B<Example:>
 
-    my $tag = $svg->ellipse(
-        cx=>10, cy=>10,
-        rx=>5, ry=>7,
-        id=>'ellipse',
-        style=>{
-            'stroke'=>'red',
-            'fill'=>'green',
-            'stroke-width'=>'4',
-            'stroke-opacity'=>'0.5',
-            'fill-opacity'=>'0.2'
-        }
-    );
+	my $tag = $svg->ellipse(
+		cx=>10, cy=>10,
+		rx=>5, ry=>7,
+		id=>'ellipse',
+		style=>{
+			'stroke'=>'red',
+			'fill'=>'green',
+			'stroke-width'=>'4',
+			'stroke-opacity'=>'0.5',
+			'fill-opacity'=>'0.2'
+		}
+	);
 
 =cut
 
@@ -276,18 +276,18 @@ Draw a rectangle at (x,y) with width 'width' and height 'height' and side radii
 
 B<Example:>
 
-    $tag = $svg->rectangle(
-        x=>10, y=>20,
-        width=>4, height=>5,
-        rx=>5.2, ry=>2.4,
-        id=>'rect_1'
-    );
+	$tag = $svg->rectangle(
+		x=>10, y=>20,
+		width=>4, height=>5,
+		rx=>5.2, ry=>2.4,
+		id=>'rect_1'
+	);
 
 =cut
 
 sub rectangle ($;@) {
 	my ($self,%attrs)=@_;
-        return $self->tag('rect',%attrs);
+		return $self->tag('rect',%attrs);
 }
 
 =pod
@@ -301,24 +301,24 @@ resource '-href'. See also L<"use">.
 
 B<Example:>
 
-    $tag = $svg->image(
-        x=>100, y=>100,
-        width=>300, height=>200,
-        '-href'=>"image.png", #may also embed SVG, e.g. "image.svg"
-        id=>'image_1'
-    );
+	$tag = $svg->image(
+		x=>100, y=>100,
+		width=>300, height=>200,
+		'-href'=>"image.png", #may also embed SVG, e.g. "image.svg"
+		id=>'image_1'
+	);
 
 B<Output:>
 
-    <image xlink:href="image.png" x="100" y="100" width="300" height="200"/>
+	<image xlink:href="image.png" x="100" y="100" width="300" height="200"/>
 
 =cut
 
 sub image ($;@) {
-    my ($self,%attrs)=@_;
-    my $im=$self->tag('image',%attrs);
-    $im->{'xlink:href'}=$attrs{-href} if(defined $attrs{-href});
-    return $im;
+	my ($self,%attrs)=@_;
+	my $im=$self->tag('image',%attrs);
+	$im->{'xlink:href'}=$attrs{-href} if(defined $attrs{-href});
+	return $im;
 }
 
 =pod
@@ -332,16 +332,16 @@ Retrieve the content from an entity within an SVG document and apply it at
 
 B<Example:>
 
-    $tag = $svg->use(
-        x=>100, y=>100,
-        width=>300, height=>200,
-        '-href'=>"pic.svg#image_1",
-        id=>'image_1'
-    );
+	$tag = $svg->use(
+		x=>100, y=>100,
+		width=>300, height=>200,
+		'-href'=>"pic.svg#image_1",
+		id=>'image_1'
+	);
 
 B<Output:>
 
-    <use xlink:href="pic.svg#image_1" x="100" y="100" width="300" height="200"/>
+	<use xlink:href="pic.svg#image_1" x="100" y="100" width="300" height="200"/>
 
 According to the SVG specification, the 'use' element in SVG can point to a
 single element within an external SVG file.
@@ -349,10 +349,10 @@ single element within an external SVG file.
 =cut
 
 sub use ($;@) {
-    my ($self,%attrs)=@_;
-    my $u=$self->tag('use',%attrs);
-    $u->{'xlink:href'}=$attrs{-href} if(defined $attrs{-href});
-    return $u;
+	my ($self,%attrs)=@_;
+	my $u=$self->tag('use',%attrs);
+	$u->{'xlink:href'}=$attrs{-href} if(defined $attrs{-href});
+	return $u;
 }
 
 =pod
@@ -367,20 +367,20 @@ convenience to generate a suitable string from coordinate data.
 
 B<Example:>
 
-    # a five-sided polygon
-    my $xv = [0,2,4,5,1];
-    my $yv = [0,0,2,7,5];
+	# a five-sided polygon
+	my $xv = [0,2,4,5,1];
+	my $yv = [0,0,2,7,5];
 
-    $points = $a->get_path(
-        x=>$xv, y=>$yv,
-        -type=>'polygon'
-    );
+	$points = $a->get_path(
+		x=>$xv, y=>$yv,
+		-type=>'polygon'
+	);
 
-    $c = $a->polygon(
-        %$points,
-        id=>'pgon1',
-        style=>\%polygon_style
-    );
+	$c = $a->polygon(
+		%$points,
+		id=>'pgon1',
+		style=>\%polygon_style
+	);
 
 SEE ALSO:
 
@@ -400,24 +400,24 @@ convenience to generate a suitable string from coordinate data.
 
 B<Example:>
 
-    # a 10-pointsaw-tooth pattern
-    my $xv = [0,1,2,3,4,5,6,7,8,9];
-    my $yv = [0,1,0,1,0,1,0,1,0,1];
+	# a 10-pointsaw-tooth pattern
+	my $xv = [0,1,2,3,4,5,6,7,8,9];
+	my $yv = [0,1,0,1,0,1,0,1,0,1];
 
-    $points = $a->get_path(
-        x=>$xv, y=>$yv,
-        -type=>'polyline',
-        -closed=>'true' #specify that the polyline is closed.
-    );
+	$points = $a->get_path(
+		x=>$xv, y=>$yv,
+		-type=>'polyline',
+		-closed=>'true' #specify that the polyline is closed.
+	);
 
-    my $tag = $a->polyline (
-        %$points,
-        id=>'pline_1',
-        style=>{
-            'fill-opacity'=>0,
-            'stroke-color'=>'rgb(250,123,23)'
-        }
-    );
+	my $tag = $a->polyline (
+		%$points,
+		id=>'pline_1',
+		style=>{
+			'fill-opacity'=>0,
+			'stroke-color'=>'rgb(250,123,23)'
+		}
+	);
 
 =head2 line
 
@@ -427,11 +427,11 @@ Draw a straight line between two points (x1,y1) and (x2,y2).
 
 B<Example:>
 
-    my $tag = $svg->line(
-        id=>'l1',
-        x1=>0, y1=>10,
-        x2=>10, y2=>0
-    );
+	my $tag = $svg->line(
+		id=>'l1',
+		x1=>0, y1=>10,
+		x2=>10, y2=>0
+	);
 
 To draw multiple connected lines, use L<"polyline">.
 
@@ -448,42 +448,42 @@ $text_span = $text_path->text(-type=>'span')->cdata('C');
 define the container for a text string to be drawn in the image.
 
 B<Input:> 
-    -type     = path type (path | polyline | polygon)
-    -type     = text element type  (path | span | normal [default])
+	-type	 = path type (path | polyline | polygon)
+	-type	 = text element type  (path | span | normal [default])
 
 B<Example:>
 
-    my $text1 = $svg->text(
-        id=>'l1', x=>10, y=>10
-    )->cdata('hello, world');
+	my $text1 = $svg->text(
+		id=>'l1', x=>10, y=>10
+	)->cdata('hello, world');
 
-    my $text2 = $svg->text(
-        id=>'l1', x=>10, y=>10, -cdata=>'hello, world');
+	my $text2 = $svg->text(
+		id=>'l1', x=>10, y=>10, -cdata=>'hello, world');
 
-    my $text = $svg->text(
-        id=>'tp', x=>10, y=>10 -type=>path)
-        ->text(id=>'ts' -type=>'span')
-        ->cdata('hello, world');
+	my $text = $svg->text(
+		id=>'tp', x=>10, y=>10 -type=>path)
+		->text(id=>'ts' -type=>'span')
+		->cdata('hello, world');
 
 SEE ALSO:
 
-    L<"desc">, L<"cdata">.
+	L<"desc">, L<"cdata">.
 
 =cut
 
 sub text ($;@) {
-    my ($self,%attrs)=@_;
-    my $pre = '';
-    $pre = $attrs{-type} || 'std';
-    my %get_pre = (std=>'text',
-                   path=>'textPath',
-                   span=>'tspan',);
+	my ($self,%attrs)=@_;
+	my $pre = '';
+	$pre = $attrs{-type} || 'std';
+	my %get_pre = (std=>'text',
+				   path=>'textPath',
+				   span=>'tspan',);
 
-    $pre = $get_pre{lc($pre)};
-    my $text=$self->tag($pre,%attrs);
-    $text->{'xlink:href'} = $attrs{-href} if(defined $attrs{-href});
+	$pre = $get_pre{lc($pre)};
+	my $text=$self->tag($pre,%attrs);
+	$text->{'xlink:href'} = $attrs{-href} if(defined $attrs{-href});
    	$text->{'target'} = $attrs{-target} if(defined $attrs{-target});
-    return($text);
+	return($text);
 }
 
 =pod
@@ -496,7 +496,7 @@ Generate the title of the image.
 
 B<Example:>
 
-    my $tag = $svg->title(id=>'document-title')->cdata('This is the title');
+	my $tag = $svg->title(id=>'document-title')->cdata('This is the title');
 
 =cut
 
@@ -510,7 +510,7 @@ Generate the description of the image.
 
 B<Example:>
 
-    my $tag = $svg->desc(id=>'document-desc')->cdata('This is a description');
+	my $tag = $svg->desc(id=>'document-desc')->cdata('This is a description');
 
 =head2 comment
 
@@ -520,15 +520,15 @@ Generate the description of the image.
 
 B<Example:>
 
-    my $tag = $svg->comment('comment 1','comment 2','comment 3');
+	my $tag = $svg->comment('comment 1','comment 2','comment 3');
 
 =cut
 
 sub comment ($;@) {
-    my ($self,@text)=@_;
-    my $tag = $self->tag('comment');
-    $tag->{-comment} = [@text];
-    return $tag;
+	my ($self,@text)=@_;
+	my $tag = $self->tag('comment');
+	$tag->{-comment} = [@text];
+	return $tag;
 }
 
 =pod 
@@ -539,21 +539,21 @@ Generate a set of processing instructions
 
 B<Example:>
 
-    my $tag = $svg->pi('instruction one','instruction two','instruction three');
+	my $tag = $svg->pi('instruction one','instruction two','instruction three');
 
-    returns: 
-      <lt>?instruction one?<gt>
-      <lt>?instruction two?<gt>
-      <lt>?instruction three?<gt>
+	returns: 
+	  <lt>?instruction one?<gt>
+	  <lt>?instruction two?<gt>
+	  <lt>?instruction three?<gt>
 
 =cut
 
 
 sub pi ($;@) {
-    my ($self,@text)=@_;
-    my $tag = $self->tag('pi');
-    $tag->{-pi} = [@text];
-    return $tag;
+	my ($self,@text)=@_;
+	my $tag = $self->tag('pi');
+	$tag->{-pi} = [@text];
+	return $tag;
 }
 
 =pod
@@ -567,28 +567,28 @@ ECMAscript, Javascript or other compatible scripting language.
 
 B<Example:>
 
-    my $tag = $svg->script(-type=>"text/ecmascript");
+	my $tag = $svg->script(-type=>"text/ecmascript");
 
-    # populate the script tag with cdata
-    # be careful to manage the javascript line ends.
-    # qq|text| or qq§text§ where text is the script 
-    # works well for this.
+	# populate the script tag with cdata
+	# be careful to manage the javascript line ends.
+	# qq|text| or qq§text§ where text is the script 
+	# works well for this.
 
-    $tag->cdata(qq|function d(){
-        //simple display function
-        for(cnt = 0; cnt < d.length; cnt++)
-            document.write(d[cnt]);//end for loop
-        document.write("<BR>");//write a line break
-      }|
-    );
+	$tag->cdata(qq|function d(){
+		//simple display function
+		for(cnt = 0; cnt < d.length; cnt++)
+			document.write(d[cnt]);//end for loop
+		document.write("<BR>");//write a line break
+	  }|
+	);
 
 =cut
 
 sub script ($;@) {
-    my ($self,%attrs)=@_;
+	my ($self,%attrs)=@_;
    	my $script = $self->tag('script',%attrs);
-    $script->{'xlink:href'}=$attrs{-href} if(defined $attrs{-href});
-    return $script;
+	$script->{'xlink:href'}=$attrs{-href} if(defined $attrs{-href});
+	return $script;
 }
 
 =pod
@@ -603,26 +603,26 @@ calculated usingthe L<"get_path"> method.
 
 B<Example:>
 
-    # a 10-pointsaw-tooth pattern drawn with a path definition
-    my $xv = [0,1,2,3,4,5,6,7,8,9];
-    my $yv = [0,1,0,1,0,1,0,1,0,1];
+	# a 10-pointsaw-tooth pattern drawn with a path definition
+	my $xv = [0,1,2,3,4,5,6,7,8,9];
+	my $yv = [0,1,0,1,0,1,0,1,0,1];
 
-    $points = $a->get_path(
-        x => $xv,
-        y => $yv,
-        -type   => 'path',
-        -closed => 'true'  #specify that the polyline is closed
-    );
+	$points = $a->get_path(
+		x => $xv,
+		y => $yv,
+		-type   => 'path',
+		-closed => 'true'  #specify that the polyline is closed
+	);
 
-    $tag = $svg->path(
-        %$points,
-        id    => 'pline_1',
-        style => {
-            'fill-opacity' => 0,
-            'fill-color'   => 'green',
-            'stroke-color' => 'rgb(250,123,23)'
-        }
-    );
+	$tag = $svg->path(
+		%$points,
+		id	=> 'pline_1',
+		style => {
+			'fill-opacity' => 0,
+			'fill-color'   => 'green',
+			'stroke-color' => 'rgb(250,123,23)'
+		}
+	);
 
 
 SEE ALSO:
@@ -638,87 +638,87 @@ the multi-point SVG drawing object definitions (path, polyline, polygon)
 
 B<Input:> attributes including:
 
-    -type     = path type (path | polyline | polygon)
-    x         = reference to array of x coordinates
-    y         = reference to array of y coordinates
+	-type	 = path type (path | polyline | polygon)
+	x		 = reference to array of x coordinates
+	y		 = reference to array of y coordinates
 
 B<Output:> a hash reference consisting of the following key-value pair:
 
-    points    = the appropriate points-definition string
-    -type     = path|polygon|polyline
-    -relative = 1 (define relative position rather than absolute position)
-    -closed   = 1 (close the curve - path and polygon only)
+	points	= the appropriate points-definition string
+	-type	 = path|polygon|polyline
+	-relative = 1 (define relative position rather than absolute position)
+	-closed   = 1 (close the curve - path and polygon only)
 
 B<Example:>
 
-    #generate an open path definition for a path.
-    my ($points,$p);
-    $points = $svg->get_path(x=&gt\@x,y=&gt\@y,-relative=&gt1,-type=&gt'path');
+	#generate an open path definition for a path.
+	my ($points,$p);
+	$points = $svg->get_path(x=&gt\@x,y=&gt\@y,-relative=&gt1,-type=&gt'path');
  
-    #add the path to the SVG document
-    my $p = $svg->path(%$path, style=>\%style_definition);
+	#add the path to the SVG document
+	my $p = $svg->path(%$path, style=>\%style_definition);
 
-    #generate an closed path definition for a a polyline.
-    $points = $svg->get_path(
-        x=>\@x,
-        y=>\@y,
-        -relative=>1,
-        -type=>'polyline',
-        -closed=>1
-    ); # generate a closed path definition for a polyline
+	#generate an closed path definition for a a polyline.
+	$points = $svg->get_path(
+		x=>\@x,
+		y=>\@y,
+		-relative=>1,
+		-type=>'polyline',
+		-closed=>1
+	); # generate a closed path definition for a polyline
 
-    # add the polyline to the SVG document
-    $p = $svg->polyline(%$points, id=>'pline1');
+	# add the polyline to the SVG document
+	$p = $svg->polyline(%$points, id=>'pline1');
 
 B<Aliases:> get_path set_path
 
 =cut
 
 sub get_path ($;@) {
-    my ($self,%attrs) = @_;
+	my ($self,%attrs) = @_;
 
-    my $type = $attrs{-type} || 'path';
-    my @x = @{$attrs{x}};
-    my @y = @{$attrs{y}};
-    my $points;
-    # we need a path-like point string returned
-    if (lc($type) eq 'path') {
-        my $char = 'M';
-        $char = ' m ' if (defined $attrs{-relative} && lc($attrs{-relative}));
-        while (@x) {
-            #scale each value
-            my $x = shift @x;
-            my $y = shift @y;
-            #append the scaled value to the graph
-            $points .= "$char $x $y ";
-            $char = ' L ';
-            $char = ' l ' if (defined $attrs{-relative}
-                                && lc($attrs{-relative}));
-        }
-        $points .=  ' z ' if (defined $attrs{-closed} && lc($attrs{-closed}));
-        my %out = (d => $points);
-        return \%out;
-    } elsif (lc($type) =~ /^poly/){
-        while (@x) {
-            #scale each value
-            my $x = shift @x;
-            my $y = shift @y;
-            #append the scaled value to the graph
-            $points .= "$x,$y ";
-        }
-    }
-    my %out = (points=>$points);
-    return \%out;
+	my $type = $attrs{-type} || 'path';
+	my @x = @{$attrs{x}};
+	my @y = @{$attrs{y}};
+	my $points;
+	# we need a path-like point string returned
+	if (lc($type) eq 'path') {
+		my $char = 'M';
+		$char = ' m ' if (defined $attrs{-relative} && lc($attrs{-relative}));
+		while (@x) {
+			#scale each value
+			my $x = shift @x;
+			my $y = shift @y;
+			#append the scaled value to the graph
+			$points .= "$char $x $y ";
+			$char = ' L ';
+			$char = ' l ' if (defined $attrs{-relative}
+								&& lc($attrs{-relative}));
+		}
+		$points .=  ' z ' if (defined $attrs{-closed} && lc($attrs{-closed}));
+		my %out = (d => $points);
+		return \%out;
+	} elsif (lc($type) =~ /^poly/){
+		while (@x) {
+			#scale each value
+			my $x = shift @x;
+			my $y = shift @y;
+			#append the scaled value to the graph
+			$points .= "$x,$y ";
+		}
+	}
+	my %out = (points=>$points);
+	return \%out;
 }
 
 sub make_path ($;@) {
-    my ($self,%attrs) = @_;
-    return get_path(%attrs);
+	my ($self,%attrs) = @_;
+	return get_path(%attrs);
 }
 
 sub set_path ($;@) {
-    my ($self,%attrs) = @_;
-    return get_path(%attrs);
+	my ($self,%attrs) = @_;
+	return get_path(%attrs);
 }
 
 =pod
@@ -734,93 +734,93 @@ commands.
 B<Inputs:> -method = Transform | Motion | Color
 
   my $an_ellipse = $svg->ellipse(
-      cx=>30,cy=>150,rx=>10,ry=>10,id=>'an_ellipse',
-      stroke=>'rgb(130,220,70)',fill=>'rgb(30,20,50)'); 
+	  cx=>30,cy=>150,rx=>10,ry=>10,id=>'an_ellipse',
+	  stroke=>'rgb(130,220,70)',fill=>'rgb(30,20,50)'); 
 
   $an_ellipse-> animate(
-      attributeName=>"cx",values=>"20; 200; 20",dur=>"10s", repeatDur=>'indefinite');
+	  attributeName=>"cx",values=>"20; 200; 20",dur=>"10s", repeatDur=>'indefinite');
 
   $an_ellipse-> animate(
-      attributeName=>"rx",values=>"10;30;20;100;50",
-      dur=>"10s", repeatDur=>'indefinite');
+	  attributeName=>"rx",values=>"10;30;20;100;50",
+	  dur=>"10s", repeatDur=>'indefinite');
 
   $an_ellipse-> animate(
-      attributeName=>"ry",values=>"30;50;10;20;70;150",
-      dur=>"15s", repeatDur=>'indefinite');
+	  attributeName=>"ry",values=>"30;50;10;20;70;150",
+	  dur=>"15s", repeatDur=>'indefinite');
 
   $an_ellipse-> animate(
-      attributeName=>"rx",values=>"30;75;10;100;20;20;150",
-      dur=>"20s", repeatDur=>'indefinite');
+	  attributeName=>"rx",values=>"30;75;10;100;20;20;150",
+	  dur=>"20s", repeatDur=>'indefinite');
 
   $an_ellipse-> animate(
-      attributeName=>"fill",values=>"red;green;blue;cyan;yellow",
-      dur=>"5s", repeatDur=>'indefinite');
+	  attributeName=>"fill",values=>"red;green;blue;cyan;yellow",
+	  dur=>"5s", repeatDur=>'indefinite');
 
   $an_ellipse-> animate(
-      attributeName=>"fill-opacity",values=>"0;1;0.5;0.75;1",
-      dur=>"20s",repeatDur=>'indefinite');
+	  attributeName=>"fill-opacity",values=>"0;1;0.5;0.75;1",
+	  dur=>"20s",repeatDur=>'indefinite');
 
   $an_ellipse-> animate(
-      attributeName=>"stroke-width",values=>"1;3;2;10;5",
-      dur=>"20s",repeatDur=>'indefinite');
+	  attributeName=>"stroke-width",values=>"1;3;2;10;5",
+	  dur=>"20s",repeatDur=>'indefinite');
 
 =cut
 
 sub animate ($;@) {
-    my ($self,%attrs) = @_;
-    my %rtr = %attrs;
-    my $method = $rtr{'-method'}; # Set | Transform | Motion | Color
+	my ($self,%attrs) = @_;
+	my %rtr = %attrs;
+	my $method = $rtr{'-method'}; # Set | Transform | Motion | Color
 
-    $method = lc($method);
+	$method = lc($method);
 
-    # we do not want this to pollute the generation of the tag
-    delete $rtr{-method};  #bug report from briac.
+	# we do not want this to pollute the generation of the tag
+	delete $rtr{-method};  #bug report from briac.
 
-    my %animation_method = (
-        transform=>'animateTransform',
-        motion=>'animateMotion',
-        color=>'animateColor',
-        set=>'set',
-        attribute=>'animate'
-    );
+	my %animation_method = (
+		transform=>'animateTransform',
+		motion=>'animateMotion',
+		color=>'animateColor',
+		set=>'set',
+		attribute=>'animate'
+	);
 	
-    my $name = $animation_method{$method} || 'animate';
+	my $name = $animation_method{$method} || 'animate';
 	
-    #list of legal entities for each of the 5 methods of animations
-    my %legal = (
-        animate =>	
-          qq§ begin dur  end  min  max  restart  repeatCount 
-              repeatDur  fill  attributeType attributeName additive
-              accumulate calcMode  values  keyTimes  keySplines
-              from  to  by §,
-        animateTransform =>	
-          qq§ begin dur  end  min  max  restart  repeatCount
-              repeatDur  fill  additive  accumulate calcMode  values
-              keyTimes  keySplines  from  to  by calcMode path keyPoints
-              rotate origin type §,
+	#list of legal entities for each of the 5 methods of animations
+	my %legal = (
+		animate =>	
+		  qq§ begin dur  end  min  max  restart  repeatCount 
+			  repeatDur  fill  attributeType attributeName additive
+			  accumulate calcMode  values  keyTimes  keySplines
+			  from  to  by §,
+		animateTransform =>	
+		  qq§ begin dur  end  min  max  restart  repeatCount
+			  repeatDur  fill  additive  accumulate calcMode  values
+			  keyTimes  keySplines  from  to  by calcMode path keyPoints
+			  rotate origin type §,
 	animateMotion =>	
-          qq§ begin dur  end  min  max  restart  repeatCount
-              repeatDur  fill  additive  accumulate calcMode  values
-              to  by keyTimes keySplines  from  path  keyPoints
-              rotate  origin §,
-        animateColor =>	
-          qq§ begin dur  end  min  max  restart  repeatCount
-              repeatDur  fill  additive  accumulate calcMode  values
-              keyTimes  keySplines  from  to  by §,
-        set =>	
-          qq§ begin dur  end  min  max  restart  repeatCount  repeatDur
-              fill to §
-    );
+		  qq§ begin dur  end  min  max  restart  repeatCount
+			  repeatDur  fill  additive  accumulate calcMode  values
+			  to  by keyTimes keySplines  from  path  keyPoints
+			  rotate  origin §,
+		animateColor =>	
+		  qq§ begin dur  end  min  max  restart  repeatCount
+			  repeatDur  fill  additive  accumulate calcMode  values
+			  keyTimes  keySplines  from  to  by §,
+		set =>	
+		  qq§ begin dur  end  min  max  restart  repeatCount  repeatDur
+			  fill to §
+	);
 
-    foreach my $k (keys %rtr) {
-        next if ($k =~ /\-/);
+	foreach my $k (keys %rtr) {
+		next if ($k =~ /\-/);
 
-        if ($legal{$name} !~ /\b$k\b/) {
-            $self->error("$name.$k" => "Illegal animation command");
-        }
-    }
+		if ($legal{$name} !~ /\b$k\b/) {
+			$self->error("$name.$k" => "Illegal animation command");
+		}
+	}
 
-    return $self->tag($name,%rtr);
+	return $self->tag($name,%rtr);
 }
 
 =pod
@@ -834,21 +834,21 @@ animation, filters, transformations, and mouse actions assigned to them.
 
 B<Example:>
 
-    $tag = $svg->group(
-        id        => 'xvs000248',
-        style     => {
-            'font'      => [ qw( Arial Helvetica sans ) ],
-            'font-size' => 10,
-            'fill'      => 'red',
-        },
-        transform => 'rotate(-45)'
-    );
+	$tag = $svg->group(
+		id		=> 'xvs000248',
+		style	 => {
+			'font'	  => [ qw( Arial Helvetica sans ) ],
+			'font-size' => 10,
+			'fill'	  => 'red',
+		},
+		transform => 'rotate(-45)'
+	);
 
 =cut
 
 sub group ($;@) {
-    my ($self,%attrs)=@_;
-    return $self->tag('g',%attrs);
+	my ($self,%attrs)=@_;
+	return $self->tag('g',%attrs);
 }
 
 =pod
@@ -860,7 +860,7 @@ $tag = $svg->defs(%attributes)
 define a definition segment. A Defs requires children when defined using SVG.pm
 B<Example:>
 
-    $tag = $svg->defs(id  =>  'def_con_one',);
+	$tag = $svg->defs(id  =>  'def_con_one',);
 
 =head2 style
 
@@ -874,14 +874,14 @@ which the value of the property is not redefined by the child.
 =cut
 
 sub style ($;@) {
-    my ($self,%attrs)=@_;
+	my ($self,%attrs)=@_;
 
-    $self->{style}=$self->{style} || {};
-    foreach my $k (keys %attrs) {
-        $self->{style}->{$k}=$attrs{$k};
-    }
+	$self->{style}=$self->{style} || {};
+	foreach my $k (keys %attrs) {
+		$self->{style}->{$k}=$attrs{$k};
+	}
 
-    return $self;
+	return $self;
 }
 
 =pod
@@ -895,14 +895,14 @@ Sets/Adds mouse action definitions for tag
 =cut
 
 sub mouseaction ($;@) {
-    my ($self,%attrs)=@_;
+	my ($self,%attrs)=@_;
 
-    $self->{mouseaction}=$self->{mouseaction} || {};
-    foreach my $k (keys %attrs) {
-        $self->{mouseaction}->{$k}=$attrs{$k};
-    }
+	$self->{mouseaction}=$self->{mouseaction} || {};
+	foreach my $k (keys %attrs) {
+		$self->{mouseaction}->{$k}=$attrs{$k};
+	}
 
-    return $self;
+	return $self;
 }
 
 =pod
@@ -922,9 +922,9 @@ Sets/Replaces attributes for a tag.
 =cut
 
 sub attrib ($$$) {
-    my ($self,$name,$val)=@_;
-    $self->{$name}=$val;
-    return $self;
+	my ($self,$name,$val)=@_;
+	$self->{$name}=$val;
+	return $self;
 }
 
 =pod
@@ -940,19 +940,19 @@ content.
 
 B<Example:>
 
-    $svg->text(
-        style => {
-            'font'      => 'Arial',
-            'font-size' => 20
-        })->cdata('SVG.pm is a perl module on CPAN!');
+	$svg->text(
+		style => {
+			'font'	  => 'Arial',
+			'font-size' => 20
+		})->cdata('SVG.pm is a perl module on CPAN!');
 
-    my $text = $svg->text(style=>{'font'=>'Arial','font-size'=>20});
-    $text->cdata('SVG.pm is a perl module on CPAN!');
+	my $text = $svg->text(style=>{'font'=>'Arial','font-size'=>20});
+	$text->cdata('SVG.pm is a perl module on CPAN!');
 
 
 B<Result:>
 
-    E<lt>text style="font: Arial; font-size: 20" E<gt>SVG.pm is a perl module on CPAN!E<lt>/text E<gt>
+	E<lt>text style="font: Arial; font-size: 20" E<gt>SVG.pm is a perl module on CPAN!E<lt>/text E<gt>
 
 SEE ALSO:
 
@@ -961,9 +961,9 @@ SEE ALSO:
 =cut
 
 sub cdata ($@) {
-    my ($self,@txt)=@_;
-    $self->{-cdata}=join(' ',@txt);
-    return($self);
+	my ($self,@txt)=@_;
+	$self->{-cdata}=join(' ',@txt);
+	return($self);
 }
 
 =pod
@@ -981,51 +981,51 @@ content.
 
 B<Example:>
 
-      my $text = qq§
-        var SVGDoc;
-        var groups = new Array();
-        var last_group;
-        
-        /*****
-        *
-        *   init
-        *
-        *   Find this SVG's document element
-        *   Define members of each group by id
-        *
-        *****/
-        function init(e) {
-            SVGDoc = e.getTarget().getOwnerDocument();
-            append_group(1, 4, 6); // group 0
-            append_group(5, 4, 3); // group 1
-            append_group(2, 3);    // group 2
-        }§;
-        $svg->script()->CDATA($text);
+	  my $text = qq§
+		var SVGDoc;
+		var groups = new Array();
+		var last_group;
+		
+		/*****
+		*
+		*   init
+		*
+		*   Find this SVG's document element
+		*   Define members of each group by id
+		*
+		*****/
+		function init(e) {
+			SVGDoc = e.getTarget().getOwnerDocument();
+			append_group(1, 4, 6); // group 0
+			append_group(5, 4, 3); // group 1
+			append_group(2, 3);	// group 2
+		}§;
+		$svg->script()->CDATA($text);
 
 
 B<Result:>
 
-    E<lt>script E<gt>
-      <gt>![CDATA[
-        var SVGDoc;
-        var groups = new Array();
-        var last_group;
-        
-        /*****
-        *
-        *   init
-        *
-        *   Find this SVG's document element
-        *   Define members of each group by id
-        *
-        *****/
-        function init(e) {
-            SVGDoc = e.getTarget().getOwnerDocument();
-            append_group(1, 4, 6); // group 0
-            append_group(5, 4, 3); // group 1
-            append_group(2, 3);    // group 2
-        }
-        ]]E<gt>
+	E<lt>script E<gt>
+	  <gt>![CDATA[
+		var SVGDoc;
+		var groups = new Array();
+		var last_group;
+		
+		/*****
+		*
+		*   init
+		*
+		*   Find this SVG's document element
+		*   Define members of each group by id
+		*
+		*****/
+		function init(e) {
+			SVGDoc = e.getTarget().getOwnerDocument();
+			append_group(1, 4, 6); // group 0
+			append_group(5, 4, 3); // group 1
+			append_group(2, 3);	// group 2
+		}
+		]]E<gt>
 
 SEE ALSO:
 
@@ -1034,9 +1034,9 @@ SEE ALSO:
 =cut
 
 sub CDATA ($@) {
-    my ($self,@txt)=@_;
-    $self->{-CDATA}=join('\n',@txt);
-    return($self);
+	my ($self,@txt)=@_;
+	$self->{-CDATA}=join('\n',@txt);
+	return($self);
 }
 
 =pod
@@ -1049,16 +1049,16 @@ Generate a filter. Filter elements contain L<"fe"> filter sub-elements.
 
 B<Example:>
 
-    my $filter = $svg->filter(
-        filterUnits=>"objectBoundingBox",
-        x=>"-10%",
-        y=>"-10%",
-        width=>"150%",
-        height=>"150%",
-        filterUnits=>'objectBoundingBox'
-    );
+	my $filter = $svg->filter(
+		filterUnits=>"objectBoundingBox",
+		x=>"-10%",
+		y=>"-10%",
+		width=>"150%",
+		height=>"150%",
+		filterUnits=>'objectBoundingBox'
+	);
 
-    $filter->fe();
+	$filter->fe();
 
 SEE ALSO:
 
@@ -1067,8 +1067,8 @@ L<"fe">.
 =cut
 
 sub filter ($;@) {
-    my ($self,%attrs)=@_;
-    return $self->tag('filter',%attrs);
+	my ($self,%attrs)=@_;
+	return $self->tag('filter',%attrs);
 }
 
 =pod
@@ -1081,16 +1081,16 @@ Generate a filter sub-element. Must be a child of a L<"filter"> element.
 
 B<Example:>
 
-    my $fe = $svg->fe(
-        -type     => 'DiffuseLighting'  # required - element name omiting 'fe'
-        id        => 'filter_1',
-        style     => {
-            'font'      => [ qw(Arial Helvetica sans) ],
-            'font-size' => 10,
-            'fill'      => 'red',
-        },
-        transform => 'rotate(-45)'
-    );
+	my $fe = $svg->fe(
+		-type	 => 'DiffuseLighting'  # required - element name omiting 'fe'
+		id		=> 'filter_1',
+		style	 => {
+			'font'	  => [ qw(Arial Helvetica sans) ],
+			'font-size' => 10,
+			'fill'	  => 'red',
+		},
+		transform => 'rotate(-45)'
+	);
 
 Note that the following filter elements are currently supported:
 
@@ -1153,41 +1153,41 @@ L<"filter">.
 =cut
 
 sub fe ($;@) {
-    my ($self,%attrs) = @_;
+	my ($self,%attrs) = @_;
 
-    return 0 unless  ($attrs{'-type'});
-    my %allowed = (
-        blend => 'feBlend',
-        colormatrix => 'feColorMatrix',
-        componenttrans => 'feComponentTrans',
-        composite => 'feComposite',
-        convolvematrix => 'feConvolveMatrix',
-        diffuselighting => 'feDiffuseLighting',
-        displacementmap => 'feDisplacementMap',
-        distantlight => 'feDistantLight',
-        flood => 'feFlood',
-        funca => 'feFuncA',
-        funcb => 'feFuncB',
-        funcg => 'feFuncG',
-        funcr => 'feFuncR',
-        gaussianblur => 'feGaussianBlur',
-        image => 'feImage',
-        merge => 'feMerge',
-        mergenode => 'feMergeNode',
-        morphology => 'feMorphology',
-        offset => 'feOffset',
-        pointlight => 'fePointLight',
-        specularlighting => 'feSpecularLighting',
-        spotlight => 'feSpotLight',
-        tile => 'feTile',
-        turbulence => 'feTurbulence'
-    );
+	return 0 unless  ($attrs{'-type'});
+	my %allowed = (
+		blend => 'feBlend',
+		colormatrix => 'feColorMatrix',
+		componenttrans => 'feComponentTrans',
+		composite => 'feComposite',
+		convolvematrix => 'feConvolveMatrix',
+		diffuselighting => 'feDiffuseLighting',
+		displacementmap => 'feDisplacementMap',
+		distantlight => 'feDistantLight',
+		flood => 'feFlood',
+		funca => 'feFuncA',
+		funcb => 'feFuncB',
+		funcg => 'feFuncG',
+		funcr => 'feFuncR',
+		gaussianblur => 'feGaussianBlur',
+		image => 'feImage',
+		merge => 'feMerge',
+		mergenode => 'feMergeNode',
+		morphology => 'feMorphology',
+		offset => 'feOffset',
+		pointlight => 'fePointLight',
+		specularlighting => 'feSpecularLighting',
+		spotlight => 'feSpotLight',
+		tile => 'feTile',
+		turbulence => 'feTurbulence'
+	);
 
-    my $key = lc($attrs{'-type'});
-    my $fe_name = $allowed{$key} || 'error:illegal_filter_element';
-    delete $attrs{'-type'};
+	my $key = lc($attrs{'-type'});
+	my $fe_name = $allowed{$key} || 'error:illegal_filter_element';
+	delete $attrs{'-type'};
 
-    return $self->tag($fe_name, %attrs);
+	return $self->tag($fe_name, %attrs);
 }
 
 =pod
@@ -1200,19 +1200,19 @@ Define a pattern for later reference by url.
 
 B<Example:>
 
-    my $pattern = $svg->pattern(
-        id     => "Argyle_1",
-        width  => "50",
-        height => "50",
-        patternUnits        => "userSpaceOnUse",
-        patternContentUnits => "userSpaceOnUse"
-    );
+	my $pattern = $svg->pattern(
+		id	 => "Argyle_1",
+		width  => "50",
+		height => "50",
+		patternUnits		=> "userSpaceOnUse",
+		patternContentUnits => "userSpaceOnUse"
+	);
 
 =cut
 
 sub pattern ($;@) {
-    my ($self,%attrs)=@_;
-    return $self->tag('pattern',%attrs);
+	my ($self,%attrs)=@_;
+	return $self->tag('pattern',%attrs);
 }
 
 =pod
@@ -1226,19 +1226,19 @@ sections as needed.
 
 B<Example:>
 
-    my $set = $svg->set(
-        id     => "Argyle_1",
-        width  => "50",
-        height => "50",
-        patternUnits        => "userSpaceOnUse",
-        patternContentUnits => "userSpaceOnUse"
-    );
+	my $set = $svg->set(
+		id	 => "Argyle_1",
+		width  => "50",
+		height => "50",
+		patternUnits		=> "userSpaceOnUse",
+		patternContentUnits => "userSpaceOnUse"
+	);
 
 =cut
 
 sub set ($;@) {
-    my ($self,%attrs)=@_;
-    return $self->tag('set',%attrs);
+	my ($self,%attrs)=@_;
+	return $self->tag('set',%attrs);
 }
 
 =pod
@@ -1252,18 +1252,18 @@ Define a stop boundary for L<"gradient">
 B<Example:>
 
    my $pattern = $svg->stop(
-       id     => "Argyle_1",
-       width  => "50",
-       height => "50",
-       patternUnits        => "userSpaceOnUse",
-       patternContentUnits => "userSpaceOnUse"
+	   id	 => "Argyle_1",
+	   width  => "50",
+	   height => "50",
+	   patternUnits		=> "userSpaceOnUse",
+	   patternContentUnits => "userSpaceOnUse"
    );
 
 =cut
 
 sub stop ($;@) {
-    my ($self,%attrs)=@_;
-    return $self->tag('stop',%attrs);
+	my ($self,%attrs)=@_;
+	return $self->tag('stop',%attrs);
 }
 
 =pod
@@ -1274,23 +1274,23 @@ Define a color gradient. Can be of type B<linear> or B<radial>
 
 B<Example:>
 
-    my $gradient = $svg->gradient(
-        -type => "linear",
-        id    => "gradient_1"
-    );
+	my $gradient = $svg->gradient(
+		-type => "linear",
+		id	=> "gradient_1"
+	);
 
 =cut
 
 sub gradient ($;@) {
-    my ($self,%attrs)=@_;
+	my ($self,%attrs)=@_;
 
-    my $type = $attrs{'-type'} || 'linear';
-    unless ($type =~ /^(linear|radial)$/) {
-        $type = 'linear';
-    }
-    delete $attrs{'-type'};
+	my $type = $attrs{'-type'} || 'linear';
+	unless ($type =~ /^(linear|radial)$/) {
+		$type = 'linear';
+	}
+	delete $attrs{'-type'};
 
-    return $self->tag($type.'Gradient',%attrs);
+	return $self->tag($type.'Gradient',%attrs);
 }
 
 =pod
@@ -1361,32 +1361,32 @@ See e.g. L<"pattern"> for an example of the use of these methods.
 # Internal methods
 
 sub error ($$$) {
-    my ($self,$command,$error)=@_;
+	my ($self,$command,$error)=@_;
 
-    if ($self->{-raiseerror}) {
-        die "$command: $error\n";
-    } elsif ($self->{-printerror}) {
-        print STDERR "$command: $error\n";
-    }
+	if ($self->{-raiseerror}) {
+		die "$command: $error\n";
+	} elsif ($self->{-printerror}) {
+		print STDERR "$command: $error\n";
+	}
 
-    $self->{errors}{$command}=$error;
+	$self->{errors}{$command}=$error;
 }
 
 # This AUTOLOAD method is activated when '-auto' is passed to SVG.pm
 sub autoload {
-    my $self=shift;
-    my ($package,$sub)=($AUTOLOAD=~/(.*)::([^:]+)$/);
+	my $self=shift;
+	my ($package,$sub)=($AUTOLOAD=~/(.*)::([^:]+)$/);
 
-    if ($sub eq 'DESTROY') {
-        return $self->release();
-    } else {
-    	# the import routine may call us with a tag name involving '-'s
-    	my $tag=$sub; $sub=~tr/-/_/;
-        # N.B.: The \ on \@_ makes sure that the incoming arguments are
-        # used and not the ones passed when the subroutine was created.
-        eval "sub $package\:\:$sub (\$;\@) { return shift->tag('$tag',\@_) }";
-        return $self->$sub(@_) if $self;
-    }
+	if ($sub eq 'DESTROY') {
+		return $self->release();
+	} else {
+		# the import routine may call us with a tag name involving '-'s
+		my $tag=$sub; $sub=~tr/-/_/;
+		# N.B.: The \ on \@_ makes sure that the incoming arguments are
+		# used and not the ones passed when the subroutine was created.
+		eval "sub $package\:\:$sub (\$;\@) { return shift->tag('$tag',\@_) }";
+		return $self->$sub(@_) if $self;
+	}
 }
 
 
@@ -1396,8 +1396,8 @@ sub autoload {
 # GD Routines
 
 sub colorAllocate ($$$$) {
-    my ($self,$red,$green,$blue)=@_;
-    return 'rgb('.int($red).','.int($green).','.int($blue).')';
+	my ($self,$red,$green,$blue)=@_;
+	return 'rgb('.int($red).','.int($green).','.int($blue).')';
 }
 
 #-------------------------------------------------------------------------------

@@ -4,8 +4,10 @@ MANIFEST
 Makefile.PL
 SVG.pm
 SVG/XML.pm
+SVG/DOM.pm
 SVG/Element.pm
 test.pl
+SVG/Manual.pod
 examples/svgtest2.pl
 examples/SVG_02_sample.pl
 examples/image_sample.pl

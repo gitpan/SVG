@@ -13,9 +13,11 @@ use vars qw($VERSION @ISA $AUTOLOAD);
 use Exporter;
 use SVG::XML;
 use SVG::Element;
+use SVG::DOM;
+
 @ISA = qw(SVG::Element Exporter);
 
-$VERSION = "2.0";
+$VERSION = "2.1";
 
 #-------------------------------------------------------------------------------
 
@@ -23,69 +25,9 @@ $VERSION = "2.0";
 
 =head2 VERSION
 
-Version 1.12, 18 October 2001
+Version 2.1, 27.05.02
 
-=head1 METHODS
-
-L<"animate">, L<"cdata">, L<"circle">, L<"defs">, L<"desc">,
-L<"ellipse">, L<"fe">, L<"get_path">, L<"group">, L<"image">, L<"line">,
-L<"mouseaction">, L<"new">, L<"path">, L<"polygon">, L<"polyline">, L<"rectangle (alias: rect)">, L<"script">,
-L<"style">, L<"text">, L<"title">, L<"use">, L<"xmlify (alias: to_xml render)">
-
-=head1 SYNOPSIS
-
-    #!/usr/bin/perl -w
-    use strict;
-    use SVG;
-
-    # create an SVG object
-    my $svg= SVG->new(width=>200,height=>200);
-
-    # use explicit element constructor to generate a group element
-    my $y=$svg->group(
-        id    => 'group_y',
-        style => { stroke=>'red', fill=>'green' }
-    );
-
-    # add a circle to the group
-    $y->circle(cx=>100, cy=>100, r=>50, id=>'circle_in_group_y');
-
-    # or, use the generic 'tag' method to generate a group element by name
-    my $z=$svg->tag('g',
-                    id    => 'group_z',
-                    style => {
-                        stroke => 'rgb(100,200,50)',
-                        fill   => 'rgb(10,100,150)'
-                    }
-                );
-
-    # create and add a circle using the generic 'tag' method
-    $z->tag('circle', cx=>50, cy=>50, r=>100, id=>'circle_in_group_z');
-
-    # create an anchor on a rectangle within a group within the group z
-    my $k = $z->anchor(
-        id      => 'anchor_k',
-        -href   => 'http://test.hackmare.com/',
-        -target => 'new_window_0'
-    )->rectangle(
-        x     => 20, y      => 50,
-        width => 20, height => 30,
-        rx    => 10, ry     => 5,
-        id    => 'rect_k_in_anchor_k_in_group_z'
-    );
-
-    # now render the SVG object, implicitly use svg namespace
-    print $svg->xmlify;
-
-    # or, explicitly use svg namespace and generate a document with its own DTD
-    print $svg->xmlify(-namespace=>'svg');
-
-    # or, explicitly use svg namespace and generate an in-line docunent
-    print $svg->xmlify(
-        -namespace => "svg",
-        -pubid => "-//W3C//DTD SVG 1.0//EN",
-        -inline   => 1
-    );
+Refer to L<SVG::Manual> for the complete manual
 
 =head1 DESCRIPTION
 
@@ -94,98 +36,7 @@ DOM representation of an SVG (Scalable Vector Graphics) image. Using SVG, you
 can generate SVG objects, embed other SVG instances into it, access the DOM
 object, create and access javascript, and generate SMIL animation content.
 
-=head2 General Steps to generating an SVG document
-
-Generating SVG is a simple three step process:
-
-=over 4
-
-=item 1 The first step is to construct a new SVG object with L<"new">.
-
-=item 2 The second step is to call element constructors to create SVG elements.
-Examples of element constructors are L<"circle"> and L<"path">.
-
-=item 3 The third and last step is to render the SVG object into XML using the
-L<"xmlify"> method.
-
-=back
-
-The L<"xmlify"> method takes a number of optional arguments that control how SVG
-renders the object into XML, and in particular determine whether a stand-alone
-SVG document or an inline SVG document fragment is generated:
-
-=over (
-
-=item -stand-alone
-
-A complete SVG document with its own associated DTD. A namespace for the SVG
-elements may be optionally specified.
-
-=item -in-line
-
-An in-line SVG document fragment with no DTD that be embedded within other XML
-content. As with stand-alone documents, an alternate namespace may be specified.
-
-=back
-
-No XML content is generated until the third step is reached. Up until this
-point, all constructed element definitions reside in a DOM-like data structure
-from which they can be accessed and modified.
-
-=head2 EXPORTS
-
-None. However, SVG permits both options and additional element methods to be
-specified in the import list. These options and elements are then available
-for all SVG instances that are created with the L<"new"> constructor. For example,
-to change the indent string to two spaces per level:
-
-    use SVG qw(-indent => "  ");
-
-With the exception of -auto, all options may also be specified to the L<"new">
-constructor. The currently supported options are:
-
-    -auto        enable autoloading of all unrecognised method calls (0)
-    -indent      the indent to use when rendering the SVG into XML ("\t")
-    -inline      whether the SVG is to be standalone or inlined (0)
-    -printerror  print SVG generation errors to standard error (1)
-    -raiseerror  die if a generation error is encountered (1)
-    -nostub      only return the handle to a blank SVG document without any elements
-
-SVG also allows additional element generation methods to be specified in the
-import list. For example to generate 'star' and 'planet' element methods:
-
-    use SVG qw(star planet);
-
-or:
-
-    use SVG ("star","planet");
-
-This will add 'star' to the list of elements supported by SVG.pm (but not of
-course other SVG parsers...). Alternatively the '-auto' option will allow
-any unknown method call to generate an element of the same name:
-
-    use SVG (-auto => 1, "star", "planet");
-
-Any elements specified explicitly (as 'star' and 'planet' are here) are
-predeclared; other elements are defined as and when they are seen by Perl. Note
-that enabling '-auto' effectively disables compile-time syntax checking for
-valid method names.
-
-B<Example:>
-
-    use SVG (
-        -auto       => 0,
-        -indent     => "  ",
-        -raiserror  => 0,
-        -printerror => 1,
-        "star", "planet", "moon"
-    );
-
-=head1 SEE ALSO
-
-    perl(1), L<SVG::XML>, L<SVG::Element>, L<SVG::Parser>
-    http://roasp.com/
-    http://www.w3c.org/Graphics/SVG/
+Refer to L<SVG::Manual> for the complete manual.
 
 =head1 AUTHOR
 
@@ -197,7 +48,11 @@ Peter Wainwright, peter@roasp.com Excellent ideas, beta-testing, SVG::Parser
 
 =head1 EXAMPLES
 
-http://roasp.com/
+http://www.roasp.com/index.shtml?svg.pod
+
+=head1 SEE ALSO
+
+perl(1), L<SVG>, L<SVG::Element>,  L<SVG::DOM>, L<SVG::Manual>, L<SVG::Parser> 
 
 =cut
 
@@ -356,7 +211,6 @@ sub new ($;@) {
     $self->{-dtd}       = $attrs{-dtd}        if ($attrs{-dtd});
     $self->{-namespace} = $attrs{-namespace}  if ($attrs{-namespace});
     $self->{-inline}     = $attrs{-inline}    if ($attrs{-inline});   
-
     # create SVG object according to inline attribute
     my $svg; 
     unless ($attrs{-nostub}) {
@@ -364,6 +218,8 @@ sub new ($;@) {
         $self->{-document} = $svg;
     }
     # add -attributes to SVG object
+#	$self->{-elrefs}->{$self}->{name} = 'document';
+#	$self->{-elrefs}->{$self}->{id} = '';
     return $self;
 }
 
@@ -404,7 +260,7 @@ sub xmlify ($;@) {
     $attrs{$key} ||= $self->{$key};
   }
 #    return $decl.$self->SUPER::xmlify($ns);
-    return $self->SUPER::xmlify($self->{-namespace});
+    return $self->SUPER::xmlify($self->{-namespace})."\n<!-- Created with the Perl SVG Module V.$VERSION-->\n<!-- (c) 2002 Ronan Oger RO IT Systems GmbH. info:ronan\@roasp.com -->\n<!-- For Info go to: http://roasp.com/-->";
 }
 
 *render=\&xmlify;

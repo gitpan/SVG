@@ -1,144 +1,113 @@
-SVG.pm version 0.50
-12 October 2001
+SVG.pm version 2.1
+28.05.02
 
-SVG.pm is a perl extention to generate stand-alone or inline SVG (scaleable vector graphics) images using the W3C SVG xml recommendation.
+SVG.pm is a perl extention to generate stand-alone or inline SVG 
+(scaleable vector graphics) images using the W3C SVG xml recommendation.
 
-Refer to the pod for full documentation and an example script, or to http://roasp.com/SVG.html . 
+Refer to the pod for full documentation and an example script, 
+or to http://roasp.com/man/SVG.html
 
-The pod resides in SVG::manual
+The complete pod resides in SVG::Manual 
+type perldoc SVG::Manual on the command line
 
-(c) 2001 Ronan Oger, RO IT Systems, GmbH ronan@roasp.com
+(c) 2001,2002 Ronan Oger, RO IT Systems, GmbH 
+homepage: http://www.roitsystems.com
+ronan@roasp.com 
+ronan@cpan.org
 
 This software is provided as is and without warranty. 
 It is freely distributed under the general perl license.
 
-CONTENTS
---------
-
 OVERVIEW
-
-DOCUMENTATION
-    POD in HTML format
-    Tutorials
-INSTALLATION
-    *NIX AND WIN32 SYSTEMS WITH MAKE OR EQUIVALENT
-    WIN32 SYSTEMS WITHOUT MAKE OR EQUIVALENT
-EXAMPLES
-KNOWN BUGS
-
 --------
-
-
-
-
-
-
-OVERVIEW
-
 SVG.pm makes it possible to generate fully-functional SVG images in perl.
 100% of the SVG tags are supported.
 
+VERSION
+-------
+V.2.1 (28.05.02)
+
 DOCUMENTATION
 -------------
-
 The following documentation is available:
-
 POD in HTML format
+pod in perldoc format (type perldoc SVG on command line)
 
-Version 1.10 POD 17 October, 2001
-http://roasp.com/SVG.html
+RESOURCES
+---------
+The following URLs offer additional resources for users of SVG.pm:
+* SVG.pm on-line manual http://roasp.com/man/SVG.html
+* Perl SVG tutorials http://roasp.com/tutorial/
+* Perl SVG Zone homepage http://roasp.com/
+* example scripts using SVG.pm ftp://roasp.com/pub/SVG-2.1/examples/
+* gallery of the use of SVG.pm on the web http://roasp.com/gallery/svg/index.html 
 
-http://roasp.com/tutorial/
-http://test.hackmare.com/tutorial/
+INSTALLATION INSTRUCTIONS
+-------------------------
+***THERE ARE FOUR WAYS TO IMPLEMENT SVG MODULE IN PERL***
 
+	1/ Systems with CPAN support (all Unix/Linux/BSD/Mac):
+	-----------------------------------------------------
+	Install the new distribution via the Perl CPAN module:
+	In a shell:
+	/home/somewhere% perl -MCPAN -e"install SVG"
 
-INSTALLATION
-------------
+	2/ (WIN) install Perl from Active State or equivalent:
+	-----------------------------------------------------
+	Make sure you already have perl or get it here: http://www.activestate.com
+	On the command line:
+	 C:\> ppm
+	 PPM> set repository tmp http://roasp.com/PPM/SVG/
+	 PPM> install SVG
+	 PPM> quit
+	 C:\>
 
-The easiest way to do this if your systems supports it is to use the perl CPAN module:
-
-
-Installation Without using the perl CPAN module
-----------------------------------
-
-First download the tar file
-Make sure you have the latest version by going to
-
-ftp://test.hackmare.com/pub/Current
-ftp://roasp.com/pub/Current
-
-
-UNIX, LINUX, BSD, OSX and WINDOWS with tar, a make program, and a c compiler
-----------------------------------------------------------------------------
-
-on the command line, type:
-
-	tar -xvfz SVG-0.20.tar.gz
-	
-	perl Makefile.PL
-
-	make 
-
+	3/ The hard way (requires make or nmake, tar, gunzip, and gcc):
+	---------------------------------------------------------------
+	This method was tested in DOS, Windows, AS400, Linux, Unix, BSD, Mac
+	Hard-headed users can directly get the distribution from 
+	ftp:/roasp.com/pub/SVG-2.1/
+	First download the source.
+	Then, in a shell:
+	/home/somewhere% gunzip SVG-2.1.tar.gz
+	/home/somewhere% tar-xvf SVG-2.1.tar
+	cd SVG-2.1
+	make
 	make test
-
 	make install
 
 
+	4/ If all the above fail, there is still a (cumbersome) way:
+	-----------------------------------------------------------
+	You have to install to a local dirctory and explicitly call the module 
+	by using one of the following line in your calling program:
 
-WIN32 SYSTEMS WITHOUT nmake
----------------------------
+	#using use lib
+	use lib 'path/where/the/release/is/located';
 
-win32 note: There is no ppm yet for this module. 
-You need to either install it using nmake or you have to install to a local dirctory and explicitly call the module by using one of the following line in your calling program:
+	-or-
 
-#using use lib
-use lib 'path/where/the/release/is/located';
+	#using BEGIN block at the beginning of the file
+	BEGIN {
+		push @INC 'path/to/svg.pm-file'; #where the SVG.pm file lives
+		push @INC 'path/to/svg.pm-file/SVG'; # where the Utils.pm file lives
+	}
+	#Refer to the Perl manual for more details.
 
--or-
+EXAMPLES:
+--------
+A set of examples is included in the distribution in directory ./examples.
+Further examples are available from:
+ftp://roasp.com/pub/SVG-2.1/examples/
 
-#using BEGIN block
-BEGIN {
-	push @INC 'path/to/svg.pm/file'; #where the SVG.pm file lives
-	push @INC 'path/to/svg.pm/file/SVG'; # where the Utils.pm file lives
-}
+KNOWN BUGS & ISSUES
+-------------------
+28.05.02 
+SVG
+There are some issues with cdata() when the text string contains newline 
+characters.
+SVG::DOM is incomplete and essentially unusable except by truly determined
+people. It is included here only in case people want to mess with it.
 
-------------------------
-
-EXAMPLES
-
-The following files are supplied as example scripts:
-examples/svgtest2.pl
-examples/SVG_02_sample.pl
-examples/image_sample.pl
-examples/inline_sample.pl
-examples/yaph5.cgi
-examples/starpath.cgi
-examples/svg.pl
-examples/sun_text_sample.pl
-examples/svg.pl
-examples/inlinesvg.pl
-
-These files are installed where the SVG directory lives in the perl installation.
-
-
-------------------------
-
-KNOWN BUGS
-
-07.10.01
-When generating a path element by directly inputing the string data
-the path definition (d=>'M 1 1 L 2 2...'), rather than the hash output of the
-get_path method, the string must contain no new-line characters.
-
-09.10.01 Does not support the path element d definition 'A' or 'a'
-SUPPORT
-
-More information is available from
-
-http://roasp.com
-
-
-------------------------
-
-
-
+SEE ALSO:
+SVG::Parser

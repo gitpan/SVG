@@ -1,66 +1,66 @@
-Revision history for Perl extension SVG.
-
-2.0 Mon Dec 24 14:00
-    - Improved POD, and moved it to SVG::manual
-	- Tested significantly
-	- Added aliases for xmlify
-	- broke out Element.pm module from SVG.pm file
-	- Repaired scripting support
-	- Added CDATA tag for unmollested text support
-	- changed underlying datastructure to support SVG::Parser
-	- Repaired in-line SVG generation
-	- Added configurability and NON-SVG support
-	- Other stuff in the POD.
-
-1.12 Thu Oct 18 00:25
-    - Repaired Animate command
-	- Added import functionality
-	- Improved AUTOLOAD functionality
-	- Improved POD
-	- Tested significantly
-	- Modified constructor to accept XML-definition parameters
-	  in preparation for supporting SVG::Parser
-
-0.60-1.0 Internal releases 
-        - Not released to public.
-
-0.50 Sat Oct 13 12:00
-	- Maintenance release.
-	- Repaired and added consistency to pod
-	- Repaired small bug in inline.
-	- Added svg.pm to examples. Tested sample of the synopsis script.
-
-0.31 Thu Oct 10 12:00:00
-        - Bug fix for careless error. Left a debugging comment in the code.
-	- Next time, run the code through an interpreted rather than just looking at the raw XML.
-
-0.30 Wed Oct 10 17:05:00
-        - Now support -T and inline and namespace.
-
-0.29 Tue Oct 9 14:36:00 
-	- Repaired bug in method $self->use(). The method was  generating an <image > tag.
-
-0.28 Mon Oct 8 18:05:40
-        - Got the program to pass -w
-	- Fixed user-reported bug in animate function $rtr{-method} was missing the minus.
-	- ran significant tests for complex files. Most work but some crash.
-
-0.26 Sun Oct 7 00:40:00
-        - Repaired the pod file
-        - Added title and desc support
-
-0.25  Sat Oct  6 23:00:02
-	- added image support; improved POD;
-	- Provided DTD & XML version support:
-		XML version         '1.0'
-		XML encoding        'UTF-8'
-		standalone      'yes'
-		namespace       'svg' 
-		DTD identifier      '-//W3C//DTD SVG 1.0//EN';
-		DTD url 'http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd'  
-
-0.2  Sat Oct  6 02:47:02
-	- added filter support; improved POD.
-
-0.1  Thu Oct  4 09:46:28 2001
-	- original version; created by h2xs 1.19
+Revision history for Perl extension SVG.
+
+2.0 Mon Dec 24 14:00
+    - Improved POD, and moved it to SVG::manual
+	- Tested significantly
+	- Added aliases for xmlify
+	- broke out Element.pm module from SVG.pm file
+	- Repaired scripting support
+	- Added CDATA tag for unmollested text support
+	- changed underlying datastructure to support SVG::Parser
+	- Repaired in-line SVG generation
+	- Added configurability and NON-SVG support
+	- Other stuff in the POD.
+
+1.12 Thu Oct 18 00:25
+    - Repaired Animate command
+	- Added import functionality
+	- Improved AUTOLOAD functionality
+	- Improved POD
+	- Tested significantly
+	- Modified constructor to accept XML-definition parameters
+	  in preparation for supporting SVG::Parser
+
+0.60-1.0 Internal releases 
+        - Not released to public.
+
+0.50 Sat Oct 13 12:00
+	- Maintenance release.
+	- Repaired and added consistency to pod
+	- Repaired small bug in inline.
+	- Added svg.pm to examples. Tested sample of the synopsis script.
+
+0.31 Thu Oct 10 12:00:00
+        - Bug fix for careless error. Left a debugging comment in the code.
+	- Next time, run the code through an interpreted rather than just looking at the raw XML.
+
+0.30 Wed Oct 10 17:05:00
+        - Now support -T and inline and namespace.
+
+0.29 Tue Oct 9 14:36:00 
+	- Repaired bug in method $self->use(). The method was  generating an <image > tag.
+
+0.28 Mon Oct 8 18:05:40
+        - Got the program to pass -w
+	- Fixed user-reported bug in animate function $rtr{-method} was missing the minus.
+	- ran significant tests for complex files. Most work but some crash.
+
+0.26 Sun Oct 7 00:40:00
+        - Repaired the pod file
+        - Added title and desc support
+
+0.25  Sat Oct  6 23:00:02
+	- added image support; improved POD;
+	- Provided DTD & XML version support:
+		XML version         '1.0'
+		XML encoding        'UTF-8'
+		standalone      'yes'
+		namespace       'svg' 
+		DTD identifier      '-//W3C//DTD SVG 1.0//EN';
+		DTD url 'http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd'  
+
+0.2  Sat Oct  6 02:47:02
+	- added filter support; improved POD.
+
+0.1  Thu Oct  4 09:46:28 2001
+	- original version; created by h2xs 1.19
