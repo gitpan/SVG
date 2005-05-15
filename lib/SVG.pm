@@ -17,7 +17,7 @@ use SVG::Extension;
 
 @ISA = qw(SVG::Element SVG::Extension);
 
-$VERSION = "2.32";
+$VERSION = "2.33";
 
 #-------------------------------------------------------------------------------
 
@@ -44,8 +44,8 @@ Ronan Oger, RO IT Systemms GmbH, ronan@roasp.com
 
 =head1 CREDITS
 
-Peter Wainwright, peter@roasp.com Excellent ideas, beta-testing, SVG::Parser
-
+I would like to thank the following people for contributing to this module with patches, testing, suggestions, and other nice tidbits:
+Peter Wainwright, Ian Hickson, Adam Schneider, Steve Lihn, Allen Day 
 
 =head1 EXAMPLES
 
@@ -74,7 +74,7 @@ my %default_attrs = (
     -indent     => "\t",    # what to indent with
     -elsep      => "\n",    # element line (vertical) separator
     -nocredits  => 0,       # enable/disable credit note comment
-    -namespace  => '',      # The root element's (and it's children's) namespace
+    -namespace  => '',      # The root element's (and it's children's) namespace prefix
 
     # XML and Doctype declarations
     -inline     => 0,       # inline or stand alone
@@ -82,7 +82,8 @@ my %default_attrs = (
     -version    => '1.0',
     -extension  => '',
     -encoding   => 'UTF-8',
-    -xml_xlink  =>'http://www.w3.org/1999/xlink',
+    -xml_svg    => 'http://www.w3.org/2000/svg',
+    -xml_xlink  => 'http://www.w3.org/1999/xlink',
     -standalone => 'yes',
     -pubid      => "-//W3C//DTD SVG 1.0//EN", # formerly -identifier
     -sysid      => 'http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd',
@@ -220,7 +221,10 @@ sub new ($;@) {
     }
     $self = $class->SUPER::new('document');
     $self->{-docref} = $self unless ($self->{-docref});
-    $attrs{'xml:xlink'} = $attrs{'xml:xlink'} || $attrs{'-xml_xlink'};
+    unless ($attrs{-namespace}) {
+        $attrs{'xmlns'} = $attrs{'xmlns'} || $attrs{'-xml_svg'};
+    }
+    $attrs{'xmlns:xlink'} = $attrs{'xmlns:xlink'} || $attrs{'-xml_xlink'};
     $self->{-level} = 0;
     $self->{$_} = $attrs{$_} foreach keys %default_attrs;
 
@@ -254,9 +258,10 @@ B<XML Declaration>
     -version           '1.0'               
     -encoding          'UTF-8'
     -standalone        'yes'
-    -namespace         'svg' - namespace for elements. 
+    -namespace         'svg' - namespace prefix for elements. 
                                Can also be used in any element method to over-ride
-                               the current namespace
+                               the current namespace prefix. Make sure to have
+                               declared the prefix before using it.
     -inline            '0' - If '1', then this is an inline document.
     -pubid             '-//W3C//DTD SVG 1.0//EN';
     -sysid             'http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd'

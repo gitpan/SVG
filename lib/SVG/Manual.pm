@@ -1,6 +1,6 @@
 package SVG::Manual;
 
-our $VERSION = 2.26;
+our $VERSION = 2.33;
 use vars qw($VERSION);
 
 $VERSION = eval $VERSION;
@@ -20,8 +20,9 @@ Covers SVG-2.30 distribution
     use SVG;
 
     # create an SVG object
-    my $svg= SVG->new(width=>200,height=>200,
-	'xmlns:xlink'=>'http://www.w3.org/1999/xlink');
+    my $svg= SVG->new(width=>200,height=>200);
+    #or
+    my $svg= SVG->new(width=>200,height=>200);
 
     # use explicit element constructor to generate a group element
     my $y=$svg->group(
@@ -48,7 +49,7 @@ Covers SVG-2.30 distribution
     my $k = $z->anchor(
         id      => 'anchor_k',
         -href   => 'http://test.hackmare.com/',
-        -target => 'new_window_0'
+        target => 'new_window_0'
     )->rectangle(
         x     => 20, y      => 50,
         width => 20, height => 30,
@@ -129,14 +130,31 @@ to change the indent string to two spaces per level:
     use SVG qw(-indent => "  ");
 
 With the exception of -auto, all options may also be specified to the L<"new">
-constructor. The currently supported options are:
+constructor. The currently supported options and their default value are:
 
-    -auto        enable autoloading of all unrecognised method calls (0)
-    -indent      the indent to use when rendering the SVG into XML ("\t")
-    -inline      whether the SVG is to be standalone or inlined (0)
-    -printerror  print SVG generation errors to standard error (1)
-    -raiseerror  die if a generation error is encountered (1)
-    -nostub      only return the handle to a blank SVG document without any elements
+    # processing options
+    -auto       => 0,       # permit arbitrary autoloading of all unrecognised elements 
+    -printerror => 1,       # print error messages to STDERR
+    -raiseerror => 1,       # die on errors (implies -printerror)
+                                                                                
+    # rendering options
+    -indent     => "\t",    # what to indent with
+    -elsep      => "\n",    # element line (vertical) separator 
+                            #     (note that not all agents ignor trailing blanks)
+    -nocredits  => 0,       # enable/disable credit note comment
+    -namespace  => '',      # The root element's (and it's children's) namespace prefix
+                                                                                
+    # XML and Doctype declarations
+    -inline     => 0,       # inline or stand alone
+    -docroot    => 'svg',   # The document's root element
+    -version    => '1.0',
+    -extension  => '',
+    -encoding   => 'UTF-8',
+    -xml_svg    => 'http://www.w3.org/2000/svg',   # the svg xmlns attribute
+    -xml_xlink  => 'http://www.w3.org/1999/xlink', # the svg tag xmlns:xlink attribute
+    -standalone => 'yes',
+    -pubid      => "-//W3C//DTD SVG 1.0//EN",      # formerly -identifier
+    -sysid      => 'http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd', # the system id
 
 SVG also allows additional element generation methods to be specified in the
 import list. For example to generate 'star' and 'planet' element methods:
@@ -168,13 +186,36 @@ B<Example:>
         "star", "planet", "moon"
     );
 
+=head2 Default SVG tag
+
+The Default SVG tag will generate the following XML:
+
+
+ $svg = new SVG;
+ $svg->xmlify;
+
+
+ resulting XML snippet:
+
+ <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+ <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.0//EN" "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
+ <svg height="100%" width="100%" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+        <defs  /><!--
+        Generated using the Perl SVG Module V2.33
+        by Ronan Oger
+        Info: http://www.roasp.com/
+  -->
+ </svg>
+
+
 =head1 SEE ALSO
 
 perl(1), L<SVG::XML>, L<SVG::Element>, L<SVG::DOM>, L<SVG::Parser>
-L<http://www.roasp.com/> ROASP.com: Serverside SVG server
-L<http://www.vectoreal.com/> Vectoreal: Commercal SVG Application solutions
-L<http://www.roitsystems.com/> ROIT Systems: Commercial SVG perl solutions
-L<http://www.w3c.org/Graphics/SVG/> SVG at the W3C
+L<http://www.roasp.com/>ROASP.com: Serverside SVG server with numerous SVG/Perl examples
+L<http://www.roasp.com/serverside>Serverside SVG discussion at ROASP.com
+L<http://www.vectoreal.com/>Vectoreal: Commercal SVG Application solutions
+L<http://www.roitsystems.com/>ROIT Systems: Commercial SVG perl solutions
+L<http://www.w3c.org/Graphics/SVG/>SVG at the W3C
 	
 
 =head1 AUTHOR
@@ -185,9 +226,8 @@ Ronan Oger, RO IT Systemms GmbH, ronan@roasp.com
 
 Peter Wainwright, peter@roasp.com Excellent ideas, beta-testing, SVG::Parser
 Fredo, http://www.penguin.at0.net/~fredo/ - provided initial feedback
-for early SVG.pm versions
-Adam Schneider, improvements to xmlescp providing improved character support
-Brial Pilpré, I do not remember what.
+for early SVG.pm versions and the idea of a simplified svg generator.
+Adam Schneider, Brial Pilpré, Ian Hickson
 
 =head1 EXAMPLES
 
@@ -316,7 +356,7 @@ B<Example:>
     # more complex anchor with both URL and target
     $tag = $svg->anchor(
 	      -href   => 'http://somewhere.org/some/other/page.html',
-	      -target => 'new_window'
+	      target => 'new_window'
     );
 
 
@@ -1124,6 +1164,10 @@ The following L<SVG::DOM> elements are accessible through SVG:
 =item * setAttribute
 
 =back
+
+=head1 LICENSE
+
+SVG.pl is distributed under the same license as Perl itself. It is provided free of warranty and may be re-used freely.
 
 =head1 SEE ALSO
 

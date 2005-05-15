@@ -7,18 +7,19 @@ Refer to the pod for full documentation and an example script,
 or to the following mirrors:
 
 1/ http://roasp.com/man/SVG.html
-2/ http://www.perlsvg.net/man/SVG.html
-3/ http://www.roitsystems.com/man/SVG.html
+2/ http://www.roitsystems.com/man/SVG.html
+3/ http://search.cpan.org/~ronan
 
 The complete pod for SVG resides in SVG::Manual 
 type perldoc SVG::Manual on the command line
 
-(c) 2001,2002,2003  Ronan Oger, RO IT Systems, GmbH 
+(c) 2001-2005  Ronan Oger, RO IT Systems, GmbH 
 homepage: http://www.roitsystems.com
+homepage: http://www.prosvg.com
 
 CONTACT POINT
 -------------
-email: ronan@roasp.com
+email: ronan at roasp.com
 
 This software is provided as is and without warranty. 
 It is freely distributed under the general perl license.
@@ -31,7 +32,7 @@ added by users by declaring it.
 
 VERSION
 -------
-2.28 (03.11.2003)
+2.33 Sunday, 2005.05.15
 
 DOCUMENTATION
 -------------
@@ -42,18 +43,18 @@ pod in perldoc format (type perldoc SVG on command line)
 RESOURCES
 ---------
 The following URLs offer additional resources for users of SVG.pm:
+* Serverside Perl Forum: http://www.roasp.com/serverside/
 * SVG.pm on-line manual http://www.roasp.com/man/SVG.html
 * Perl SVG tutorials http://www.roasp.com/tutorial/
 * Perl SVG Zone homepage http://www.roasp.com/
-* Serverside Perl Forum: http://www.roasp.com/serverside/
 * gallery of the use of SVG.pm on the web http://roasp.com/gallery/svg/index.html 
 * SVG Foundation http://www.svgfoundation.org
 * SVG Developers mailing list http://www.yahoogroups.com/svg-developers/
 * W3 Consortium http://www.w3.org
 * Sams Publishing, "SVG Unleashed", September 2002. There is a Perl chapter
 * SVG Open Conference proceedings http://www.svgopen.org
-* YAPC::Open Conference Proceedings: http://www.yapc.org/eu/
-
+* SVG foundation http://www.svgfoundation.org
+* SVG dot org http://www.svg.org
 INSTALLATION INSTRUCTIONS
 -------------------------
 ***THERE ARE FIVE WAYS TO IMPLEMENT SVG MODULE IN PERL***
@@ -116,7 +117,7 @@ INSTALLATION INSTRUCTIONS
 
 KNOWN BUGS & ISSUES
 -------------------
-Comments before the <svg> element are toxic.
+Comments tags before the <svg> element are toxic. This is being worked on but I can not promise anything.
 
 SEE ALSO:
 SVG::Parser
@@ -126,7 +127,7 @@ SVG::Element
 
 CHANGE LOG
 ----------
-A poor version of the change history is available in the Changes file.
+You can find details about the changes over time in the change log
 
 COMMENTS/FEEDBACK
 -----------------

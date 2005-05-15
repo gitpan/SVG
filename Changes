@@ -1,8 +1,14 @@
 Revision history for Perl extension SVG.
+
+2.33    14 May, 2005
+	-fixed the xlink reference behaviour which was wrong and 
+	 broke Mozilla native SVG. Fix submitted by Ian Hickson
+
 2.32	10 October, 2004
 	-bufgix to repair broken test which causes failure of make test
 	-added sorting to attribute list so output is consistent
-	-added generic support for -href for any method that adds it as an attribute
+	-added generic support for -href for any method that adds 
+	 it as an attribute
 	-added xlink support to any tag with an -href attribute
 	-added 'a' and 'g' autosubs
 	-added numerous tests including pi, polygon, script, anchor, style tests
