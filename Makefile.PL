@@ -1,13 +1,11 @@
 use ExtUtils::MakeMaker;
-use strict;
-
+# See lib/ExtUtils/MakeMaker.pm for details of how to influence
+# the contents of the Makefile that is written.
 WriteMakefile(
-    'NAME'     => 'SVG2',
-    'VERSION_FROM'   => 'SVG2.pm',
-    'PREREQ_PM'  => {
-    'Pod::Usage'         => 0,
-    'XML2' => 0,
-    },
-    'AUTHOR'        => "Martin Owens <DoctorMO{atta}gmail.com>",
+    NAME              => 'SVG',
+    VERSION_FROM      => 'lib/SVG.pm', # finds $VERSION
+    PREREQ_PM         => {}, # e.g., Module::Name => 1.1
+    ($] >= 5.005 ?     ## Add these new keywords supported since 5.005
+      (ABSTRACT_FROM  => 'lib/SVG/Manual.pm', # retrieve abstract from module
+       AUTHOR         => 'Ronan Oger <ronan@roitsystems.com>') : ()),
 );
-
