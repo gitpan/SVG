@@ -21,11 +21,13 @@ package SVG::XML;
 use strict;
 use vars qw($VERSION @ISA @EXPORT );
 
-$VERSION = "2.26";
+$VERSION = "2.27";
 
 require Exporter;
 @ISA = qw(Exporter);
 @EXPORT = qw(
+    xmlesc
+    xmlescape
     xmlescp
     cssstyle
     xmlattrib
@@ -58,6 +60,10 @@ sub xmlescp ($) {
 
     return $s;
 }
+
+*xmlesc=\&xmlescp;
+
+*xmlescape=\&xmlescp;
 
 sub cssstyle {
     my %attrs=@_;

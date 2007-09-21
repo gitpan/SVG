@@ -2,7 +2,7 @@ package SVG::DOM;
 use strict;
 
 use vars qw($VERSION);
-$VERSION = "1.03";
+$VERSION = "1.04";
 
 # this module extends SVG::Element
 package SVG::Element;
@@ -570,9 +570,6 @@ SVG::DOM provides a selection of methods for accessing and manipulating SVG
 elements through DOM-like methods such as getElements, getChildren, getNextSibling
 and so on. 
 
-Currently only methods that provide read operations are supported. Methods to
-manipulate SVG elements will be added in a future release.
-
 =head1 SYNOPSIS
 
     my $svg=new SVG(id=>"svg_dom_synopsis", width=>"100", height=>"100");
@@ -754,8 +751,6 @@ Martin Owens, doctormo@postmaster.co.uk
 
 perl(1), L<SVG>, L<SVG::XML>, L<SVG::Element>, L<SVG::Parser>, L<SVG::Manual>
 
-L<http://www.roitsystems.com/> ROASP.com: Serverside SVG server
-L<http://www.vectoreal.com/> Vectoreal: Commercal SVG Application solutions
 L<http://www.roitsystems.com/> ROIT Systems: Commercial SVG perl solutions
 L<http://www.w3c.org/Graphics/SVG/> SVG at the W3C
 

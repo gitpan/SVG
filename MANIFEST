@@ -31,6 +31,7 @@ test/19-style.pl
 test/20-anchor.pl
 test/21-polygon.pl
 test/22-xlink.pl
+test/23-xmlescape.pl
 examples/svgtest2.pl
 examples/SVG_02_sample.pl
 examples/image_sample.pl

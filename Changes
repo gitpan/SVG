@@ -1,8 +1,20 @@
 Revision history for Perl extension SVG.
+
+
+2.36	16 September, 2007
+	-Fixed SVG::DOM POD
+
+2.35	14 September, 2007
+	-Fixed SVG::DOM POD
+
 2.34    17 May 2005
 	-SVG::Element - Removed elsep entry for CDATA, cdata, cdata_noxmlesc fields to get rid of
 	artificial blank spaces that confuse some browsers
 	-SVG::DOM - added getRootNode method
+	-Added user-contributed DOM2 methods to SVG::DOM	
+
+
+
 2.33    14 May, 2005
 	-fixed the xlink reference behaviour which was wrong and 
 	 broke Mozilla native SVG. Fix submitted by Ian Hickson

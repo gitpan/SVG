@@ -1,6 +1,6 @@
 package SVG::Manual;
 
-our $VERSION = 2.34;
+our $VERSION = 2.35;
 use vars qw($VERSION);
 
 $VERSION = eval $VERSION;
@@ -11,7 +11,7 @@ SVG - Perl extension for generating Scalable Vector Graphics (SVG) documents
 
 =head2 VERSION
 
-Covers SVG-2.34 distribution
+Covers SVG-2.35 distribution
 
 =head1 SYNOPSIS
 
@@ -896,6 +896,13 @@ B<Result:>
 SEE ALSO:
 
   L<"cdata">, L<"script">.
+
+=head2 xmlescp and xmlescape
+
+$string = $svg->xmlescp($string)
+$string = $svg->xmlescape($string)
+
+SVG module does not xml-escape characters that are incompatible with the XML specification. B<xmlescp> and B<xmlescape> provides this functionality. It is a helper method which Generates an XML-escaped string for reserved characters such as ampersand, open and close brackets, etcetera.
 
 =head2 filter
 
