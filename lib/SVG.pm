@@ -17,7 +17,7 @@ use SVG::Extension;
 
 @ISA = qw(SVG::Element SVG::Extension);
 
-$VERSION = "2.36";
+$VERSION = "2.37";
 
 #-------------------------------------------------------------------------------
 
@@ -223,7 +223,10 @@ sub new ($;@) {
     unless ($attrs{-namespace}) {
         $attrs{'xmlns'} = $attrs{'xmlns'} || $attrs{'-xml_svg'};
     }
-    $attrs{'xmlns:xlink'} = $attrs{'xmlns:xlink'} || $attrs{'-xml_xlink'};
+    $attrs{'xmlns:xlink'} = $attrs{'xmlns:xlink'} || $attrs{'-xml_xlink'} || 'http://www.w3.org/1999/xlink';
+    $attrs{'xmlns:svg'} = $attrs{'xmlns:svg'} || $attrs{'-xml_svg'} || 'http://www.w3.org/2000/svg';
+
+
     $self->{-level} = 0;
     $self->{$_} = $attrs{$_} foreach keys %default_attrs;
 

@@ -1,6 +1,6 @@
 package SVG::Manual;
 
-our $VERSION = 2.35;
+our $VERSION = 2.37;
 use vars qw($VERSION);
 
 $VERSION = eval $VERSION;
@@ -11,7 +11,7 @@ SVG - Perl extension for generating Scalable Vector Graphics (SVG) documents
 
 =head2 VERSION
 
-Covers SVG-2.35 distribution
+Covers SVG-2.37 distribution, November 2007
 
 =head1 SYNOPSIS
 
@@ -899,10 +899,26 @@ SEE ALSO:
 
 =head2 xmlescp and xmlescape
 
-$string = $svg->xmlescp($string)
-$string = $svg->xmlescape($string)
+$string = SVG::xmlescp($string)
+$string = SVG::xmlesc($string)
+$string = SVG::xmlescape($string)
 
-SVG module does not xml-escape characters that are incompatible with the XML specification. B<xmlescp> and B<xmlescape> provides this functionality. It is a helper method which Generates an XML-escaped string for reserved characters such as ampersand, open and close brackets, etcetera.
+SVG module does not xml-escape characters that are incompatible with the XML specification. B<xmlescp> and B<xmlescape> provides this functionality. It is a helper function which Generates an XML-escaped string for reserved characters such as ampersand, open and close brackets, etcetera.
+
+The behaviour of xmlesc is to apply the following transformation to the input string $s: 
+
+    $s = '0' unless defined $s;
+    $s=join(', ',@{$s}) if(ref($s) eq 'ARRAY');
+        $s=~s/&(?!#(x\w\w|\d+?);)/&amp;/g;
+    $s=~s/>/&gt;/g;
+    $s=~s/</&lt;/g;
+    $s=~s/\"/&quot;/g;
+    $s=~s/\'/&apos;/g;
+    $s=~s/\`/&apos;/g;
+    $s=~s/([\x00-\x1f])/sprintf('&#x%02X;',chr($1))/eg;
+        #per suggestion from Adam Schneider
+        $s=~s/([\200-\377])/'&#'.ord($1).';'/ge;
+ 
 
 =head2 filter
 
