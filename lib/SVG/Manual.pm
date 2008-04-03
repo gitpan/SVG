@@ -1,6 +1,6 @@
 package SVG::Manual;
 
-our $VERSION = 2.37;
+our $VERSION = 2.38;
 use vars qw($VERSION);
 
 $VERSION = eval $VERSION;
@@ -11,7 +11,7 @@ SVG - Perl extension for generating Scalable Vector Graphics (SVG) documents
 
 =head2 VERSION
 
-Covers SVG-2.37 distribution, November 2007
+Covers SVG-2.38 distribution, April 2008
 
 =head1 SYNOPSIS
 
@@ -127,7 +127,7 @@ specified in the import list. These options and elements are then available
 for all SVG instances that are created with the L<"new"> constructor. For example,
 to change the indent string to two spaces per level:
 
-    use SVG qw(-indent => "  ");
+    use SVG (-indent => "  ");
 
 With the exception of -auto, all options may also be specified to the L<"new">
 constructor. The currently supported options and their default value are:

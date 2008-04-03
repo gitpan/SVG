@@ -1,6 +1,11 @@
 Revision history for Perl extension SVG.
 
-2.37	11 November, 2007
+2.38	03 May, 2008
+	-Modified SVG::Element to answer a bug report in rt.perl.org by slaven
+	 regarding the redefined methods warnings when SVG is used twice.
+	-Fixed the POD to reflect annotation comments.
+
+2.37	02 March, 2008
 	-Added NS definitions for svg and xlink to enable xlink:href and svg: namespace usage in Firefox.
 
 2.36	16 September, 2007

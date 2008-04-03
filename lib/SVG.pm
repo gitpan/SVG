@@ -17,7 +17,7 @@ use SVG::Extension;
 
 @ISA = qw(SVG::Element SVG::Extension);
 
-$VERSION = "2.37";
+$VERSION = "2.38";
 
 #-------------------------------------------------------------------------------
 
@@ -25,7 +25,7 @@ $VERSION = "2.37";
 
 =head2 VERSION
 
-Version 2.36, 15 August, 2007
+Version 2.38, 03 April, 2008
 
 Refer to L<SVG::Manual> for the complete manual
 
@@ -210,8 +210,8 @@ may also be set in xmlify, overriding any corresponding values set in the SVG->n
 # refer to the SVG::tag method 
 
 sub new ($;@) {
-    my ($proto,%attrs)=@_;
-    my $class=ref $proto || $proto;
+    my ($proto,%attrs) = @_;
+    my $class = ref $proto || $proto;
     my $self;
 
     # establish defaults for unspecified attributes

@@ -20,7 +20,7 @@ L<http://www.w3c.org/Graphics/SVG/> SVG at the W3C
 
 package SVG::Element;
 
-$VERSION = "2.28";
+$VERSION = "2.38";
 
 use strict;
 use SVG::XML;
@@ -1624,7 +1624,13 @@ sub autoload {
 
         # N.B.: The \ on \@_ makes sure that the incoming arguments are
         # used and not the ones passed when the subroutine was created.
-        eval "sub $package\:\:$sub (\$;\@) { return shift->tag('$tag',\@_) }";
+       # eval "sub $package\:\:$sub (\$;\@) { return shift->tag('$tag',\@_) }";
+	#per rt.perl.org comment by slaven.
+
+	if (!$package->can($sub)) {
+		no strict 'refs';
+		*{$package.'::'.$sub} = sub { return shift->tag($tag, @_) };
+	}
         return $self->$sub(@_) if $self;
     }
 }
