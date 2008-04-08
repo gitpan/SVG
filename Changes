@@ -1,6 +1,9 @@
 Revision history for Perl extension SVG.
 
-2.38	03 May, 2008
+2.39	08 April, 2008
+	-Added warnings
+2.38	03 April, 2008
+
 	-Modified SVG::Element to answer a bug report in rt.perl.org by slaven
 	 regarding the redefined methods warnings when SVG is used twice.
 	-Fixed the POD to reflect annotation comments.

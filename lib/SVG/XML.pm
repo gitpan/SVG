@@ -19,6 +19,8 @@ L<http://www.w3c.org/Graphics/SVG/> SVG at the W3C
 
 package SVG::XML;
 use strict;
+use warnings;
+
 use vars qw($VERSION @ISA @EXPORT );
 
 $VERSION = "2.27";

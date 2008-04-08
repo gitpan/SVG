@@ -14,10 +14,11 @@ use Exporter;
 use SVG::XML;
 use SVG::Element;
 use SVG::Extension;
+use warnings;
 
 @ISA = qw(SVG::Element SVG::Extension);
 
-$VERSION = "2.38";
+$VERSION = "2.39";
 
 #-------------------------------------------------------------------------------
 
@@ -25,7 +26,7 @@ $VERSION = "2.38";
 
 =head2 VERSION
 
-Version 2.38, 03 April, 2008
+Version 2.39, 08  April, 2008
 
 Refer to L<SVG::Manual> for the complete manual
 

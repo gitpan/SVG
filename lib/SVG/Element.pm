@@ -26,6 +26,7 @@ use strict;
 use SVG::XML;
 use SVG::DOM;
 use SVG::Extension;
+use warnings;
 use vars qw($AUTOLOAD %autosubs);
 
 my @autosubs = qw(

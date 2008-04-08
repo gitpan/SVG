@@ -1,6 +1,6 @@
 package SVG::Extension;
 use strict;
-
+use warnings;
 use vars qw(@ISA $VERSION @TYPES %TYPES);
 $VERSION = "0.2";
 

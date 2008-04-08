@@ -1,6 +1,6 @@
 package SVG::DOM;
 use strict;
-
+use warnings;
 use vars qw($VERSION);
 $VERSION = "1.04";
 
