@@ -18,7 +18,7 @@ use warnings;
 
 @ISA = qw(SVG::Element SVG::Extension);
 
-$VERSION = "2.39";
+$VERSION = "2.40";
 
 #-------------------------------------------------------------------------------
 
@@ -26,7 +26,7 @@ $VERSION = "2.39";
 
 =head2 VERSION
 
-Version 2.39, 08  April, 2008
+Version 2.40, 08  April, 2008
 
 Refer to L<SVG::Manual> for the complete manual
 
@@ -249,7 +249,7 @@ sub new ($;@) {
 
 =pod
 
-=head2 xmlify (alias: to_xml render, serialize, serialise)
+=head2 xmlify  (alias: to_xml render serialize serialise )
 
 $string = $svg->xmlify(%attributes);
 
@@ -312,6 +312,13 @@ return the perl code which generates the SVG document as it currently exists.
 sub perlify ($;@) {
     return shift->SUPER::perlify();
 }
+
+=head2 toperl ()
+
+Alias for method perlify()
+
+=cut
+
 *toperl=\&perlify;
 
 #-------------------------------------------------------------------------------

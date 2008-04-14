@@ -20,7 +20,7 @@ L<http://www.w3c.org/Graphics/SVG/> SVG at the W3C
 
 package SVG::Element;
 
-$VERSION = "2.38";
+$VERSION = "2.40";
 
 use strict;
 use SVG::XML;
@@ -332,14 +332,14 @@ as a child.
 
 the following attributes are expected for anchor tags (any any tags which use -href links):
 
-=item -href    required
-=item -type    optional
-=item -role    optional
-=item -title   optional
-=item -show    optional
-=item -arcrole optional
-=item -actuate optional
-=item target   optional
+=head2 -href    required
+=head2 -type    optional
+=head2 -role    optional
+=head2 -title   optional
+=head2 -show    optional
+=head2 -arcrole optional
+=head2 -actuate optional
+=head2 target   optional
 
 For more information on the options, refer to the w3c XLink specification at 
 L<http://www.w3.org/TR/xlink/>
@@ -1331,57 +1331,54 @@ B<Example:>
 Note that the following filter elements are currently supported:
 Also note that the elelemts are defined in lower case in the module, but as of version 2.31, any case combination is allowed.
 
-=over 4
+=head2 * feBlend 
 
-=item * feBlend 
+=head2 * feColorMatrix 
 
-=item * feColorMatrix 
+=head2 * feComponentTransfer 
 
-=item * feComponentTransfer 
+=head2 * feComposite
 
-=item * feComposite
+=head2 * feConvolveMatrix 
 
-=item * feConvolveMatrix 
+=head2 * feDiffuseLighting 
 
-=item * feDiffuseLighting 
+=head2 * feDisplacementMap 
 
-=item * feDisplacementMap 
+=head2 * feDistantLight 
 
-=item * feDistantLight 
+=head2 * feFlood 
 
-=item * feFlood 
+=head2 * feFuncA 
 
-=item * feFuncA 
+=head2 * feFuncB 
 
-=item * feFuncB 
+=head2 * feFuncG 
 
-=item * feFuncG 
+=head2 * feFuncR 
 
-=item * feFuncR 
+=head2 * feGaussianBlur 
 
-=item * feGaussianBlur 
+=head2 * feImage 
 
-=item * feImage 
+=head2 * feMerge 
 
-=item * feMerge 
+=head2 * feMergeNode 
 
-=item * feMergeNode 
+=head2 * feMorphology 
 
-=item * feMorphology 
+=head2 * feOffset 
 
-=item * feOffset 
+=head2 * fePointLight
 
-=item * fePointLight
+=head2 * feSpecularLighting 
 
-=item * feSpecularLighting 
+=head2 * feSpotLight 
 
-=item * feSpotLight 
+=head2 * feTile 
 
-=item * feTile 
+=head2 * feTurbulence 
 
-=item * feTurbulence 
-
-=back
 
 SEE ALSO:
 
@@ -1537,59 +1534,55 @@ sub gradient ($;@) {
 
 The following elements are generically supported by SVG:
 
-=over 4
+=head2 * altGlyph
 
-=item * altGlyph
+=head2 * altGlyphDef
 
-=item * altGlyphDef
+=head2 * altGlyphItem
 
-=item * altGlyphItem
+=head2 * clipPath
 
-=item * clipPath
+=head2 * color-profile
 
-=item * color-profile
+=head2 * cursor
 
-=item * cursor
+=head2 * definition-src
 
-=item * definition-src
+=head2 * font-face-format
 
-=item * font-face-format
+=head2 * font-face-name
 
-=item * font-face-name
+=head2 * font-face-src
 
-=item * font-face-src
+=head2 * font-face-url
 
-=item * font-face-url
+=head2 * foreignObject
 
-=item * foreignObject
+=head2 * glyph
 
-=item * glyph
+=head2 * glyphRef
 
-=item * glyphRef
+=head2 * hkern
 
-=item * hkern
+=head2 * marker
 
-=item * marker
+=head2 * mask
 
-=item * mask
+=head2 * metadata
 
-=item * metadata
+=head2 * missing-glyph
 
-=item * missing-glyph
+=head2 * mpath
 
-=item * mpath
+=head2 * switch
 
-=item * switch
+=head2 * symbol
 
-=item * symbol
+=head2 * tref
 
-=item * tref
+=head2 * view
 
-=item * view
-
-=item * vkern
-
-=back
+=head2 * vkern
 
 See e.g. L<"pattern"> for an example of the use of these methods.
 

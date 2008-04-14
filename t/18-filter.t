@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+use Test::More tests => 2;
 use strict;
 use SVG;
 
@@ -19,8 +19,6 @@ my $fe = $svg->fe(
         transform => 'rotate(-45)'
     );
 
-print ("Failed on fe 1: generation ") and exit(0) unless $fe;
+ok($fe,"fe 1: generation");
 my $out = $svg->xmlify;
-print ("Failed on fe 2: result ") and exit(0) unless $out =~ /feDiffuseLighting/;
-
-exit 1;
+ok($out =~ /feDiffuseLighting/,"fe 2: result");

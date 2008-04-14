@@ -1,7 +1,12 @@
 Revision history for Perl extension SVG.
 
+2.40	14 April, 2008
+	-Changed tests to current recommendation. Moved to t/ directory.
+	-Added POD and POD Coverage tests
+
 2.39	08 April, 2008
 	-Added warnings
+
 2.38	03 April, 2008
 
 	-Modified SVG::Element to answer a bug report in rt.perl.org by slaven

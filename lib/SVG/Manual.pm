@@ -1,7 +1,9 @@
 package SVG::Manual;
 
-our $VERSION = 2.38;
+our $VERSION = 2.40;
 use vars qw($VERSION);
+use strict;
+use warnings;
 
 $VERSION = eval $VERSION;
 
@@ -11,7 +13,7 @@ SVG - Perl extension for generating Scalable Vector Graphics (SVG) documents
 
 =head2 VERSION
 
-Covers SVG-2.38 distribution, April 2008
+Covers SVG-2.40 distribution, April 2008
 
 =head1 SYNOPSIS
 
@@ -86,35 +88,31 @@ object, create and access javascript, and generate SMIL animation content.
 
 Generating SVG is a simple three step process:
 
-=over 4
 
-=item 1 The first step is to construct a new SVG object with L<"new">.
+=head2 1 The first step is to construct a new SVG object with L<"new">.
 
-=item 2 The second step is to call element constructors to create SVG elements.
+=head2 2 The second step is to call element constructors to create SVG elements.
 Examples of element constructors are L<"circle"> and L<"path">.
 
-=item 3 The third and last step is to render the SVG object into XML using the
+=head2 3 The third and last step is to render the SVG object into XML using the
 L<"xmlify"> method.
 
-=back
 
 The L<"xmlify"> method takes a number of optional arguments that control how SVG
 renders the object into XML, and in particular determine whether a stand-alone
 SVG document or an inline SVG document fragment is generated:
 
-=over (
 
-=item -stand-alone
+=head2 -stand-alone
 
 A complete SVG document with its own associated DTD. A namespace for the SVG
 elements may be optionally specified.
 
-=item -in-line
+=head2 -in-line
 
 An in-line SVG document fragment with no DTD that be embedded within other XML
 content. As with stand-alone documents, an alternate namespace may be specified.
 
-=back
 
 No XML content is generated until the third step is reached. Up until this
 point, all constructed element definitions reside in a DOM-like data structure
@@ -964,57 +962,55 @@ B<Example:>
 
 Note that the following filter elements are currently supported:
 
-=over 4
 
-=item * feBlend 
+=head2 * feBlend 
 
-=item * feColorMatrix 
+=head2 * feColorMatrix 
 
-=item * feComponentTransfer 
+=head2 * feComponentTransfer 
 
-=item * feComposite
+=head2 * feComposite
 
-=item * feConvolveMatrix 
+=head2 * feConvolveMatrix 
 
-=item * feDiffuseLighting 
+=head2 * feDiffuseLighting 
 
-=item * feDisplacementMap 
+=head2 * feDisplacementMap 
 
-=item * feDistantLight 
+=head2 * feDistantLight 
 
-=item * feFlood 
+=head2 * feFlood 
 
-=item * feFuncA 
+=head2 * feFuncA 
 
-=item * feFuncB 
+=head2 * feFuncB 
 
-=item * feFuncG 
+=head2 * feFuncG 
 
-=item * feFuncR 
+=head2 * feFuncR 
 
-=item * feGaussianBlur 
+=head2 * feGaussianBlur 
 
-=item * feImage 
+=head2 * feImage 
 
-=item * feMerge 
+=head2 * feMerge 
 
-=item * feMergeNode 
+=head2 * feMergeNode 
 
-=item * feMorphology 
+=head2 * feMorphology 
 
-=item * feOffset 
+=head2 * feOffset 
 
-=item * fePointLight
+=head2 * fePointLight
 
-=item * feSpecularLighting 
+=head2 * feSpecularLighting 
 
-=item * feSpotLight 
+=head2 * feSpotLight 
 
-=item * feTile 
+=head2 * feTile 
 
-=item * feTurbulence 
+=head2 * feTurbulence 
 
-=back
 
 SEE ALSO:
 
@@ -1084,59 +1080,56 @@ B<Example:>
 
 The following elements are generically supported by SVG:
 
-=over 4
 
-=item * altGlyph
+=head2 * altGlyph
 
-=item * altGlyphDef
+=head2 * altGlyphDef
 
-=item * altGlyphItem
+=head2 * altGlyphItem
 
-=item * clipPath
+=head2 * clipPath
 
-=item * color-profile
+=head2 * color-profile
 
-=item * cursor
+=head2 * cursor
 
-=item * definition-src
+=head2 * definition-src
 
-=item * font-face-format
+=head2 * font-face-format
 
-=item * font-face-name
+=head2 * font-face-name
 
-=item * font-face-src
+=head2 * font-face-src
 
-=item * font-face-url
+=head2 * font-face-url
 
-=item * foreignObject
+=head2 * foreignObject
 
-=item * glyph
+=head2 * glyph
 
-=item * glyphRef
+=head2 * glyphRef
 
-=item * hkern
+=head2 * hkern
 
-=item * marker
+=head2 * marker
 
-=item * mask
+=head2 * mask
 
-=item * metadata
+=head2 * metadata
 
-=item * missing-glyph
+=head2 * missing-glyph
 
-=item * mpath
+=head2 * mpath
 
-=item * switch
+=head2 * switch
 
-=item * symbol
+=head2 * symbol
 
-=item * tref
+=head2 * tref
 
-=item * view
+=head2 * view
 
-=item * vkern
-
-=back
+=head2 * vkern
 
 See e.g. L<"pattern"> for an example of the use of these methods.
 
@@ -1144,55 +1137,52 @@ See e.g. L<"pattern"> for an example of the use of these methods.
 
 The following L<SVG::DOM> elements are accessible through SVG:
 
-=over 4
+=head2 * getChildren
 
-=item * getChildren
+=head2 * getFirstChild
 
-=item * getFirstChild
+=head2 * getNextChild
 
-=item * getNextChild
+=head2 * getLastChild
 
-=item * getLastChild
+=head2 * getParent
 
-=item * getParent
+=head2 * getParentElement
 
-=item * getParentElement
+=head2 * getSiblings
 
-=item * getSiblings
+=head2 * getElementByID
 
-=item * getElementByID
+=head2 * getElementID
 
-=item * getElementID
+=head2 * getElements
 
-=item * getElements
+=head2 * getElementName
 
-=item * getElementName
+=head2 * getType
 
-=item * getType
+=head2 * getAttributes
 
-=item * getAttributes
+=head2 * getAttribute
 
-=item * getAttribute
+=head2 * setAttributes
 
-=item * setAttributes
+=head2 * setAttribute
 
-=item * setAttribute
+=head2 * insertBefore
 
-=item * insertBefore
+=head2 * insertAfter
 
-=item * insertAfter
+=head2 * insertSiblingBefore
 
-=item * insertSiblingBefore
+=head2 * insertSiblingAfter
 
-=item * insertSiblingAfter
+=head2 * replaceChild
 
-=item * replaceChild
+=head2 * removeChild
 
-=item * removeChild
+=head2 * cloneNode
 
-=item * cloneNode
-
-=back
 
 =head1 LICENSE
 

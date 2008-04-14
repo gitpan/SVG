@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+use Test::More tests=>7;
 use strict;
 use SVG;
 
@@ -24,18 +24,13 @@ document.write('<br>');//write a horizontal rule
 }|
 );
 
-print("Failed on script 1: create script element") and exit(0)
-  unless $tag;
+ok($tag,"create script element");
 $out = $svg->xmlify;
 
-print("Failed on script 2: specify script type") and exit(0)
-  unless $out =~ /\"text\/ecmascript\"/;
-print("Failed on script 3: generate script content") and exit(0)
-  unless $out =~ /function/;
-print("Failed on script 4: handle single quotes") and exit(0)
-  unless $out =~ /'<br>'/;
-print("Failed on script 5: handle double quotes") and exit(0)
-  unless $out =~ /"<hr>"/;
+ok($out =~ /\"text\/ecmascript\"/,"specify script type");
+ok($out =~ /function/,"generate script content");;
+ok($out =~ /'<br>'/,"handle single quotes");
+ok($out =~ /"<hr>/,"handle double quotes");
 
 #test for adding scripting commands in an element
 
@@ -53,15 +48,14 @@ my $rect = $svg->rect(
 
 $out = $rect->xmlify;
 
-print("Failed on script 6: mouse event script call") and exit(0)
-  unless ( $out =~ /'hello'/gs && $out =~ /'world'/gs );
+ok( $out =~ /'hello'/gs && $out =~ /'world'/gsi,"mouse event script call" );
 
 
 $svg = new SVG;
 $svg->script()->CDATA("TESTTESTTEST");
 $out = $svg->xmlify;
 chomp $out;
-print("Failed on script 7: script without type") and exit(0)
-  unless ( $out =~ /<script\s*><!\[CDATA\[TESTTESTTEST\]\]>\s*<\/script>/);
 
-exit 1;
+ok( $out =~ /<script\s*><!\[CDATA\[TESTTESTTEST\]\]>\s*<\/script>/,"script without type");
+
+

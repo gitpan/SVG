@@ -39,7 +39,7 @@ sub internal_subset {
 
     return $document->{-internal};
 }
-=item extension
+=head2 extension
 
 return the element object
 
@@ -54,7 +54,7 @@ sub extension {
 
 #-----------------
 
-=item element_decl
+=head2 element_decl
 
 generate an element declaration in the DTD
 
@@ -67,7 +67,7 @@ sub element_decl {
     return $subset->extension('ELEMENT',%attrs);
 }
 
-=item attribute_decl
+=head2 attribute_decl
 
 return generate an attribute list for an element
 
@@ -84,7 +84,7 @@ sub attribute_decl {
     return $element_decl->extension('ATTLIST',%attrs);
 }
 
-=item attlist_decl
+=head2 attlist_decl
 
 =cut
 
@@ -101,7 +101,7 @@ sub attlist_decl {
     return $element_decl->attribute_decl(%attrs);
 }
 
-=item notation_decl(%attrs)
+=head2 notation_decl(%attrs)
 
 return an extention object of type NOTATION
 
@@ -115,7 +115,7 @@ sub notation_decl {
 }
 
 
-=item entity_decl(%attrs) 
+=head2 entity_decl(%attrs) 
 
 return an extension object of type 'ENTITY'
 
@@ -135,7 +135,7 @@ sub entity_decl {
 # extension elements. A hierarchical model will follow in time
 # with the same render API.
 
-=item xmilfy
+=head2 xmilfy
 
 =cut
 
@@ -213,19 +213,19 @@ sub xmlify {
 
 #some aliases for xmilfy
 
-=item render
+=head2 render
 
 alias for xmlify
 
-=item to_xml
+=head2 to_xml
 
 alias for xmlify
 
-=item serialise
+=head2 serialise
 
 alias for xmlify
 
-=item serialise
+=head2 serialise
 
 alias for xmlify
 
@@ -238,11 +238,11 @@ alias for xmlify
 
 #-----------------
 
-=item getDeclName
+=head2 getDeclName
 
 Simply an alias for the general method for SVG::Extension objects
 
-=item getExtensionName
+=head2 getExtensionName
 
 alias to getDeclName
 
@@ -254,14 +254,14 @@ sub getDeclName {
 }
 *getExtensionName=\&getDeclName;
 
-=item getDeclNames
+=head2 getDeclNames
 
 return list of existing decl types by extracting it from the overall list
 of existing element types
 
 sub getDeclNames {
 
-=item getExtensionNames
+=head2 getExtensionNames
 
 alias to getDeclNames
 

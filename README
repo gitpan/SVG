@@ -6,22 +6,27 @@ SVG.pm is a perl extention to generate stand-alone or inline SVG
 Refer to the pod for full documentation and an example script, 
 or to the following mirrors:
 
-1/ http://roitsystems.com/
-2/ http://search.cpan.org/perldoc?SVG
-3/ http://search.cpan.org/~ronan
+1/ http://search.cpan.org/perldoc?SVG
+2/ http://search.cpan.org/~ronan
 
 The complete pod for SVG resides in SVG::Manual 
 type perldoc SVG::Manual on the command line
 
-(c) 2001-2005  Ronan Oger, RO IT Systems, GmbH 
+(c) 2001-2008  Ronan Oger, RO IT Systems, GmbH  
 homepage: http://www.roitsystems.com
 
 CONTACT POINT
 -------------
-email: ronan at roitsystems.com
+
+ronan@cpan.org
 
 This software is provided as is and without warranty. 
 It is freely distributed under the general perl license.
+
+LICENSE
+-------
+
+This software is provided under the terms of the Perl license
 
 OVERVIEW
 --------
@@ -118,7 +123,10 @@ KNOWN BUGS & ISSUES
 -------------------
 Comments tags before the <svg> element are toxic. This is being worked on but I can not promise anything.
 
-SEE ALSO:
+Please submit bug reports to http://rt.cpan.org
+
+SEE ALSO
+--------
 SVG::Parser
 SVG::DOM
 SVG::XML
@@ -126,7 +134,7 @@ SVG::Element
 
 CHANGE LOG
 ----------
-You can find details about the changes over time in the change log
+You can find details about the changes over time in the change log file: Changes
 
 COMMENTS/FEEDBACK
 -----------------

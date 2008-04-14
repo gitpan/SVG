@@ -1,4 +1,5 @@
-#!/usr/bin/perl -w
+use Test::More tests => 4;
+
 use strict;
 use SVG;
 
@@ -23,18 +24,12 @@ my $c = $svg->polygon(
 	opacity=>0.6,
 );
 
-print ("Failed on polygon 1: define") and exit(0) unless
-	$c;
+ok($c,"polygon 1: define");
 
 $out = $svg->xmlify();
 
-print ("Failed on polygon 2: serialize") and exit(0) unless
-	$out =~ /polygon/;
+ok($out =~ /polygon/,"polygon 2: serialize");
 
-print ("Failed on polygon 3: inline css style") and exit(0) unless
-	$out =~ /style/;
+ok($out =~ /style/,"inline css style 1");
 
-print ("Failed on polygon 4: inline css style") and exit(0) unless
-	$out =~ /opacity/;
-
-exit 1;
+ok($out =~ /opacity/,"inline css style 2");

@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+use Test::More tests => 2;
 use strict;
 use SVG;
 
@@ -10,14 +10,11 @@ my $dupnotdetected=eval {
     $svga->group(id=>'the_group');
     1;
 };
-print("Failed in raiserror") and exit(0)
-    if $dupnotdetected;
+
+ok(!$dupnotdetected,"raiseerror");
 
 my $svgb=new SVG(-raiseerror => 0, -printerror => 0);
 $svgb->group(id=>'the_group');
 $svgb->group(id=>'the_group');
 my $xml=$svgb->render();
-print("Failed in error attribute") and exit(0)
-    unless $xml=~/errors=/;
-
-exit 1;
+ok($xml=~/errors=/,"raiseerror and printerror attribute in constructor");

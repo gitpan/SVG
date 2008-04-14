@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+use Test::More tests => 6;
 use strict;
 use SVG;
 
@@ -32,23 +32,18 @@ my $out;
     $tag2->circle(cx=>10,cy=>10,r=>1);
 
 $out = $tag0->xmlify;
-print ("Failed on anchor 3: xlink href") and exit(0) unless
-	$out =~ /http\:\/\/here\.com\/some\/simpler\/SVG\.svg/gs;
+ok($out =~ /http\:\/\/here\.com\/some\/simpler\/SVG\.svg/gs,"anchor 3: xlink href");
 
 $out = $tag1->xmlify;
-print ("Failed on anchor 4: target") and exit(0) unless
-	$out =~ /target\=\"new_window_1\"/gs;
+ok($out =~ /target\=\"new_window_1\"/gs,"anchor 4: target");
 
 $out = $tag2->xmlify;
-print ("Failed on anchor 6: title") and exit(0) unless
-	$out =~ /xlink\:title\=\"demotitle\"/gs;
+ok($out =~ /xlink\:title\=\"demotitle\"/gs,"anchor 6: title");
 $out = $tag2->xmlify;
-print ("Failed on anchor 7: actuate") and exit(0) unless
-	$out =~ /actuate/gs;
+ok($out =~ /actuate/gs,"anchor 7: actuate");
 
 $out = $tag2->xmlify;
-print ("Failed on anchor 8: show") and exit(0) unless
-	$out =~ /xlink\:show\=\"embed\"/gs;
+ok($out =~ /xlink\:show\=\"embed\"/gs,"anchor 8: show");
 
     my $tag3 = $svg->a(
         -href   => 'http://example.com/some/page.html',
@@ -56,7 +51,5 @@ print ("Failed on anchor 8: show") and exit(0) unless
         target => 'new_window_1',);
 
 $out = $tag3->xmlify;
-print ("Failed on anchor 8: direct a method") and exit(0) unless
-	$out =~ /direct_a_tag/gs;
+ok($out =~ /direct_a_tag/gs,"anchor 9: direct a method");
 
-exit 1;

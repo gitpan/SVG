@@ -1,12 +1,12 @@
-#!/usr/bin/perl -w
+use Test::More tests => 1;
 use strict;
 use SVG (-auto => 1);
 
 my $svg=new SVG(-foo => "bar");
-print("Failed in autoload") and exit(0)
-    unless eval {
+
+    ok(eval {
         $svg->make->it->up->as->we->go->along;
-    };
+    },"autoload arbitrary xml tags");
 
 #--> currently this is allowed, in fact. It just has no effect.
 #print("Failed in rejecting -auto argument") and exit(0)
@@ -15,4 +15,3 @@ print("Failed in autoload") and exit(0)
 #	1;
 #    };
 
-exit 1;

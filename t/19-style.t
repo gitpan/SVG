@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+use Test::More tests => 1;
 use strict;
 use SVG;
 
@@ -10,6 +10,4 @@ my $rect = $svg->rect(x=>10,y=>10,
 	width=>10,height=>10,
 	style=>{fill=>'red',stroke=>'green'});
 my $out = $svg->xmlify;
-print ("Failed on style 1: inline css defs") and exit(0) unless $out =~ /stroke\s*\:\s*green/;
-
-exit 1;
+ok($out =~ /stroke\s*\:\s*green/,"inline css defs");
