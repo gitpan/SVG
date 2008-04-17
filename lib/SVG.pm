@@ -18,7 +18,7 @@ use warnings;
 
 @ISA = qw(SVG::Element SVG::Extension);
 
-$VERSION = "2.40";
+$VERSION = "2.41";
 
 #-------------------------------------------------------------------------------
 
@@ -26,7 +26,7 @@ $VERSION = "2.40";
 
 =head2 VERSION
 
-Version 2.40, 08  April, 2008
+Version 2.41, 08  April, 2008
 
 Refer to L<SVG::Manual> for the complete manual
 
@@ -322,5 +322,15 @@ Alias for method perlify()
 *toperl=\&perlify;
 
 #-------------------------------------------------------------------------------
+
+#LICENSE
+#
+#
+#
+#The modules in the SVG distribution are distributed under the same license
+# as Perl itself. It is provided free of warranty and may be re-used freely.
+#
+#
+#
 
 1;
