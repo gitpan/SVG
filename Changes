@@ -1,5 +1,8 @@
 Revision history for Perl extension SVG.
 
+2.42	16 April, 2008
+	-Removed Makefile from MANIFEST
+
 2.41	16 April, 2008
 	-Fixed MANIFEST and added license data to the SVG.pm file
 

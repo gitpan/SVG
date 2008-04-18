@@ -23,7 +23,7 @@ use warnings;
 
 use vars qw($VERSION @ISA @EXPORT );
 
-$VERSION = "2.27";
+$VERSION = "2.42";
 
 require Exporter;
 @ISA = qw(Exporter);
