@@ -20,7 +20,7 @@ L<http://www.w3c.org/Graphics/SVG/> SVG at the W3C
 
 package SVG::Element;
 
-$VERSION = "2.43";
+$VERSION = "2.44";
 
 use strict;
 use SVG::XML;
@@ -1329,7 +1329,7 @@ B<Example:>
     );
 
 Note that the following filter elements are currently supported:
-Also note that the elelemts are defined in lower case in the module, but as of version 2.431, any case combination is allowed.
+Also note that the elelemts are defined in lower case in the module, but as of version 2.441, any case combination is allowed.
 
 =head2 * feBlend 
 

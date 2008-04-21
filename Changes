@@ -1,5 +1,11 @@
 Revision history for Perl extension SVG.
 
+2.44	21 April, 2008
+	-Improved META.yml
+
+2.43	21 April, 2008
+	-Improved META.yml
+
 2.42	16 April, 2008
 	-Removed Makefile from MANIFEST
 

@@ -1,6 +1,6 @@
 --- #YAML:1.0
 name:                SVG
-version:             2.43
+version:             2.44
 abstract:            Perl extension for generating Scalable Vector Graphics (SVG) documents
 license:             perl
 author:              

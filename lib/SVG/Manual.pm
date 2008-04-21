@@ -1,6 +1,6 @@
 package SVG::Manual;
 
-our $VERSION = 2.43;
+our $VERSION = 2.44;
 use vars qw($VERSION);
 use strict;
 use warnings;
@@ -13,7 +13,7 @@ SVG - Perl extension for generating Scalable Vector Graphics (SVG) documents
 
 =head2 VERSION
 
-Covers SVG-2.43 distribution, April 2008
+Covers SVG-2.44 distribution, April 2008
 
 =head1 SYNOPSIS
 
@@ -199,7 +199,7 @@ The Default SVG tag will generate the following XML:
  <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.0//EN" "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
  <svg height="100%" width="100%" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
         <defs  /><!--
-        Generated using the Perl SVG Module V2.43
+        Generated using the Perl SVG Module V2.44
         by Ronan Oger
         Info: http://www.roitsystems.com/
   -->
