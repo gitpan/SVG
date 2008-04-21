@@ -2,7 +2,7 @@ package SVG::DOM;
 use strict;
 use warnings;
 use vars qw($VERSION);
-$VERSION = "2.42";
+$VERSION = "2.43";
 
 # this module extends SVG::Element
 package SVG::Element;
