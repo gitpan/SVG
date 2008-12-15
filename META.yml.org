@@ -1,13 +1,15 @@
 --- #YAML:1.0
-name:                SVG
-version:             2.45
-abstract:            Perl extension for generating Scalable Vector Graphics (SVG) documents
+name:                Device-Velleman-K8055-Fuse
+version:             0.98
+abstract:            Communication with the Velleman K8055 USB experiment board using Fuse and K8055fs
 license:             perl
 author:              
-    - Ronan Oger <ronan@cpan.com>
+    - Ronan Oger<ronan@cpan.org>
 generated_by:        ExtUtils::MakeMaker version 6.42
 distribution_type:   module
 requires:     
+    IO::File:                      1
 meta-spec:
     url:     http://module-build.sourceforge.net/META-spec-v1.3.html
     version: 1.3
+

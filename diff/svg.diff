@@ -1,0 +1,718 @@
+diff -r -w SVG-2.36/lib/SVG/DOM.pm SVG-2.42/lib/SVG/DOM.pm
+3c3
+< 
+---
+> use warnings;
+5c5
+< $VERSION = "1.04";
+---
+> $VERSION = "2.42";
+diff -r -w SVG-2.36/lib/SVG/Element.pm SVG-2.42/lib/SVG/Element.pm
+23c23
+< $VERSION = "2.28";
+---
+> $VERSION = "2.42";
+28a29
+> use warnings;
+334,341c335,342
+< =item -href    required
+< =item -type    optional
+< =item -role    optional
+< =item -title   optional
+< =item -show    optional
+< =item -arcrole optional
+< =item -actuate optional
+< =item target   optional
+---
+> =head2 -href    required
+> =head2 -type    optional
+> =head2 -role    optional
+> =head2 -title   optional
+> =head2 -show    optional
+> =head2 -arcrole optional
+> =head2 -actuate optional
+> =head2 target   optional
+1331c1332
+< Also note that the elelemts are defined in lower case in the module, but as of version 2.31, any case combination is allowed.
+---
+> Also note that the elelemts are defined in lower case in the module, but as of version 2.421, any case combination is allowed.
+1333c1334
+< =over 4
+---
+> =head2 * feBlend 
+1335c1336
+< =item * feBlend 
+---
+> =head2 * feColorMatrix 
+1337c1338
+< =item * feColorMatrix 
+---
+> =head2 * feComponentTransfer 
+1339c1340
+< =item * feComponentTransfer 
+---
+> =head2 * feComposite
+1341c1342
+< =item * feComposite
+---
+> =head2 * feConvolveMatrix 
+1343c1344
+< =item * feConvolveMatrix 
+---
+> =head2 * feDiffuseLighting 
+1345c1346
+< =item * feDiffuseLighting 
+---
+> =head2 * feDisplacementMap 
+1347c1348
+< =item * feDisplacementMap 
+---
+> =head2 * feDistantLight 
+1349c1350
+< =item * feDistantLight 
+---
+> =head2 * feFlood 
+1351c1352
+< =item * feFlood 
+---
+> =head2 * feFuncA 
+1353c1354
+< =item * feFuncA 
+---
+> =head2 * feFuncB 
+1355c1356
+< =item * feFuncB 
+---
+> =head2 * feFuncG 
+1357c1358
+< =item * feFuncG 
+---
+> =head2 * feFuncR 
+1359c1360
+< =item * feFuncR 
+---
+> =head2 * feGaussianBlur 
+1361c1362
+< =item * feGaussianBlur 
+---
+> =head2 * feImage 
+1363c1364
+< =item * feImage 
+---
+> =head2 * feMerge 
+1365c1366
+< =item * feMerge 
+---
+> =head2 * feMergeNode 
+1367c1368
+< =item * feMergeNode 
+---
+> =head2 * feMorphology 
+1369c1370
+< =item * feMorphology 
+---
+> =head2 * feOffset 
+1371c1372
+< =item * feOffset 
+---
+> =head2 * fePointLight
+1373c1374
+< =item * fePointLight
+---
+> =head2 * feSpecularLighting 
+1375c1376
+< =item * feSpecularLighting 
+---
+> =head2 * feSpotLight 
+1377c1378
+< =item * feSpotLight 
+---
+> =head2 * feTile 
+1379c1380
+< =item * feTile 
+---
+> =head2 * feTurbulence 
+1381,1383d1381
+< =item * feTurbulence 
+< 
+< =back
+1539,1543c1537
+< =over 4
+< 
+< =item * altGlyph
+< 
+< =item * altGlyphDef
+---
+> =head2 * altGlyph
+1545c1539
+< =item * altGlyphItem
+---
+> =head2 * altGlyphDef
+1547c1541
+< =item * clipPath
+---
+> =head2 * altGlyphItem
+1549c1543
+< =item * color-profile
+---
+> =head2 * clipPath
+1551c1545
+< =item * cursor
+---
+> =head2 * color-profile
+1553c1547
+< =item * definition-src
+---
+> =head2 * cursor
+1555c1549
+< =item * font-face-format
+---
+> =head2 * definition-src
+1557c1551
+< =item * font-face-name
+---
+> =head2 * font-face-format
+1559c1553
+< =item * font-face-src
+---
+> =head2 * font-face-name
+1561c1555
+< =item * font-face-url
+---
+> =head2 * font-face-src
+1563c1557
+< =item * foreignObject
+---
+> =head2 * font-face-url
+1565c1559
+< =item * glyph
+---
+> =head2 * foreignObject
+1567c1561
+< =item * glyphRef
+---
+> =head2 * glyph
+1569c1563
+< =item * hkern
+---
+> =head2 * glyphRef
+1571c1565
+< =item * marker
+---
+> =head2 * hkern
+1573c1567
+< =item * mask
+---
+> =head2 * marker
+1575c1569
+< =item * metadata
+---
+> =head2 * mask
+1577c1571
+< =item * missing-glyph
+---
+> =head2 * metadata
+1579c1573
+< =item * mpath
+---
+> =head2 * missing-glyph
+1581c1575
+< =item * switch
+---
+> =head2 * mpath
+1583c1577
+< =item * symbol
+---
+> =head2 * switch
+1585c1579
+< =item * tref
+---
+> =head2 * symbol
+1587c1581
+< =item * view
+---
+> =head2 * tref
+1589c1583
+< =item * vkern
+---
+> =head2 * view
+1591c1585
+< =back
+---
+> =head2 * vkern
+1627c1621,1627
+<         eval "sub $package\:\:$sub (\$;\@) { return shift->tag('$tag',\@_) }";
+---
+>        # eval "sub $package\:\:$sub (\$;\@) { return shift->tag('$tag',\@_) }";
+> 	#per rt.perl.org comment by slaven.
+> 
+> 	if (!$package->can($sub)) {
+> 		no strict 'refs';
+> 		*{$package.'::'.$sub} = sub { return shift->tag($tag, @_) };
+> 	}
+diff -r -w SVG-2.36/lib/SVG/Extension.pm SVG-2.42/lib/SVG/Extension.pm
+3c3
+< 
+---
+> use warnings;
+5c5
+< $VERSION = "0.2";
+---
+> $VERSION = "2.42";
+42c42
+< =item extension
+---
+> =head2 extension
+57c57
+< =item element_decl
+---
+> =head2 element_decl
+70c70
+< =item attribute_decl
+---
+> =head2 attribute_decl
+87c87
+< =item attlist_decl
+---
+> =head2 attlist_decl
+104c104
+< =item notation_decl(%attrs)
+---
+> =head2 notation_decl(%attrs)
+118c118
+< =item entity_decl(%attrs) 
+---
+> =head2 entity_decl(%attrs) 
+138c138
+< =item xmilfy
+---
+> =head2 xmilfy
+216c216
+< =item render
+---
+> =head2 render
+220c220
+< =item to_xml
+---
+> =head2 to_xml
+224c224
+< =item serialise
+---
+> =head2 serialise
+228c228
+< =item serialise
+---
+> =head2 serialise
+241c241
+< =item getDeclName
+---
+> =head2 getDeclName
+245c245
+< =item getExtensionName
+---
+> =head2 getExtensionName
+257c257
+< =item getDeclNames
+---
+> =head2 getDeclNames
+264c264
+< =item getExtensionNames
+---
+> =head2 getExtensionNames
+diff -r -w SVG-2.36/lib/SVG/Manual.pm SVG-2.42/lib/SVG/Manual.pm
+3c3
+< our $VERSION = 2.35;
+---
+> our $VERSION = 2.42;
+4a5,6
+> use strict;
+> use warnings;
+14c16
+< Covers SVG-2.35 distribution
+---
+> Covers SVG-2.42 distribution, April 2008
+89d90
+< =over 4
+91c92
+< =item 1 The first step is to construct a new SVG object with L<"new">.
+---
+> =head2 1 The first step is to construct a new SVG object with L<"new">.
+93c94
+< =item 2 The second step is to call element constructors to create SVG elements.
+---
+> =head2 2 The second step is to call element constructors to create SVG elements.
+96c97
+< =item 3 The third and last step is to render the SVG object into XML using the
+---
+> =head2 3 The third and last step is to render the SVG object into XML using the
+99d99
+< =back
+105d104
+< =over (
+107c106
+< =item -stand-alone
+---
+> =head2 -stand-alone
+112c111
+< =item -in-line
+---
+> =head2 -in-line
+117d115
+< =back
+130c128
+<     use SVG qw(-indent => "  ");
+---
+>     use SVG (-indent => "  ");
+204c202
+<         Generated using the Perl SVG Module V2.33
+---
+>         Generated using the Perl SVG Module V2.42
+967d964
+< =over 4
+969c966
+< =item * feBlend 
+---
+> =head2 * feBlend 
+971c968
+< =item * feColorMatrix 
+---
+> =head2 * feColorMatrix 
+973c970
+< =item * feComponentTransfer 
+---
+> =head2 * feComponentTransfer 
+975c972
+< =item * feComposite
+---
+> =head2 * feComposite
+977c974
+< =item * feConvolveMatrix 
+---
+> =head2 * feConvolveMatrix 
+979c976
+< =item * feDiffuseLighting 
+---
+> =head2 * feDiffuseLighting 
+981c978
+< =item * feDisplacementMap 
+---
+> =head2 * feDisplacementMap 
+983c980
+< =item * feDistantLight 
+---
+> =head2 * feDistantLight 
+985c982
+< =item * feFlood 
+---
+> =head2 * feFlood 
+987c984
+< =item * feFuncA 
+---
+> =head2 * feFuncA 
+989c986
+< =item * feFuncB 
+---
+> =head2 * feFuncB 
+991c988
+< =item * feFuncG 
+---
+> =head2 * feFuncG 
+993c990
+< =item * feFuncR 
+---
+> =head2 * feFuncR 
+995c992
+< =item * feGaussianBlur 
+---
+> =head2 * feGaussianBlur 
+997c994
+< =item * feImage 
+---
+> =head2 * feImage 
+999c996
+< =item * feMerge 
+---
+> =head2 * feMerge 
+1001c998
+< =item * feMergeNode 
+---
+> =head2 * feMergeNode 
+1003c1000
+< =item * feMorphology 
+---
+> =head2 * feMorphology 
+1005c1002
+< =item * feOffset 
+---
+> =head2 * feOffset 
+1007c1004
+< =item * fePointLight
+---
+> =head2 * fePointLight
+1009c1006
+< =item * feSpecularLighting 
+---
+> =head2 * feSpecularLighting 
+1011c1008
+< =item * feSpotLight 
+---
+> =head2 * feSpotLight 
+1013c1010
+< =item * feTile 
+---
+> =head2 * feTile 
+1015c1012
+< =item * feTurbulence 
+---
+> =head2 * feTurbulence 
+1017d1013
+< =back
+1087,1089d1082
+< =over 4
+< 
+< =item * altGlyph
+1091c1084
+< =item * altGlyphDef
+---
+> =head2 * altGlyph
+1093c1086
+< =item * altGlyphItem
+---
+> =head2 * altGlyphDef
+1095c1088
+< =item * clipPath
+---
+> =head2 * altGlyphItem
+1097c1090
+< =item * color-profile
+---
+> =head2 * clipPath
+1099c1092
+< =item * cursor
+---
+> =head2 * color-profile
+1101c1094
+< =item * definition-src
+---
+> =head2 * cursor
+1103c1096
+< =item * font-face-format
+---
+> =head2 * definition-src
+1105c1098
+< =item * font-face-name
+---
+> =head2 * font-face-format
+1107c1100
+< =item * font-face-src
+---
+> =head2 * font-face-name
+1109c1102
+< =item * font-face-url
+---
+> =head2 * font-face-src
+1111c1104
+< =item * foreignObject
+---
+> =head2 * font-face-url
+1113c1106
+< =item * glyph
+---
+> =head2 * foreignObject
+1115c1108
+< =item * glyphRef
+---
+> =head2 * glyph
+1117c1110
+< =item * hkern
+---
+> =head2 * glyphRef
+1119c1112
+< =item * marker
+---
+> =head2 * hkern
+1121c1114
+< =item * mask
+---
+> =head2 * marker
+1123c1116
+< =item * metadata
+---
+> =head2 * mask
+1125c1118
+< =item * missing-glyph
+---
+> =head2 * metadata
+1127c1120
+< =item * mpath
+---
+> =head2 * missing-glyph
+1129c1122
+< =item * switch
+---
+> =head2 * mpath
+1131c1124
+< =item * symbol
+---
+> =head2 * switch
+1133c1126
+< =item * tref
+---
+> =head2 * symbol
+1135c1128
+< =item * view
+---
+> =head2 * tref
+1137c1130
+< =item * vkern
+---
+> =head2 * view
+1139c1132
+< =back
+---
+> =head2 * vkern
+1147,1149c1140
+< =over 4
+< 
+< =item * getChildren
+---
+> =head2 * getChildren
+1151c1142
+< =item * getFirstChild
+---
+> =head2 * getFirstChild
+1153c1144
+< =item * getNextChild
+---
+> =head2 * getNextChild
+1155c1146
+< =item * getLastChild
+---
+> =head2 * getLastChild
+1157c1148
+< =item * getParent
+---
+> =head2 * getParent
+1159c1150
+< =item * getParentElement
+---
+> =head2 * getParentElement
+1161c1152
+< =item * getSiblings
+---
+> =head2 * getSiblings
+1163c1154
+< =item * getElementByID
+---
+> =head2 * getElementByID
+1165c1156
+< =item * getElementID
+---
+> =head2 * getElementID
+1167c1158
+< =item * getElements
+---
+> =head2 * getElements
+1169c1160
+< =item * getElementName
+---
+> =head2 * getElementName
+1171c1162
+< =item * getType
+---
+> =head2 * getType
+1173c1164
+< =item * getAttributes
+---
+> =head2 * getAttributes
+1175c1166
+< =item * getAttribute
+---
+> =head2 * getAttribute
+1177c1168
+< =item * setAttributes
+---
+> =head2 * setAttributes
+1179c1170
+< =item * setAttribute
+---
+> =head2 * setAttribute
+1181c1172
+< =item * insertBefore
+---
+> =head2 * insertBefore
+1183c1174
+< =item * insertAfter
+---
+> =head2 * insertAfter
+1185c1176
+< =item * insertSiblingBefore
+---
+> =head2 * insertSiblingBefore
+1187c1178
+< =item * insertSiblingAfter
+---
+> =head2 * insertSiblingAfter
+1189c1180
+< =item * replaceChild
+---
+> =head2 * replaceChild
+1191c1182
+< =item * removeChild
+---
+> =head2 * removeChild
+1193c1184
+< =item * cloneNode
+---
+> =head2 * cloneNode
+1195d1185
+< =back
+diff -r -w SVG-2.36/lib/SVG/XML.pm SVG-2.42/lib/SVG/XML.pm
+21a22,23
+> use warnings;
+> 
+24c26
+< $VERSION = "2.27";
+---
+> $VERSION = "2.42";
+diff -r -w SVG-2.36/lib/SVG.pm SVG-2.42/lib/SVG.pm
+16a17
+> use warnings;
+20c21
+< $VERSION = "2.36";
+---
+> $VERSION = "2.42";
+28c29
+< Version 2.36, 15 August, 2007
+---
+> Version 2.42, 08  April, 2008
+226c227,230
+<     $attrs{'xmlns:xlink'} = $attrs{'xmlns:xlink'} || $attrs{'-xml_xlink'};
+---
+>     $attrs{'xmlns:xlink'} = $attrs{'xmlns:xlink'} || $attrs{'-xml_xlink'} || 'http://www.w3.org/1999/xlink';
+>     $attrs{'xmlns:svg'} = $attrs{'xmlns:svg'} || $attrs{'-xml_svg'} || 'http://www.w3.org/2000/svg';
+> 
+> 
+248c252
+< =head2 xmlify (alias: to_xml render, serialize, serialise)
+---
+> =head2 xmlify  (alias: to_xml render serialize serialise )
+310a315,321
+> 
+> =head2 toperl ()
+> 
+> Alias for method perlify()
+> 
+> =cut
+> 
+314a326,335
+> #LICENSE
+> #
+> #
+> #
+> #The modules in the SVG distribution are distributed under the same license
+> # as Perl itself. It is provided free of warranty and may be re-used freely.
+> #
+> #
+> #
+> 

@@ -1,11 +1,11 @@
 --- #YAML:1.0
 name:                SVG
-version:             2.45
+version:             2.42
 abstract:            Perl extension for generating Scalable Vector Graphics (SVG) documents
 license:             perl
 author:              
     - Ronan Oger <ronan@cpan.com>
-generated_by:        ExtUtils::MakeMaker version 6.42
+generated_by:        ExtUtils::MakeMaker version 6.44
 distribution_type:   module
 requires:     
 meta-spec:

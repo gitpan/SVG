@@ -14,11 +14,10 @@ use Exporter;
 use SVG::XML;
 use SVG::Element;
 use SVG::Extension;
-use warnings;
 
 @ISA = qw(SVG::Element SVG::Extension);
 
-$VERSION = "2.45";
+$VERSION = "2.36";
 
 #-------------------------------------------------------------------------------
 
@@ -26,7 +25,7 @@ $VERSION = "2.45";
 
 =head2 VERSION
 
-Version 2.44, 08  April, 2008
+Version 2.36, 15 August, 2007
 
 Refer to L<SVG::Manual> for the complete manual
 
@@ -211,8 +210,8 @@ may also be set in xmlify, overriding any corresponding values set in the SVG->n
 # refer to the SVG::tag method 
 
 sub new ($;@) {
-    my ($proto,%attrs) = @_;
-    my $class = ref $proto || $proto;
+    my ($proto,%attrs)=@_;
+    my $class=ref $proto || $proto;
     my $self;
 
     # establish defaults for unspecified attributes
@@ -224,10 +223,7 @@ sub new ($;@) {
     unless ($attrs{-namespace}) {
         $attrs{'xmlns'} = $attrs{'xmlns'} || $attrs{'-xml_svg'};
     }
-    $attrs{'xmlns:xlink'} = $attrs{'xmlns:xlink'} || $attrs{'-xml_xlink'} || 'http://www.w3.org/1999/xlink';
-    $attrs{'xmlns:svg'} = $attrs{'xmlns:svg'} || $attrs{'-xml_svg'} || 'http://www.w3.org/2000/svg';
-
-
+    $attrs{'xmlns:xlink'} = $attrs{'xmlns:xlink'} || $attrs{'-xml_xlink'};
     $self->{-level} = 0;
     $self->{$_} = $attrs{$_} foreach keys %default_attrs;
 
@@ -249,7 +245,7 @@ sub new ($;@) {
 
 =pod
 
-=head2 xmlify  (alias: to_xml render serialize serialise )
+=head2 xmlify (alias: to_xml render, serialize, serialise)
 
 $string = $svg->xmlify(%attributes);
 
@@ -312,25 +308,8 @@ return the perl code which generates the SVG document as it currently exists.
 sub perlify ($;@) {
     return shift->SUPER::perlify();
 }
-
-=head2 toperl ()
-
-Alias for method perlify()
-
-=cut
-
 *toperl=\&perlify;
 
 #-------------------------------------------------------------------------------
-
-#LICENSE
-#
-#
-#
-#The modules in the SVG distribution are distributed under the same license
-# as Perl itself. It is provided free of warranty and may be re-used freely.
-#
-#
-#
 
 1;
