@@ -1,6 +1,6 @@
 package SVG::Manual;
 
-our $VERSION = 2.44;
+our $VERSION = 2.47;
 use vars qw($VERSION);
 use strict;
 use warnings;
@@ -13,7 +13,7 @@ SVG - Perl extension for generating Scalable Vector Graphics (SVG) documents
 
 =head2 VERSION
 
-Covers SVG-2.44 distribution, April 2008
+Covers SVG-2.47 distribution, December 2008
 
 =head1 SYNOPSIS
 

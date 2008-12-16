@@ -21,6 +21,7 @@ Makefile.PL
 MANIFEST
 META.yml
 README
+Changes
 t/01-loadsvg.t
 t/02-simpledoc.t
 t/03-render.t
@@ -46,4 +47,3 @@ t/22-xlink.t
 t/23-xmlescape.t
 t/24-doubleuse.t
 t/98_all_pod.t
-t/99_test_pod_coverage.t
