@@ -1,3 +1,4 @@
+META.yml
 examples/attributeManip.pl
 examples/image_sample.pl
 examples/inline_sample.pl
@@ -19,7 +20,6 @@ lib/SVG/XML.pm
 LICENSE
 Makefile.PL
 MANIFEST
-META.yml
 README
 Changes
 t/01-loadsvg.t
@@ -47,3 +47,4 @@ t/22-xlink.t
 t/23-xmlescape.t
 t/24-doubleuse.t
 t/98_all_pod.t
+t/99_test_pod_coverage.t

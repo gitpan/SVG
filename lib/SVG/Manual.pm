@@ -1,6 +1,6 @@
 package SVG::Manual;
 
-our $VERSION = 2.47;
+our $VERSION = 2.48;
 use vars qw($VERSION);
 use strict;
 use warnings;

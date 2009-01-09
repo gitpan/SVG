@@ -1,5 +1,8 @@
 Revision history for Perl extension SVG.
 
+2.48    08 January, 2009
+	-Improved YAML and MANIFEST for cpan testers game
+
 2.47	15 December, 2008
 	-Fixed MANIFEST - replaced Changes entry
 
