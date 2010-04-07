@@ -2,7 +2,7 @@ use Test::More tests => 2;
 use strict;
 use SVG;
 
-# test: duplicate ids, -raiserror
+# test: duplicate ids, -raiseerror
 
 my $svga=new SVG();
 my $dupnotdetected=eval {

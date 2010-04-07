@@ -170,7 +170,7 @@ my $w=$a2->text(id=>'t5',
 $t->cdata('Text generated using the high-level "text" tag');
 $t->cdata('Courtesy of RO IT Systems GmbH');
 $v->cdata('Text generated using the low-level "tag" tag');
-$w->cdata('But what about in-line SVG? Yes, we do that too');
+$w->cdata('But what about inline SVG? Yes, we do that too');
 $w->cdata('All this with SVG.pm? Wow.');
 
 print $p->header('image/svg-xml');

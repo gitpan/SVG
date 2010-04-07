@@ -1,6 +1,6 @@
 package SVG::Manual;
 
-our $VERSION = 2.48;
+our $VERSION = 2.50;
 use vars qw($VERSION);
 use strict;
 use warnings;
@@ -70,7 +70,7 @@ Covers SVG-2.47 distribution, December 2008
     # or, explicitly use svg namespace and generate a document with its own DTD
     print $svg->xmlify(-namespace=>'svg');
 
-    # or, explicitly use svg namespace and generate an in-line docunent
+    # or, explicitly use svg namespace and generate an inline docunent
     print $svg->xmlify(
         -namespace => "svg",
         -pubid => "-//W3C//DTD SVG 1.0//EN",
@@ -99,19 +99,19 @@ L<"xmlify"> method.
 
 
 The L<"xmlify"> method takes a number of optional arguments that control how SVG
-renders the object into XML, and in particular determine whether a stand-alone
+renders the object into XML, and in particular determine whether a standalone
 SVG document or an inline SVG document fragment is generated:
 
 
-=head2 -stand-alone
+=head2 -standalone
 
 A complete SVG document with its own associated DTD. A namespace for the SVG
 elements may be optionally specified.
 
-=head2 -in-line
+=head2 -inline
 
-An in-line SVG document fragment with no DTD that be embedded within other XML
-content. As with stand-alone documents, an alternate namespace may be specified.
+An inline SVG document fragment with no DTD that be embedded within other XML
+content. As with standalone documents, an alternate namespace may be specified.
 
 
 No XML content is generated until the third step is reached. Up until this
@@ -179,7 +179,7 @@ B<Example:>
     use SVG (
         -auto       => 0,
         -indent     => "  ",
-        -raiserror  => 0,
+        -raiseerror  => 0,
         -printerror => 1,
         "star", "planet", "moon"
     );
@@ -188,22 +188,20 @@ B<Example:>
 
 The Default SVG tag will generate the following XML:
 
+  $svg = new SVG;
+  print $svg->xmlify;
 
- $svg = new SVG;
- $svg->xmlify;
+Resulting XML snippet:
 
+  <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+  <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.0//EN" "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
+  <svg height="100%" width="100%" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  	<!-- 
+	  Generated using the Perl SVG Module V2.50
+  	by Ronan Oger
+	  Info: http://www.roitsystems.com/
+   -->
 
- resulting XML snippet:
-
- <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
- <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.0//EN" "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
- <svg height="100%" width="100%" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-        <defs  /><!--
-        Generated using the Perl SVG Module V2.44
-        by Ronan Oger
-        Info: http://www.roitsystems.com/
-  -->
- </svg>
 
 
 =head1 SEE ALSO
@@ -897,25 +895,21 @@ SEE ALSO:
 
 =head2 xmlescp and xmlescape
 
-$string = SVG::xmlescp($string)
-$string = SVG::xmlesc($string)
-$string = SVG::xmlescape($string)
+$string = $svg->xmlescp($string)
+$string = $svg->xmlesc($string)
+$string = $svg->xmlescape($string)
 
-SVG module does not xml-escape characters that are incompatible with the XML specification. B<xmlescp> and B<xmlescape> provides this functionality. It is a helper function which Generates an XML-escaped string for reserved characters such as ampersand, open and close brackets, etcetera.
+SVG module does not xml-escape characters that are incompatible with the XML specification. B<xmlescp> and B<xmlescape> provides this functionality. It is a helper function which generates an XML-escaped string for reserved characters such as ampersand, open and close brackets, etcetera.
 
 The behaviour of xmlesc is to apply the following transformation to the input string $s: 
 
-    $s = '0' unless defined $s;
-    $s=join(', ',@{$s}) if(ref($s) eq 'ARRAY');
-        $s=~s/&(?!#(x\w\w|\d+?);)/&amp;/g;
+    $s=~s/&(?!#(x\w\w|\d+?);)/&amp;/g;
     $s=~s/>/&gt;/g;
     $s=~s/</&lt;/g;
     $s=~s/\"/&quot;/g;
     $s=~s/\'/&apos;/g;
-    $s=~s/\`/&apos;/g;
-    $s=~s/([\x00-\x1f])/sprintf('&#x%02X;',chr($1))/eg;
-        #per suggestion from Adam Schneider
-        $s=~s/([\200-\377])/'&#'.ord($1).';'/ge;
+    $s=~s/([\x00-\x08\x0b\x1f])/''/eg;
+    $s=~s/([\200-\377])/'&#'.ord($1).';'/ge;
  
 
 =head2 filter

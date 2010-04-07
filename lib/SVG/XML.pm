@@ -23,7 +23,7 @@ use warnings;
 
 use vars qw($VERSION @ISA @EXPORT );
 
-$VERSION = "2.44";
+$VERSION = "2.50";
 
 require Exporter;
 @ISA = qw(Exporter);
@@ -46,19 +46,31 @@ require Exporter;
     dtddecl
 );
 
-sub xmlescp ($) {
-    my $s=shift;
+sub xmlescp ($$) {
+    my ($self,$s) = @_;
+
     $s = '0' unless defined $s;
     $s=join(', ',@{$s}) if(ref($s) eq 'ARRAY');
-	$s=~s/&(?!#(x\w\w|\d+?);)/&amp;/g;
+
+    # Special XML entities are escaped
+    $s=~s/&(?!#(x\w\w|\d+?);)/&amp;/g;
     $s=~s/>/&gt;/g;
     $s=~s/</&lt;/g;
     $s=~s/\"/&quot;/g;
     $s=~s/\'/&apos;/g;
-    $s=~s/\`/&apos;/g;
-    $s=~s/([\x00-\x1f])/sprintf('&#x%02X;',chr($1))/eg;
-	#per suggestion from Adam Schneider
-	$s=~s/([\200-\377])/'&#'.ord($1).';'/ge;
+
+    # Backtick is just a regular XML citizen
+    #$s=~s/\`/&apos;/g;
+
+    # Invalid XML characters are removed, not just escaped: \x00-\x08\x0b\x1f
+    # Tabs (\x09) and newlines (\x0a) are valid.
+    while ( $s=~s/([\x00-\x08\x0b\x1f])/''/e ) {
+        my $char = "'\\x".sprintf('%02X',ord($1))."'";
+        $self->error( $char => "This forbidden XML character was removed");
+    }
+
+    # Per suggestion from Adam Schneider
+    $s=~s/([\200-\377])/'&#'.ord($1).';'/ge;
 
     return $s;
 }
@@ -74,14 +86,9 @@ sub cssstyle {
 
 # Per suggestion from Adam Schneider
 sub xmlattrib {
-    my %attrs=@_;
+   my %attrs=@_;
    return(join(' ',map { qq($_=").$attrs{$_}.q(") } sort keys(%attrs)));
 }
-
-#sub xmlattrib {
-#    my %attrs=@_;
-#    return(join(' ',map { qq($_=").xmlescp($attrs{$_}).q(") } keys(%attrs)));
-#}
 
 sub xmltag ($$;@) {
     my ($name,$ns,%attrs)=@_;
@@ -110,7 +117,7 @@ sub xmltagopen_ln ($$;@) {
 sub xmlcomment ($$) {
     my ($self,$r_comment) = @_;
     my $ind = $self->{-docref}->{-elsep}.$self->{-docref}->{-indent} x $self->{-docref}->{-level};
-    return(join($ind,map { qq(<!-- $_ -->)} @$r_comment));
+    return($ind.join($ind,map { qq(<!-- $_ -->)} @$r_comment));
 }
 
 sub xmlpi ($$) {
@@ -149,7 +156,7 @@ sub dtddecl ($) {
         "\"$self->{-docref}->{-dtd}\""
     }
 
-    my $at=join(' ',($docroot, $id));
+    my $at = join(' ',($docroot, $id));
 
     #>>>TBD: add internal() method to return this
     my $extension = (exists $self->{-internal})?$self->{-internal}->render():"";
@@ -160,7 +167,7 @@ sub dtddecl ($) {
     }
     $extension = " [".$self->{-docref}{-elsep}.$extension."]" if $extension;
 
-    return qq[<!DOCTYPE $at$extension>];
+    return qq[$self->{-docref}{-elsep}<!DOCTYPE $at$extension>];
 }
 
 sub xmldecl ($) {
@@ -170,8 +177,7 @@ sub xmldecl ($) {
     my $encoding = $self->{-encoding} || 'UTF-8';
     my $standalone = $self->{-standalone} ||'yes';
 
-    return qq§<?xml version="$version" encoding="$encoding" standalone="$standalone"?>§
-           .$self->{-docref}{-elsep};
+    return qq§<?xml version="$version" encoding="$encoding" standalone="$standalone"?>§;
 }
 
 #-------------------------------------------------------------------------------

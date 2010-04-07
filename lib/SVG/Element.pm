@@ -20,12 +20,13 @@ L<http://www.w3c.org/Graphics/SVG/> SVG at the W3C
 
 package SVG::Element;
 
-$VERSION = "2.44";
+$VERSION = "2.50";
 
 use strict;
 use SVG::XML;
 use SVG::DOM;
 use SVG::Extension;
+use Scalar::Util qw/weaken/;
 use warnings;
 use vars qw($AUTOLOAD %autosubs);
 
@@ -111,27 +112,28 @@ sub xmlify ($) {
     } elsif ( $self->{-name} eq 'document' ) {
 
         #write the xml header
-        $xml .= $self->xmldecl;
+        $xml .= $self->xmldecl unless $self->{-inline};
+
         $xml .= $self->xmlpi( $self->{-document}->{-pi} )
           if $self->{-document}->{-pi};
 
         #and write the dtd if this is inline
         $xml .= $self->dtddecl unless $self->{-inline};
+
+        #rest of the xml
         foreach my $k ( @{ $self->{-childs} } ) {
             if ( ref($k) =~ /^SVG::Element/ ) {
                 $xml .= $k->xmlify($ns);
             }
         }
+
         return $xml;
     }
-    if (
-        defined $self->{-childs}
-        || defined $self->{-cdata}
-        ||defined $self->{-CDATA}
-        ||defined $self->{-cdata_noxmlesc}
-      )
-    {
-        $xml .= $self->{-docref}->{-elsep} if defined $self->{-childs};
+    my $is_cdataish = defined $self->{-cdata}
+                   || defined $self->{-CDATA}
+                   || defined $self->{-cdata_noxmlesc};
+    if ( defined $self->{-childs} || $is_cdataish ) {
+        $xml .= $self->{-docref}->{-elsep} unless ($self->{-inline} && $self->{-name});
         $xml .= $self->{-docref}->{-indent} x $self->{-docref}->{-level};
         $xml .= xmltagopen_ln( $self->{-name}, $ns, %attrs );
         $self->{-docref}->{-level}++;
@@ -142,7 +144,7 @@ sub xmlify ($) {
         }
 
         if ( defined $self->{-cdata} ) {
-            $xml .= xmlescp( $self->{-cdata} );
+            $xml .= $self->xmlescp( $self->{-cdata} );
         }
         if ( defined $self->{-CDATA} ) {
             $xml .= '<![CDATA[' . $self->{-CDATA} . ']]>';
@@ -153,8 +155,10 @@ sub xmlify ($) {
 
         #return without writing the tag out if it the document tag
         $self->{-docref}->{-level}--;
-        $xml .= $self->{-docref}->{-elsep};
-        $xml .= $self->{-docref}->{-indent} x $self->{-docref}->{-level};
+        unless( $is_cdataish ) {
+            $xml .= $self->{-docref}->{-elsep};
+            $xml .= $self->{-docref}->{-indent} x $self->{-docref}->{-level};
+        }
         $xml .= xmltagclose_ln( $self->{-name}, $ns );
     } else {
         $xml .= $self->{-docref}->{-elsep};
@@ -264,7 +268,6 @@ sub tag ($$;@) {
     my ( $self, $name, %attrs ) = @_;
 
     unless ( $self->{-parent} ) {
-
         #traverse down the tree until you find a non-document entry
         while ( $self->{-document} ) { $self = $self->{-document} }
     }
@@ -275,6 +278,7 @@ sub tag ($$;@) {
 
     #add the tag to the document element
     $tag->{-docref} = $self->{-docref};
+    weaken( $tag->{-docref} );
 
     #create the empty idlist hash ref unless it already exists
     $tag->{-docref}->{-idlist} = {}
@@ -290,7 +294,9 @@ sub tag ($$;@) {
     }
 
     #add the current id reference to the document id hash
-    $tag->{-docref}->{-idlist}->{ $tag->{id} } = $tag if defined( $tag->{id} );
+    if ( defined($tag->{id}) ) {
+        $tag->{-docref}->{-idlist}->{ $tag->{id} } = $tag;
+    }
 
     #create the empty idlist hash ref unless it already exists
     $tag->{-docref}->{-elist} = {}
@@ -300,15 +306,16 @@ sub tag ($$;@) {
     $tag->{-docref}->{-elist}->{ $tag->{-name} } = []
       unless ( defined $tag->{-docref}->{-elist}->{ $tag->{-name} } );
 
-#add the current element ref to the corresponding element-hash array
-# -elist is a hash of element names. key name is element, content is object ref.
+    #add the current element ref to the corresponding element-hash array
+    # -elist is a hash of element names. key name is element, content is object ref.
 
     # add the reference to $tag to the array of refs that belong to the
     # key $tag->{-name}.
     unshift @{ $tag->{-docref}->{-elist}->{ $tag->{-name} } }, $tag;
 
     # attach element to the DOM of the document
-    $tag->{-parent}     = $self;
+    $tag->{-parent} = $self;
+    weaken($tag->{-parent});
     $tag->{-parentname} = $self->{-name};
     $self->addchilds($tag);
 

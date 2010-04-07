@@ -14,11 +14,12 @@ use Exporter;
 use SVG::XML;
 use SVG::Element;
 use SVG::Extension;
+use Scalar::Util qw/weaken/;
 use warnings;
 
 @ISA = qw(SVG::Element SVG::Extension);
 
-$VERSION = "2.49";
+$VERSION = "2.50";
 
 #-------------------------------------------------------------------------------
 
@@ -45,7 +46,8 @@ Ronan Oger, RO IT Systemms GmbH, cpan@roitsystems.com.com
 
 =head1 CREDITS
 
-I would like to thank the following people for contributing to this module with patches, testing, suggestions, and other nice tidbits:
+I would like to thank the following people for contributing to this module with
+patches, testing, suggestions, and other nice tidbits:
 Peter Wainwright, Ian Hickson, Adam Schneider, Steve Lihn, Allen Day 
 
 =head1 EXAMPLES
@@ -159,14 +161,13 @@ B<Example:>
         -printerror => 1,
         -raiseerror => 0,
         -indent     => '  ',
-    -elsep      =>"\n",  # element line (vertical) separator
-        -docroot => 'svg', #default document root element (SVG specification assumes svg). Defaults to 'svg' if undefined
- 
-	-xml_xlink => 'http://www.w3.org/1999/xlink', #required by Mozilla's embedded SVG engine
-        -sysid      => 'abc', #optional system identifyer 
-        -pubid      => "-//W3C//DTD SVG 1.0//EN", #public identifyer default value is "-//W3C//DTD SVG 1.0//EN" if undefined
-        -namespace => 'mysvg',
-        -inline   => 1
+        -elsep      => "\n",  # element line (vertical) separator
+        -docroot    => 'svg', # default document root element (SVG specification assumes svg). Defaults to 'svg' if undefined
+        -xml_xlink  => 'http://www.w3.org/1999/xlink', # required by Mozilla's embedded SVG engine
+        -sysid      => 'abc', # optional system identifier 
+        -pubid      => "-//W3C//DTD SVG 1.0//EN", # public identifier default value is "-//W3C//DTD SVG 1.0//EN" if undefined
+        -namespace  => 'mysvg',
+        -inline     => 1
         id          => 'document_element',
         width       => 300,
         height      => 200,
@@ -220,7 +221,10 @@ sub new ($;@) {
         $attrs{$attr}=$default_attrs{$attr} unless exists $attrs{$attr}
     }
     $self = $class->SUPER::new('document');
-    $self->{-docref} = $self unless ($self->{-docref});
+    if (not $self->{-docref}) {
+      $self->{-docref} = $self;
+      weaken( $self->{-docref} );
+    }
     unless ($attrs{-namespace}) {
         $attrs{'xmlns'} = $attrs{'xmlns'} || $attrs{'-xml_svg'};
     }
@@ -236,6 +240,7 @@ sub new ($;@) {
     unless ($attrs{-nostub}) {
         $svg = $self->svg(%attrs);
         $self->{-document} = $svg;
+        weaken( $self->{-document} );
     }
 
     # add -attributes to SVG object

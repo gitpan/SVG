@@ -1,8 +1,9 @@
 package SVG::DOM;
 use strict;
 use warnings;
+use Scalar::Util qw/weaken/;
 use vars qw($VERSION);
-$VERSION = "2.44";
+$VERSION = "2.50";
 
 # this module extends SVG::Element
 package SVG::Element;
@@ -264,8 +265,7 @@ sub getElements ($;$) {
     my $elist=$self->{-docref}->{-elist};
     if (defined $element) {
         if (exists $elist->{$element}) {
-            return wantarray?@{$elist->{$element}}:
-		$elist->{$element};
+            return wantarray?@{$elist->{$element}}:$elist->{$element};
         }
         return wantarray?():undef;
     } else {
@@ -458,7 +458,7 @@ sub replaceChild
 	# We need the index of the node to replace
 	my $index = $self->findChildIndex($oldChild);
 	return 0 if($index < 0); # NOT_FOUND_ERR
-	# Replace and bind new node with it's family
+	# Replace and bind new node with its family
 	$self->removeChildAtIndex($index);
 	$self->insertChildAtIndex($index);
 	return $oldChild;
@@ -483,9 +483,8 @@ sub removeChild
 sub appendChild
 {
     my ($self, $element) = @_;
-    $element->{-docref} = $self->{-docref};
-    $element->{-parent} = $self;
-    push @{$self->{-childs}}, $element;
+    my $index = (defined $self->{-childs} && scalar @{$self->{-childs}}) || 0;
+    $self->insertAtIndex($element, $index);
     return 1;
 }
 *appendElement=\&appendChild;
@@ -498,17 +497,26 @@ sub cloneNode
 	my ($self, $deep) = @_;
 	my $clone = new SVG::Element;
 	foreach my $key (keys(%{$self})) {
-		if($key ne '-childs' and $key ne '-parent') {
-			$clone->{$key} = $self->{$key};
+    next if $key eq '-childs' or $key eq '-parent';
+    if ($key eq '-docref') {
+      # need to forge a docref based on the docref of the template element
+      foreach my $dockey (keys(%{$self->{-docref}})) {
+        next if $dockey eq '-childs' or $dockey eq '-parent' or $dockey eq '-idlist' or $dockey eq '-elist' or $dockey eq '-document' or $dockey eq '-docref';
+        $clone->{-docref}->{$dockey} = $self->{-docref}->{$dockey};
+      }
+    } else {
+      $clone->{$key} = $self->{$key};
 		}
 	}
+
 	# We need to clone the children if deep is specified.
-	if($deep) {
+	if ($deep) {
 		foreach my $child (@{$self->{-childs}}) {
 			my $childClone = $child->cloneNode($deep);
 			$clone->appendChild($childClone);
 		}
 	}
+
 	return $clone;
 }
 *cloneElement=\&cloneNode;
@@ -520,40 +528,76 @@ sub cloneNode
 # sub findChildIndex
 sub findChildIndex
 {
-	my ($self, $refChild) = @_;
-	my $index;
-	foreach my $child (@{$self->{-childs}}) {
-        last if $child eq $refChild;
+    my ($self, $refChild) = @_;
+
+    my $index = 0;
+    foreach my $child (@{$self->{-childs}}) {
+        if ($child eq $refChild) {
+            return $index; # Child found
+        }
         $index++;
-        return -1 if($index > @{$self->{-childs}}); 
-    } 
-	return $index;
+    }
+
+    return -1; # Child not found
 }
 
 # ---------------
 # sub insertAtIndex
 sub insertAtIndex
 {
-	my ($self, $newChild, $index) = @_;
-	splice @{$self->{-childs}}, $index, 0, $newChild;
+    my ($self, $newChild, $index) = @_;
+
+    # add child
+    splice @{$self->{-childs}}, $index, 0, $newChild;
+
+    # update parent and document reference
     $newChild->{-docref} = $self->{-docref};
+    weaken( $newChild->{-docref} );
     $newChild->{-parent} = $self;
-	return 1;
+    weaken( $newChild->{-parent} );
+
+    # update ID and element list
+    if ( defined($newChild->{id}) ) {
+        $self->{-docref}->{-idlist}->{ $newChild->{id} } = $newChild;
+    }
+    $self->{-docref}->{-elist} = {}
+        unless ( defined $self->{-docref}->{-elist} );
+    $self->{-docref}->{-elist}->{ $newChild->{-name} } = []
+        unless ( defined $self->{-docref}->{-elist}->{ $newChild->{-name} } );
+    unshift @{ $self->{-docref}->{-elist}->{ $newChild->{-name} } }, $newChild;
+
+    return 1;
 }
+*insertChildAtIndex=\&insertAtIndex;
 
 # ----------------
 # sub removeChildAtIndex
 sub removeChildAtIndex
 {
 	my ($self, $index) = @_;
+
+  # remove child
 	my $oldChild = splice @{$self->{-childs}}, $index, 1;
-	$oldChild->{-parent} = undef;
-    $oldChild->{-docref} = undef;
 	if(not @{$self->{-childs}}) {
 		delete $self->{-childs};
 	}
+
+  # update parent and document reference
+  $oldChild->{-docref} = undef;
+	$oldChild->{-parent} = undef;
+
+  # update ID and element list
+  if ( defined($oldChild->{id}) && 
+       exists $self->{-docref}->{-idlist}->{ $oldChild->{id} } ) {
+    delete $self->{-docref}->{-idlist}->{ $oldChild->{id} };
+  }
+  if ( exists $self->{-docref}->{-elist}->{ $oldChild->{-name} } ) {
+    delete $self->{-docref}->{-elist}->{ $oldChild->{-name} };
+  }
+
 	return $oldChild;
-} 
+}
+*removeAtIndex=\&removeChildAtIndex;
 
 
 #-------------------------------------------------------------------------------
@@ -598,11 +642,11 @@ and so on.
     my @rectangles=$svg->getElements("rect");
     my $allelements_arrayref=$svg->getElements();
 
-	$group->insertBefore($newChild,$rect);
-	$group->insertAfter($newChild,$rect);
-	$rect = $group->replaceChild($newChild,$rect);
-	$group->removeChild($newChild);
-	my $newRect = $rect->cloneNode($deep);
+    $group->insertBefore($newChild,$rect);
+    $group->insertAfter($newChild,$rect);
+    $rect = $group->replaceChild($newChild,$rect);
+    $group->removeChild($newChild);
+    my $newRect = $rect->cloneNode($deep);
 
     ...and so on...
 
@@ -740,7 +784,7 @@ Returns $child if it was removed successfully from $obj
 
 =head2 $element = $obj->cloneNode( $deep ); 
 
-Returns a new $element clone of $obj, includes children if deep = 1
+Returns a new $element clone of $obj, without parents or children. If deep is set to 1, all children are included recursively.
 
 =head1 AUTHOR
 
