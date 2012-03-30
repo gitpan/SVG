@@ -1,4 +1,4 @@
-=pod 
+=pod
 
 =head1 NAME
 
@@ -9,25 +9,24 @@ SVG - Perl extension for generating Scalable Vector Graphics (SVG) documents
 package SVG;
 
 use strict;
-use vars qw($VERSION @ISA $AUTOLOAD);
-use Exporter;
+use warnings;
+
 use SVG::XML;
 use SVG::Element;
 use SVG::Extension;
 use Scalar::Util qw/weaken/;
-use warnings;
 
-@ISA = qw(SVG::Element SVG::Extension);
+our @ISA = qw(SVG::Element SVG::Extension);
 
-$VERSION = "2.50";
+our $VERSION = "2.51";
 
 #-------------------------------------------------------------------------------
 
-=pod 
+=pod
 
 =head2 VERSION
 
-Version 2.44, 08  April, 2008
+Version 2.51, 30  March, 2012
 
 Refer to L<SVG::Manual> for the complete manual
 
@@ -42,7 +41,11 @@ Refer to L<SVG::Manual> for the complete manual.
 
 =head1 AUTHOR
 
-Ronan Oger, RO IT Systemms GmbH, cpan@roitsystems.com.com
+Ronan Oger, RO IT Systemms GmbH, cpan@roitsystems.com
+
+=head1 CO-MAINTAINER
+
+Gabor Szabo
 
 =head1 CREDITS
 
@@ -153,11 +156,11 @@ a hyphen) may be set on a per object basis:
 
 B<Example:>
 
-    my $svg1=new SVG;
+    my $svg1 = SVG->new;
 
-    my $svg2=new SVG(id => 'document_element');
+    my $svg2 = SVG->new(id => 'document_element');
 
-    my $svg3=new SVG(
+    my $svg3 = SVG->new(
         -printerror => 1,
         -raiseerror => 0,
         -indent     => '  ',

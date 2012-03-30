@@ -1,11 +1,8 @@
 package SVG::Manual;
-
-our $VERSION = 2.50;
-use vars qw($VERSION);
 use strict;
 use warnings;
 
-$VERSION = eval $VERSION;
+our $VERSION = 2.51;
 
 =head1 NAME
 
@@ -13,7 +10,7 @@ SVG - Perl extension for generating Scalable Vector Graphics (SVG) documents
 
 =head2 VERSION
 
-Covers SVG-2.47 distribution, December 2008
+Covers SVG-2.51 distribution, 30 March 2012
 
 =head1 SYNOPSIS
 
@@ -188,7 +185,7 @@ B<Example:>
 
 The Default SVG tag will generate the following XML:
 
-  $svg = new SVG;
+  $svg = SVG->new;
   print $svg->xmlify;
 
 Resulting XML snippet:
@@ -223,8 +220,6 @@ Martin Owens - SVG::DOM improvements in version 3.34
 
 =head1 EXAMPLES
 
-http://wiki.roitsystems.com/
-
 See also the examples directory in this distribution which contain several fully documented examples.
 
 =pod
@@ -255,11 +250,11 @@ a hyphen) may be set on a per object basis:
 
 B<Example:>
 
-    my $svg1=new SVG;
+    my $svg1 = SVG->new;
 
-    my $svg2=new SVG(id => 'document_element');
+    my $svg2 = SVG->new(id => 'document_element');
 
-    my $svg3=new SVG(s
+    my $svg3 = SVG->new(s
         -printerror => 1,
         -raiseerror => 0,
         -indent     => '  ',
@@ -492,8 +487,8 @@ B<Example:>
         %$points,
         id=>'pline_1',
         style=>{
-            'fill-opacity'=>0,
-            'stroke-color'=>'rgb(250,123,23)'
+            'fill-opacity' => 0,
+            'stroke' => 'rgb(250,123,23)'
         }
     );
 
@@ -643,8 +638,8 @@ B<Example:>
         id    => 'pline_1',
         style => {
             'fill-opacity' => 0,
-            'fill-color'   => 'green',
-            'stroke-color' => 'rgb(250,123,23)'
+            'fill'   => 'green',
+            'stroke' => 'rgb(250,123,23)'
         }
     );
 

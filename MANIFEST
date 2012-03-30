@@ -1,4 +1,4 @@
-META.yml
+Changes
 examples/attributeManip.pl
 examples/image_sample.pl
 examples/inline_sample.pl
@@ -19,11 +19,9 @@ lib/SVG/Manual.pm
 lib/SVG/XML.pm
 LICENSE
 Makefile.PL
-MANIFEST
+MANIFEST			This list of files
 README
-Changes
 t/01-loadsvg.t
-t/02-simpledoc.t
 t/03-render.t
 t/04-inline.t
 t/05-processinginstruction.t
@@ -48,3 +46,5 @@ t/23-xmlescape.t
 t/24-doubleuse.t
 t/98_all_pod.t
 t/99_test_pod_coverage.t
+META.yml                                 Module YAML meta-data (added by MakeMaker)
+META.json                                Module JSON meta-data (added by MakeMaker)
