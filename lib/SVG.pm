@@ -12,13 +12,10 @@ use strict;
 use warnings;
 
 use SVG::XML;
-use SVG::Element;
-use SVG::Extension;
+use parent qw(SVG::Element SVG::Extension);
 use Scalar::Util qw/weaken/;
 
-our @ISA = qw(SVG::Element SVG::Extension);
-
-our $VERSION = "2.51";
+our $VERSION = '2.52';
 
 #-------------------------------------------------------------------------------
 
@@ -52,10 +49,6 @@ Gabor Szabo
 I would like to thank the following people for contributing to this module with
 patches, testing, suggestions, and other nice tidbits:
 Peter Wainwright, Ian Hickson, Adam Schneider, Steve Lihn, Allen Day 
-
-=head1 EXAMPLES
-
-http://www.roitsystems.com/index.shtml?svg.pod
 
 =head1 SEE ALSO
 
@@ -214,7 +207,7 @@ may also be set in xmlify, overriding any corresponding values set in the SVG->n
 # the next tag object there.
 # refer to the SVG::tag method 
 
-sub new ($;@) {
+sub new {
     my ($proto,%attrs) = @_;
     my $class = ref $proto || $proto;
     my $self;
@@ -279,7 +272,7 @@ B<XML Declaration>
 
 =cut
 
-sub xmlify ($;@) {
+sub xmlify {
 
     my ($self,%attrs) = @_;
     my ($decl,$ns);
@@ -292,12 +285,12 @@ sub xmlify ($;@) {
     }
 
     foreach my $key (keys %attrs) {
-        next unless ($key =~ /^\-/);
+        next if $key !~ /^-/;
         $self->{$key} = $attrs{$key};
     }
 
     foreach my $key (keys %$self) {
-        next unless ($key =~ /^\-/);
+        next if $key !~ /^-/;
         $attrs{$key} ||= $self->{$key};
     }
 

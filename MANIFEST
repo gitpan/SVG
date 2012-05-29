@@ -1,4 +1,7 @@
 Changes
+examples/01_circle.pl
+examples/02_circle_with_color.pl
+examples/03_circle_and_square.pl
 examples/attributeManip.pl
 examples/image_sample.pl
 examples/inline_sample.pl
@@ -44,7 +47,7 @@ t/21-polygon.t
 t/22-xlink.t
 t/23-xmlescape.t
 t/24-doubleuse.t
-t/98_all_pod.t
 t/99_test_pod_coverage.t
+xt/98_all_pod.t
 META.yml                                 Module YAML meta-data (added by MakeMaker)
 META.json                                Module JSON meta-data (added by MakeMaker)

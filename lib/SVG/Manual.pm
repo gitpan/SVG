@@ -2,7 +2,7 @@ package SVG::Manual;
 use strict;
 use warnings;
 
-our $VERSION = 2.51;
+our $VERSION = '2.52';
 
 =head1 NAME
 
@@ -19,8 +19,6 @@ Covers SVG-2.51 distribution, 30 March 2012
     use SVG;
 
     # create an SVG object
-    my $svg= SVG->new(width=>200,height=>200);
-    #or
     my $svg= SVG->new(width=>200,height=>200);
 
     # use explicit element constructor to generate a group element
@@ -776,6 +774,7 @@ $svg->mouseaction(%attributes)
 
 Sets/Adds mouse action definitions for tag
 
+=head2 attrib
 
 $svg->attrib($name, $value)
 

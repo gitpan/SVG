@@ -19,6 +19,7 @@ no_index:
     - inc
 requires:
   Scalar::Util: 0
+  parent: 0
 resources:
   repository: https://github.com/szabgab/SVG
-version: 2.51
+version: 2.52

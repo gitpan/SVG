@@ -31,7 +31,7 @@ use Scalar::Util qw/weaken/;
 
 our $AUTOLOAD;
 
-our $VERSION = "2.51";
+our $VERSION = '2.52';
 
 my @autosubs = qw(
   animateMotion animateColor animateTransform circle ellipse rect polyline
@@ -56,7 +56,7 @@ sub new ($$;@) {
     foreach my $key ( keys %attrs ) {
 
         #handle escapes for special elements such as anchor
-        if ( $key =~ /^\-/ ) {
+        if ( $key =~ /^-/ ) {
             if ( $key eq '-href' ) {
                 $self->{'xlink:href'}    = $attrs{$key};
                 $self->{'xlink:type'}    = $attrs{-type} if $attrs{-type};
@@ -80,7 +80,7 @@ sub release ($) {
     my $self = shift;
 
     foreach my $key ( keys( %{$self} ) ) {
-        next if $key =~ /^\-/;
+        next if $key =~ /^-/;
         if ( ref( $self->{$key} ) =~ /^SVG/ ) {
             eval { $self->{$key}->release; };
         }
@@ -98,7 +98,7 @@ sub xmlify ($) {
     #prep the attributes
     my %attrs;
     foreach my $k ( keys( %{$self} ) ) {
-        if ( $k =~ /^\-/ ) { next; }
+        if ( $k =~ /^-/ ) { next; }
         if ( ref( $self->{$k} ) eq 'ARRAY' ) {
             $attrs{$k} = join( ', ', @{ $self->{$k} } );
         } elsif ( ref( $self->{$k} ) eq 'HASH' ) {
@@ -180,7 +180,7 @@ sub perlify {
     #prep the attributes
     my %attrs;
     foreach my $k ( keys( %{$self} ) ) {
-        if ( $k =~ /^\-/ ) { next; }
+        next if $k =~ /^-/;
         if ( ref( $self->{$k} ) eq 'ARRAY' ) {
             $attrs{$k} = join( ', ', @{ $self->{$k} } );
         } elsif ( ref( $self->{$k} ) eq 'HASH' ) {
@@ -773,10 +773,10 @@ B<Example:>
     
     my $tag = $SVG->style(type=>"text/css");
 
-    # populate the style tag with cdata
-    # be careful to manage the line ends.
-    # qq|text| or qq§text§ where text is the script
-    # works well for this.
+    # Populate the style tag with cdata.
+    # Be careful to manage the line ends.
+    # qq|text| or qq§text§, where text is the script
+    # work well for this.
 
     $tag1->CDATA(qq|
 	rect     fill:red;stroke:green;
@@ -785,7 +785,7 @@ B<Example:>
 	text     fill:black;stroke:none;
    	|);
     
-    # create a external css stylesheet reference
+    # Create a external CSS stylesheet reference
     my $tag2 = $SVG->style(type=>"text/css", -href="/resources/example.css");
 
 =pod

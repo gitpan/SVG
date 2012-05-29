@@ -2,7 +2,14 @@ package SVG::Extension;
 use strict;
 use warnings;
 
-our $VERSION = "2.51";
+our $VERSION = '2.52';
+
+=head1 NAME
+
+SVG::Extension - additional methods
+
+=cut
+
 
 # although DTD declarations are not elements, we use the same API so we can
 # manipulate the internal DTD subset using the same methods available for
@@ -11,7 +18,7 @@ our $VERSION = "2.51";
 # e.g. isElementDecl() to determine types; this API will be retained
 # irrespective.
 
-our @ISA = qw(SVG::Element);
+use parent qw/SVG::Element/;
 
 # DTD declarations handled in this module
 use constant ELEMENT => "ELEMENT";
@@ -103,7 +110,7 @@ sub attlist_decl {
 
 =head2 notation_decl(%attrs)
 
-return an extention object of type NOTATION
+return an extension object of type NOTATION
 
 =cut
 
