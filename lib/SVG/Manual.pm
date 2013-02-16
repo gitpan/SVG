@@ -2,7 +2,7 @@ package SVG::Manual;
 use strict;
 use warnings;
 
-our $VERSION = '2.52';
+our $VERSION = '2.54';
 
 =head1 NAME
 
@@ -201,10 +201,8 @@ Resulting XML snippet:
 
 =head1 SEE ALSO
 
-perl(1), L<SVG::XML>, L<SVG::Element>, L<SVG::DOM>, L<SVG::Parser>
 L<http://www.roitsystems.com/>ROIT Systems: Commercial SVG perl solutions
 L<http://www.w3c.org/Graphics/SVG/>SVG at the W3C
-	
 
 =head1 AUTHOR
 
@@ -325,7 +323,7 @@ as a child.
 
 B<Example:>
 
-    # generate an anchor	
+    # generate an anchor
     $tag = $svg->anchor(
         -href=>'http://here.com/some/simpler/svg.svg'
     );
