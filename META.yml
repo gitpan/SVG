@@ -22,4 +22,11 @@ requires:
   parent: 0
 resources:
   repository: https://github.com/szabgab/SVG
-version: 2.54
+version: 2.55
+x_contributors:
+  - 'Peter Wainwright'
+  - 'Ian Hickson'
+  - 'Adam Schneider'
+  - 'Steve Lihn'
+  - 'Allen Day'
+  - 'Gabor Szabo'

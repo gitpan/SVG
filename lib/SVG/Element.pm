@@ -31,7 +31,7 @@ use Scalar::Util qw/weaken/;
 
 our $AUTOLOAD;
 
-our $VERSION = '2.54';
+our $VERSION = '2.55';
 
 my @autosubs = qw(
   animateMotion animateColor animateTransform circle ellipse rect polyline
@@ -292,7 +292,7 @@ sub tag {
     if ( $tag->{id} ) {
         if ( $self->getElementByID( $tag->{id} ) ) {
             $self->error( $tag->{id} => "ID already exists in document" );
-            return undef;
+            return;
         }
     }
 
@@ -1142,7 +1142,7 @@ sub attrib {
     if ( $name eq "id" ) {
         if ( $self->getElementByID($val) ) {
             $self->error( $val => "ID already exists in document" );
-            return undef;
+            return;
         }
     }
 
@@ -1632,6 +1632,7 @@ sub autoload {
 	#per rt.perl.org comment by slaven.
 
 	if (!$package->can($sub)) {
+        ## no critic (TestingAndDebugging::ProhibitNoStrict)
 		no strict 'refs';
 		*{$package.'::'.$sub} = sub { return shift->tag($tag, @_) };
 	}

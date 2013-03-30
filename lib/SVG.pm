@@ -1,11 +1,3 @@
-=pod
-
-=head1 NAME
-
-SVG - Perl extension for generating Scalable Vector Graphics (SVG) documents
-
-=cut
-
 package SVG;
 
 use strict;
@@ -15,15 +7,15 @@ use SVG::XML;
 use parent qw(SVG::Element SVG::Extension);
 use Scalar::Util qw/weaken/;
 
-our $VERSION = '2.54';
-
-#-------------------------------------------------------------------------------
+our $VERSION = '2.55';
 
 =pod
 
-=head2 VERSION
+=head1 NAME
 
-Version 2.54
+SVG - Perl extension for generating Scalable Vector Graphics (SVG) documents
+
+=head1 SYNOPSIS
 
 Refer to L<SVG::Manual> for the complete manual.
 
@@ -34,6 +26,28 @@ L<SVG::Element>,
 L<SVG::Parser>,
 L<SVG::Extension>
 
+=head1 VERSION
+
+Version 2.55
+
+=head1 EXAMPLES
+
+examples/svg.pl generates the following image:
+
+=begin html
+
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.0//EN" "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
+<svg height="200" width="200" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<title >I am a title</title>
+<g id="group_y" style="fill: green; stroke: red">
+<circle cx="100" cy="100" id="circle_in_group_y" r="50" />
+<!-- This is a comment -->
+</g>
+</svg>
+
+=end html
+
 =head1 DESCRIPTION
 
 SVG is a 100% Perl module which generates a nested data structure containing the
@@ -41,36 +55,8 @@ DOM representation of an SVG (Scalable Vector Graphics) image. Using SVG, you
 can generate SVG objects, embed other SVG instances into it, access the DOM
 object, create and access javascript, and generate SMIL animation content.
 
-Refer to L<SVG::Manual> for the complete manual.
-
-=head1 AUTHOR
-
-Ronan Oger, RO IT Systemms GmbH, cpan@roitsystems.com
-
-=head1 CO-MAINTAINER
-
-Gabor Szabo
-
-=head1 CREDITS
-
-I would like to thank the following people for contributing to this module with
-patches, testing, suggestions, and other nice tidbits:
-Peter Wainwright, Ian Hickson, Adam Schneider, Steve Lihn, Allen Day
-
-=head1 SEE ALSO
-
-L<http://www.roitsystems.com/> ROASP.com: Serverside SVG server
-L<http://www.roitsystems.com/> ROIT Systems: Commercial SVG perl solutions
-L<http://www.w3c.org/Graphics/SVG/> SVG at the W3C
-
-=head1 COPYRIGHT & LICENSE
-
-Copyright Ronan Oger
-
-The modules in the SVG distribution are distributed under the same license
-as Perl itself. It is provided free of warranty and may be re-used freely.
-
 =cut
+
 
 
 #-------------------------------------------------------------------------------
@@ -336,3 +322,35 @@ Alias for method perlify()
 *toperl=\&perlify;
 
 1;
+
+=pod
+
+=head1 AUTHOR
+
+Ronan Oger, RO IT Systemms GmbH, cpan@roitsystems.com
+
+=head1 MAINTAINER
+
+L<Gabor Szabo|http://szabgab.com/>
+
+=head1 CREDITS
+
+I would like to thank the following people for contributing to this module with
+patches, testing, suggestions, and other nice tidbits:
+Peter Wainwright, Ian Hickson, Adam Schneider, Steve Lihn, Allen Day
+
+=head1 SEE ALSO
+
+L<ROASP.com: Serverside SVG server|http://www.roitsystems.com/>,
+L<ROIT Systems: Commercial SVG perl solutions|http://www.roitsystems.com/>,
+L<SVG at the W3C|http://www.w3c.org/Graphics/SVG/>
+
+=head1 COPYRIGHT & LICENSE
+
+Copyright 2001- Ronan Oger
+
+The modules in the SVG distribution are distributed under the same license
+as Perl itself. It is provided free of warranty and may be re-used freely.
+
+=cut
+

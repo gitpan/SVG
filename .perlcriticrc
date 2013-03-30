@@ -1,0 +1,25 @@
+severity  = 4
+
+# Severity 5:
+[-OTRS::RequireCamelCase]
+[-OTRS::ProhibitSomeCoreFunctions]
+[-OTRS::ProhibitLowPrecendeceOps]
+[-OTRS::RequireParensWithMethods]
+
+# TODO?
+[-ValuesAndExpressions::ProhibitAccessOfPrivateData]
+
+# Severity 4:
+[-Bangs::ProhibitRefProtoOrProto]
+[-ErrorHandling::RequireUseOfExceptions]
+[-Modules::ProhibitMultiplePackages]
+[-Modules::ProhibitAutomaticExportation]
+[-Modules::RequireExplicitInclusion]
+[-Objects::ProhibitIndirectSyntax]
+[-Subroutines::RequireFinalReturn]
+[-Subroutines::RequireArgUnpacking]
+[-Subroutines::ProhibitCallsToUndeclaredSubs]
+[-Subroutines::ProhibitCallsToUnexportedSubs]
+[-Subroutines::ProhibitExportingUndeclaredSubs]
+[-Subroutines::ProhibitBuiltinHomonyms]
+[-ValuesAndExpressions::ProhibitConstantPragma]

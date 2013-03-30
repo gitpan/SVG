@@ -1,3 +1,4 @@
+.perlcriticrc
 Changes
 examples/01_circle.pl
 examples/02_circle_with_color.pl
@@ -18,7 +19,7 @@ lib/SVG.pm
 lib/SVG/DOM.pm
 lib/SVG/Element.pm
 lib/SVG/Extension.pm
-lib/SVG/Manual.pm
+lib/SVG/Manual.pod
 lib/SVG/XML.pm
 LICENSE
 Makefile.PL
@@ -48,5 +49,6 @@ t/22-xlink.t
 t/23-xmlescape.t
 t/99_test_pod_coverage.t
 xt/98_all_pod.t
+xt/99_perl_critic.t
 META.yml                                 Module YAML meta-data (added by MakeMaker)
 META.json                                Module JSON meta-data (added by MakeMaker)
