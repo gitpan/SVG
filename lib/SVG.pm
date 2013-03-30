@@ -7,7 +7,7 @@ use SVG::XML;
 use parent qw(SVG::Element SVG::Extension);
 use Scalar::Util qw/weaken/;
 
-our $VERSION = '2.58';
+our $VERSION = '2.59';
 
 =pod
 
@@ -85,7 +85,7 @@ L<SVG::Extension>
 
 =head1 VERSION
 
-Version 2.58
+Version 2.59
 
 =head1 EXAMPLES
 
@@ -105,7 +105,7 @@ That you can either embed directly into HTML or can include it using:
 
    <object data="file.svg" type="image/svg+xml"></object>
 
-=for HTML <p><a<img src="http://szabgab.com/img/SVG/svg.png" alt="SVG example circle" /></p>
+=for HTML <p><img src="http://szabgab.com/img/SVG/circle.png" alt="SVG example circle" /></p>
 
 (The image was converted to png using L<Image::LibRSVG>. See the svg2png.pl script in the examples directory.)
 
@@ -1503,6 +1503,19 @@ For Commercial Perl/SVG development, refer to the following sites:
 L<ROASP.com: Serverside SVG server|http://www.roitsystems.com/>,
 L<ROIT Systems: Commercial SVG perl solutions|http://www.roitsystems.com/>,
 L<SVG at the W3C|http://www.w3c.org/Graphics/SVG/>
+
+=head1 EXPERIMENTAL POD
+
+=for HTML <p><img src="http://gphat.github.com/chart-clicker/static/images/examples/bubble.png" width="500" height="250" alt="Bubble Chart" /></p>
+
+=for html <p><img src="http://szabgab.com/img/SVG/circle.png" alt="SVG example circle" /></p>
+
+=begin HTML
+
+<p><img src="http://szabgab.com/img/SVG/circle.png" alt="SVG example circle" /></p>
+
+=end HTML
+
 
 =cut
 
