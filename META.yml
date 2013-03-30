@@ -22,7 +22,7 @@ requires:
   parent: 0
 resources:
   repository: https://github.com/szabgab/SVG
-version: 2.57
+version: 2.58
 x_contributors:
   - 'Peter Wainwright'
   - 'Ian Hickson'

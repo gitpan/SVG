@@ -4,13 +4,14 @@ examples/01_circle.pl
 examples/02_circle_with_color.pl
 examples/03_circle_and_square.pl
 examples/attributeManip.pl
+examples/circle.pl
 examples/image_sample.pl
 examples/inline_sample.pl
 examples/inlinesvg.pl
 examples/minsvg.pl
 examples/starpath.cgi
 examples/sun_text_sample.pl
-examples/svg.pl
+examples/svg2png.pl
 examples/SVG_02_sample.pl
 examples/svg_dom_sample.pl
 examples/svgtest2.pl
