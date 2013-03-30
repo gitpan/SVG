@@ -19,7 +19,6 @@ lib/SVG.pm
 lib/SVG/DOM.pm
 lib/SVG/Element.pm
 lib/SVG/Extension.pm
-lib/SVG/Manual.pod
 lib/SVG/XML.pm
 LICENSE
 Makefile.PL

@@ -4,7 +4,7 @@ use warnings;
 
 use Scalar::Util qw/weaken/;
 
-our $VERSION = '2.55';
+our $VERSION = '2.56';
 
 # this module extends SVG::Element
 package SVG::Element;
@@ -794,7 +794,7 @@ Martin Owens, doctormo@postmaster.co.uk
 
 =head1 SEE ALSO
 
-perl(1), L<SVG>, L<SVG::XML>, L<SVG::Element>, L<SVG::Parser>, L<SVG::Manual>
+perl(1), L<SVG>, L<SVG::XML>, L<SVG::Element>, L<SVG::Parser>
 
 L<http://www.roitsystems.com/> ROIT Systems: Commercial SVG perl solutions
 L<http://www.w3c.org/Graphics/SVG/> SVG at the W3C

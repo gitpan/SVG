@@ -10,7 +10,7 @@ Ronan Oger, cpan@roitsystems.com
 
 =head1 SEE ALSO
 
-perl(1),L<SVG>,L<SVG::XML>,L<SVG::Element>,L<SVG::Parser>, L<SVG::Manual>
+L<SVG>,L<SVG::XML>,L<SVG::Element>,L<SVG::Parser>
 L<http://www.roitsystems.com/> ROASP.com: Serverside SVG server
 L<http://www.roitsystems.com/> ROIT Systems: Commercial SVG perl solutions
 L<http://www.w3c.org/Graphics/SVG/> SVG at the W3C
@@ -23,7 +23,7 @@ use warnings;
 
 use Exporter qw(import);
 
-our $VERSION = '2.55';
+our $VERSION = '2.56';
 
 our @EXPORT = qw(
     xmlesc
